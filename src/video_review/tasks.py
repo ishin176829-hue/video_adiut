@@ -26,7 +26,13 @@ from .db import (
 )
 from .downloader import SourceDownloadError, download_oss_video, download_video, register_local_video
 from .judge import build_report
-from .model_retry import ModelRetryBudget, call_model_with_retry, is_rate_limit_error, is_transient_model_error
+from .model_retry import (
+    ModelRetryBudget,
+    call_model_with_retry,
+    classify_model_error,
+    is_rate_limit_error,
+    is_transient_model_error,
+)
 from .models import CreateReviewRequest, ReportNarrative, ReviewFinding, ReviewJob, ReviewStatus, SegmentReviewResult, VideoAsset
 from .policies import load_policy
 from .preprocessor import (
@@ -74,7 +80,15 @@ async def _persist_job_with_retry(job: ReviewJob, *, attempts: int = 3) -> None:
 
 
 async def persist_created_job(job: ReviewJob, request: CreateReviewRequest) -> None:
-    await _safe_persist(persist_job(job, request))
+    max_attempts = 3
+    for attempt in range(1, max_attempts + 1):
+        try:
+            await persist_job(job, request, strict=True)
+            break
+        except Exception:
+            if attempt >= max_attempts:
+                raise
+            await asyncio.sleep(min(2 ** (attempt - 1), 5))
     await _safe_persist(persist_event(job.review_id, "status", {"text": "任务已创建"}))
 
 
@@ -462,16 +476,34 @@ async def _analyze_subtitle_resilient(
 def _manual_review_result(segment, batch: list[dict], exc: BaseException) -> SegmentReviewResult:
     start_time = batch[0]["timestamp"] if batch else segment.start_time
     end_time = batch[-1]["timestamp"] if batch else segment.end_time
+    error_kind = classify_model_error(exc)
+    contract_error = error_kind in {"parse", "validation"}
+    sub_category = "模型响应异常人工复核" if contract_error else "模型超时人工复核"
+    evidence = (
+        f"{start_time} - {end_time} 帧批次未获得可解析的结构化审核结果。"
+        if contract_error
+        else f"{start_time} - {end_time} 帧批次调用多模态模型超时或网关失败。"
+    )
+    reason = (
+        f"上游模型连续返回空内容、非 JSON 或不符合数据契约的结果：{exc}"
+        if contract_error
+        else f"上游模型服务返回临时错误，未能稳定完成该时间段审核：{exc}"
+    )
+    summary = (
+        f"{start_time} - {end_time} 模型响应异常，已标记人工复核。"
+        if contract_error
+        else f"{start_time} - {end_time} 模型审核超时，已标记人工复核。"
+    )
     finding = ReviewFinding(
         category="模型调用异常",
-        sub_category="模型超时人工复核",
+        sub_category=sub_category,
         risk_level="中风险",
         rule_tag="人工复核",
         severity="medium",
         start_time=start_time,
         end_time=end_time,
-        evidence=f"{start_time} - {end_time} 帧批次调用多模态模型超时或网关失败。",
-        reason=f"上游模型服务返回临时错误，未能稳定完成该时间段审核：{exc}",
+        evidence=evidence,
+        reason=reason,
         suggested_action="人工复核该时间段，或稍后重试该视频。",
         context_note="该命中项表示审核链路异常，不代表视频内容本身违规。",
         plot_impact="该时间段未完成模型判定，整片结论需结合人工复核确认。",
@@ -485,7 +517,7 @@ def _manual_review_result(segment, batch: list[dict], exc: BaseException) -> Seg
         segment_index=segment.segment_index,
         start_time=segment.start_time,
         end_time=segment.end_time,
-        summary=f"{start_time} - {end_time} 模型审核超时，已标记人工复核。",
+        summary=summary,
         findings=[finding],
         risk_score=55,
     )
@@ -616,6 +648,18 @@ async def _analyze_frame_batch_resilient(
                     "text": (
                         f"帧批次 {batch[0]['timestamp']} - {batch[-1]['timestamp']} "
                         "模型限流重试耗尽，已标记人工复核"
+                    )
+                },
+            )
+            return [_manual_review_result(segment, batch, exc)]
+        if classify_model_error(exc) in {"parse", "validation"}:
+            await add_event(
+                review_id,
+                "status",
+                {
+                    "text": (
+                        f"帧批次 {batch[0]['timestamp']} - {batch[-1]['timestamp']} "
+                        "结构化响应重试耗尽，已标记人工复核"
                     )
                 },
             )

@@ -330,9 +330,16 @@ async def persist_asset(asset: VideoAsset) -> None:
         )
 
 
-async def persist_job(job: ReviewJob, request: CreateReviewRequest | None = None) -> None:
-    pool = await get_pool()
+async def persist_job(
+    job: ReviewJob,
+    request: CreateReviewRequest | None = None,
+    *,
+    strict: bool = False,
+) -> None:
+    pool = await get_pool(strict=strict)
     if pool is None:
+        if strict:
+            raise RuntimeError("database connection unavailable")
         return
     request_json = _json(request.model_dump(mode="json", exclude_none=True)) if request else None
     session_id = request.session_id if request else None

@@ -135,7 +135,7 @@ class Settings(BaseModel):
     ffmpeg_filter_threads: int = int(os.getenv("VIDEO_REVIEW_FFMPEG_FILTER_THREADS", "1"))
     model_call_timeout_seconds: int = int(os.getenv("VIDEO_REVIEW_MODEL_CALL_TIMEOUT_SECONDS", "180"))
     model_call_retry_delay_seconds: float = float(os.getenv("VIDEO_REVIEW_MODEL_CALL_RETRY_DELAY_SECONDS", "2"))
-    model_parse_retry_attempts: int = int(os.getenv("VIDEO_REVIEW_MODEL_PARSE_RETRY_ATTEMPTS", "2"))
+    model_parse_retry_attempts: int = int(os.getenv("VIDEO_REVIEW_MODEL_PARSE_RETRY_ATTEMPTS", "3"))
     model_transient_retry_attempts: int = int(os.getenv("VIDEO_REVIEW_MODEL_TRANSIENT_RETRY_ATTEMPTS", "2"))
     model_rate_limit_retry_attempts: int = int(os.getenv("VIDEO_REVIEW_MODEL_RATE_LIMIT_RETRY_ATTEMPTS", "3"))
     model_rate_limit_backoff_seconds: float = float(

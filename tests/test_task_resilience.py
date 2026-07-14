@@ -9,6 +9,7 @@ import warnings
 os.environ["VIDEO_REVIEW_DATA_DIR"] = tempfile.mkdtemp(prefix="video-review-test-")
 
 from video_review.models import CreateReviewRequest, ReviewJob, ReviewStatus, SegmentPlan, SegmentReviewResult
+from video_review.model_retry import ModelContractError
 from video_review.config import settings
 
 settings.data_dir = Path(os.environ["VIDEO_REVIEW_DATA_DIR"])
@@ -146,6 +147,40 @@ def test_terminal_job_persistence_retries_transient_database_failure(monkeypatch
     asyncio.run(scenario())
 
 
+def test_created_job_requires_durable_request_before_queueing(monkeypatch):
+    async def scenario():
+        attempts = []
+
+        async def fake_persist_job(job, request=None, *, strict=False):
+            attempts.append((request, strict))
+            if len(attempts) < 3:
+                raise RuntimeError("pool busy")
+
+        async def fake_persist_event(*args, **kwargs):
+            return None
+
+        async def fake_sleep(seconds):
+            return None
+
+        monkeypatch.setattr(tasks, "persist_job", fake_persist_job)
+        monkeypatch.setattr(tasks, "persist_event", fake_persist_event)
+        monkeypatch.setattr(tasks.asyncio, "sleep", fake_sleep)
+        request = CreateReviewRequest(video_url="https://example.com/a.mp4")
+        job = ReviewJob(
+            review_id="review_created",
+            status=ReviewStatus.PENDING,
+            phase="pending",
+            message="任务已创建",
+        )
+
+        await tasks.persist_created_job(job, request)
+
+        assert len(attempts) == 3
+        assert all(item == (request, True) for item in attempts)
+
+    asyncio.run(scenario())
+
+
 def test_subtitle_timeout_degrades_to_visual_review(monkeypatch):
     async def scenario():
         events = []
@@ -194,6 +229,58 @@ def test_manual_review_result_marks_batch_time_range():
     assert result.findings[0].start_time == "00:04"
     assert result.findings[0].end_time == "00:05"
     assert result.findings[0].value_correction_advice.main
+
+
+def test_frame_batch_contract_error_degrades_to_manual_review(monkeypatch):
+    async def scenario():
+        settings.frame_sheet_enabled = False
+
+        class Analyzer:
+            model = "test-model"
+
+            async def analyze_frames_segment(self, *args, **kwargs):
+                return None
+
+        async def fake_call(*args, **kwargs):
+            raise ModelContractError("模型返回空内容", kind="parse")
+
+        async def fake_add_event(*args, **kwargs):
+            return None
+
+        async def fake_get_cache(*args, **kwargs):
+            return None
+
+        monkeypatch.setattr(tasks, "_call_model_with_timeout", fake_call)
+        monkeypatch.setattr(tasks, "add_event", fake_add_event)
+        monkeypatch.setattr(tasks, "get_frame_batch_cache", fake_get_cache)
+
+        segment = SegmentPlan(
+            segment_index=1,
+            start_seconds=0,
+            end_seconds=2,
+            start_time="00:00",
+            end_time="00:02",
+        )
+        batch = [{"timestamp": "00:01", "timestamp_seconds": 1, "frame_index": 1}]
+        asset = type("Asset", (), {"sha256": "hash"})()
+        policy = type("Policy", (), {"version": "v1"})()
+
+        results = await _analyze_frame_batch_resilient(
+            review_id="review_test",
+            analyzer=Analyzer(),
+            policy=policy,
+            asset=asset,
+            segment=segment,
+            batch=batch,
+            frame_fps=1,
+            video_title="test",
+        )
+
+        assert len(results) == 1
+        assert results[0].findings[0].sub_category == "模型响应异常人工复核"
+        assert "结构化" in results[0].findings[0].evidence
+
+    asyncio.run(scenario())
 
 
 def test_frame_batches_run_with_bounded_concurrency(monkeypatch):
