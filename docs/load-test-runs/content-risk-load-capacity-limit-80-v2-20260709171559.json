@@ -1,0 +1,1411 @@
+{
+  "name": "content-risk-load-capacity-limit-80-v2-20260709171559",
+  "generated_at": "2026-07-09T09:40:51.601347+00:00",
+  "prefix": "capacity-limit-80-v2-20260709171559",
+  "base_url": "http://127.0.0.1:8767",
+  "app_id": "capacity-test",
+  "sample": {
+    "source": "postgres",
+    "distinct_video_urls": 80,
+    "min_duration_seconds": 10.0,
+    "max_duration_seconds": 240.0
+  },
+  "run": {
+    "total": 80,
+    "elapsed_seconds": 1490.1842838829616,
+    "status_counts": {
+      "completed": 77,
+      "failed": 3
+    },
+    "submit_errors": 0,
+    "latency_seconds": {
+      "p50": 601.6319096088409,
+      "p90": 746.6415485143668,
+      "p95": 858.7590324163436,
+      "avg": 606.0145945131778
+    },
+    "model_error_result_counts": {},
+    "model_error_result_ratio": {},
+    "aborted": false
+  },
+  "db_report": {
+    "matched_jobs": 80,
+    "status_counts": {
+      "completed": 77,
+      "failed": 3
+    },
+    "review_seconds": {
+      "p50": 573.2329110000001,
+      "p90": 726.4534855,
+      "p95": 840.4489059499999,
+      "avg": 572.2776373625
+    },
+    "total_seconds": {
+      "p50": 592.818675,
+      "p90": 739.3129811000006,
+      "p95": 845.2909687499999,
+      "avg": 597.6438792
+    },
+    "model_error_job_counts": {
+      "timeout": 13,
+      "504": 2
+    },
+    "model_error_job_ratio": {
+      "504": 0.025,
+      "timeout": 0.1625
+    }
+  },
+  "cleanup": {
+    "matched_jobs": 80,
+    "deleted_paths": 397,
+    "deleted_bytes": 10337090657,
+    "deleted_gib": 9.627165884710848,
+    "skipped_paths": 0,
+    "cancel_unfinished": false,
+    "redis": {
+      "stream_scanned": 1320,
+      "xack": 0,
+      "xdel": 80,
+      "active_zrem": 0
+    }
+  },
+  "disk": {
+    "before": {
+      "path": "/home",
+      "total_bytes": 214643507200,
+      "used_bytes": 163025801216,
+      "free_bytes": 51617705984,
+      "used_percent": 75.9518903425745
+    },
+    "after": {
+      "path": "/home",
+      "total_bytes": 1099406770176,
+      "used_bytes": 169202147328,
+      "free_bytes": 930204622848,
+      "used_percent": 15.390313387001706
+    },
+    "guard_path": "/home",
+    "max_used_percent": 82.0
+  },
+  "sample_states": [
+    {
+      "data_id": "capacity-limit-80-v2-20260709171559-00001",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1782975851585_27.mp4",
+      "submitted_at": 1783588560.1368,
+      "submit_elapsed_seconds": 0.025095461052842438,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-limit-80-v2-20260709171559-00001",
+        "task_id": "capacity-limit-80-v2-20260709171559-00001",
+        "review_id": "review_fb86100f7d99c175",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "completed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-limit-80-v2-20260709171559-00001",
+        "task_id": "capacity-limit-80-v2-20260709171559-00001",
+        "status": "completed",
+        "final_label": "BLOCK",
+        "decision_label": "BLOCK",
+        "summary": "本片为古代架空权谋剧，主线涉及真假千金与宫廷复仇。整体剧情框架常规，但后半段存在严重违规风险。主要问题在于角色“常慕”对被称为“姐姐”的女性角色表达了极端的占有欲，且伴随“不是阉人”的身份揭露，极易触碰“乱伦/近亲伦理”或“畸形婚恋（百合）”的高风险红线。此外，部分台词（如“抽筋剥皮”）过于血腥。建议优先核实并修改常慕与姐姐的人物关系设定，删除暧昧及强迫性台词，同时弱化血腥台词，修改合格后方可过审。",
+        "risk_score": 87.0,
+        "video_results": {
+          "decision": "BLOCK",
+          "frames": [
+            {
+              "time": 18.0,
+              "end_time": 30.0,
+              "label": "历史及名著改编",
+              "sub_label": "历史虚无",
+              "decision": "REVIEW",
+              "decision_detail": "画面中红衣女子出场，字幕显示“九千岁驾到”，后续蓝衣女子致谢时字幕显示“多谢九千岁”。“九千岁”在真实历史中通常特指明朝权宦魏忠贤等，此处由女性角色扮演并作为尊称使用，属于对历史称谓的架空戏说。",
+              "risk_level": "低风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 113.0,
+              "end_time": 114.0,
+              "label": "暴力伤害",
+              "sub_label": "血腥暴力",
+              "decision": "BLOCK",
+              "decision_detail": "画面中红衣角色凑近蓝衣女子进行威胁，字幕出现'要么像个畜生'、'被抽筋剥皮为生'。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 142.0,
+              "end_time": 152.0,
+              "label": "不良价值观",
+              "sub_label": "乱伦/近亲伦理",
+              "decision": "BLOCK",
+              "decision_detail": "画面中穿着太监服饰的角色（常慕，由女性扮演）拦住蓝衣女子，字幕显示常慕说：'姐姐崔啸不知你的好，可我知道我如今权倾朝野...只要是我想要得到的东西，无论用什么手段'。；常慕对蓝衣女子表达了明确的爱慕和极端的占有欲。由于常慕由女性扮演且称呼对方为'姐姐'，此情节可能涉及同性恋爱（百合线）或近亲伦理（乱伦），同时带有强迫和极端占有欲倾向，属于不良价值观。由于单凭片段无法确定'姐姐'是亲属关系还是尊称，以及常慕的具体性别设定，需人工复核。",
+              "risk_level": "高风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 155.0,
+              "end_time": 159.0,
+              "label": "不良价值观",
+              "sub_label": "畸形婚恋",
+              "decision": "REVIEW",
+              "decision_detail": "画面中两名女性角色（其中一人着红衣官服）靠近耳语、抓手腕，红衣角色台词称“第一其实我不是阉人”。；两名女性面相角色存在亲密肢体接触，且台词涉及生理特征揭示，疑似存在双女主/百合暧昧线；或属于“假太监”题材的擦边设定，需人工核实具体人物设定和关系。",
+              "risk_level": "中风险",
+              "confidence": 0.75
+            },
+            {
+              "time": 160.0,
+              "end_time": 164.0,
+              "label": "不良价值观",
+              "sub_label": "极端复仇",
+              "decision": "REVIEW",
+              "decision_detail": "红衣角色对另一女子表明目的，台词为“第二我活着唯一的目的 就是杀了当今皇帝李泽川”。；台词明确表达了刺杀皇帝的极端复仇目的。在古代架空剧中属常见权谋设定，但需防范过度渲染血腥暴力。",
+              "risk_level": "低风险",
+              "confidence": 0.9
+            }
+          ]
+        },
+        "audio_results": {
+          "decision": "BLOCK",
+          "details": [
+            {
+              "start_time": 18.0,
+              "end_time": 30.0,
+              "label": "历史及名著改编",
+              "sub_label": "历史虚无",
+              "decision": "REVIEW",
+              "decision_detail": "画面中红衣女子出场，字幕显示“九千岁驾到”，后续蓝衣女子致谢时字幕显示“多谢九千岁”。“九千岁”在真实历史中通常特指明朝权宦魏忠贤等，此处由女性角色扮演并作为尊称使用，属于对历史称谓的架空戏说。",
+              "text": "九千岁驾到, 多谢九千岁",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 113.0,
+              "end_time": 114.0,
+              "label": "暴力伤害",
+              "sub_label": "血腥暴力",
+              "decision": "BLOCK",
+              "decision_detail": "画面中红衣角色凑近蓝衣女子进行威胁，字幕出现'要么像个畜生'、'被抽筋剥皮为生'。",
+              "text": "要么像个畜生，被抽筋剥皮为生",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 142.0,
+              "end_time": 152.0,
+              "label": "不良价值观",
+              "sub_label": "乱伦/近亲伦理",
+              "decision": "BLOCK",
+              "decision_detail": "画面中穿着太监服饰的角色（常慕，由女性扮演）拦住蓝衣女子，字幕显示常慕说：'姐姐崔啸不知你的好，可我知道我如今权倾朝野...只要是我想要得到的东西，无论用什么手段'。；常慕对蓝衣女子表达了明确的爱慕和极端的占有欲。由于常慕由女性扮演且称呼对方为'姐姐'，此情节可能涉及同性恋爱（百合线）或近亲伦理（乱伦），同时带有强迫和极端占有欲倾向，属于不良价值观。由于单凭片段无法确定'姐姐'是亲属关系还是尊称，以及常慕的具体性别设定，需人工复核。",
+              "text": "姐姐崔啸不知你的好，可我知道我如今权倾朝野，有花不完的钱，也读过许多书。常慕你喝醉了。只要是我想要得到的东西，无论用什么手段",
+              "confidence": 0.85
+            },
+            {
+              "start_time": 155.0,
+              "end_time": 159.0,
+              "label": "不良价值观",
+              "sub_label": "畸形婚恋",
+              "decision": "REVIEW",
+              "decision_detail": "画面中两名女性角色（其中一人着红衣官服）靠近耳语、抓手腕，红衣角色台词称“第一其实我不是阉人”。；两名女性面相角色存在亲密肢体接触，且台词涉及生理特征揭示，疑似存在双女主/百合暧昧线；或属于“假太监”题材的擦边设定，需人工核实具体人物设定和关系。",
+              "text": "我有两个秘密想告诉你 第一其实我不是阉人",
+              "confidence": 0.75
+            },
+            {
+              "start_time": 160.0,
+              "end_time": 164.0,
+              "label": "不良价值观",
+              "sub_label": "极端复仇",
+              "decision": "REVIEW",
+              "decision_detail": "红衣角色对另一女子表明目的，台词为“第二我活着唯一的目的 就是杀了当今皇帝李泽川”。；台词明确表达了刺杀皇帝的极端复仇目的。在古代架空剧中属常见权谋设定，但需防范过度渲染血腥暴力。",
+              "text": "第二我活着唯一的目的 就是杀了当今皇帝李泽川",
+              "confidence": 0.9
+            }
+          ]
+        },
+        "annotations": [
+          "视频18秒 命中 历史及名著改编-历史虚无：画面中红衣女子出场，字幕显示“九千岁驾到”，后续蓝衣女子致谢时字幕显示“多谢九千岁”。“九千岁”在真实历史中通常特指明朝权宦魏忠贤等，此处由女性角色扮演并作为尊称使用，属于对历史称谓的架空戏说。",
+          "视频113秒 命中 暴力伤害-血腥暴力：画面中红衣角色凑近蓝衣女子进行威胁，字幕出现'要么像个畜生'、'被抽筋剥皮为生'。",
+          "视频142秒 命中 不良价值观-乱伦/近亲伦理：画面中穿着太监服饰的角色（常慕，由女性扮演）拦住蓝衣女子，字幕显示常慕说：'姐姐崔啸不知你的好，可我知道我如今权倾朝野...只要是我想要得到的东西，无论用什么手段'。；常慕对蓝衣女子表达了明确的爱慕和极端的占有欲。由于常慕由女性扮演且称呼对方为'姐姐'，此情节可能涉及同性恋爱（百合线）或近亲伦理（乱伦），同时带有强迫和极端占有欲倾向，属于不良价值观。由于单凭片段无法确定'姐姐'是亲属关系还是尊称，以及常慕的具体性别设定，需人工复核。",
+          "视频155秒 命中 不良价值观-畸形婚恋：画面中两名女性角色（其中一人着红衣官服）靠近耳语、抓手腕，红衣角色台词称“第一其实我不是阉人”。；两名女性面相角色存在亲密肢体接触，且台词涉及生理特征揭示，疑似存在双女主/百合暧昧线；或属于“假太监”题材的擦边设定，需人工核实具体人物设定和关系。",
+          "视频160秒 命中 不良价值观-极端复仇：红衣角色对另一女子表明目的，台词为“第二我活着唯一的目的 就是杀了当今皇帝李泽川”。；台词明确表达了刺杀皇帝的极端复仇目的。在古代架空剧中属常见权谋设定，但需防范过度渲染血腥暴力。"
+        ]
+      },
+      "completed_at": 1783590035.2389412
+    },
+    {
+      "data_id": "capacity-limit-80-v2-20260709171559-00002",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1782530571669_789.mp4",
+      "submitted_at": 1783588560.1764646,
+      "submit_elapsed_seconds": 0.014554060995578766,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-limit-80-v2-20260709171559-00002",
+        "task_id": "capacity-limit-80-v2-20260709171559-00002",
+        "review_id": "review_38cc710f0e177aa2",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "completed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-limit-80-v2-20260709171559-00002",
+        "task_id": "capacity-limit-80-v2-20260709171559-00002",
+        "status": "completed",
+        "final_label": "BLOCK",
+        "decision_label": "BLOCK",
+        "summary": "本片主要围绕现代都市情感纠纷展开，核心问题在于后半段女方为了羞辱男方，使用了极其露骨的性暗示台词（如“睡了很多次”、“身体强悍”），这已触及平台“低俗擦边”的红线，属于中风险违规。此外，全片充斥着互相出轨、多角恋和语言羞辱等不良价值观元素。建议首要任务是删除或修改低俗台词，其次在整体剧情编排上，需确保对出轨和背叛行为有明确的负面定性，避免传递畸形的婚恋观。另外，画面中出现的OCR乱码需人工核实是否为违规水印。修改台词并确认无水印后可考虑通过。",
+        "risk_score": 92.0,
+        "video_results": {
+          "decision": "BLOCK",
+          "frames": [
+            {
+              "time": 0.0,
+              "end_time": 23.0,
+              "label": "不良价值观",
+              "sub_label": "家庭矛盾/出轨",
+              "decision": "BLOCK",
+              "decision_detail": "台词中出现“沈怀玉不是发照片了吗 还不够清楚吗”、“三年的感情不过是个笑话”、“你是得报复我吗”，表现出情感破裂、疑似出轨线索及报复心理。",
+              "risk_level": "低风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 4.0,
+              "end_time": 61.0,
+              "label": "质量问题",
+              "sub_label": "画面水印/杂字",
+              "decision": "REVIEW",
+              "decision_detail": "OCR识别出大量无意义的英文字母和符号（如 'bf', 'SN >', 'a ‘SQ! (', 'ine', 'OBNEAT }' 等），提示画面可能存在水印、杂乱背景字或双重字幕。",
+              "risk_level": "低风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 7.0,
+              "end_time": 11.0,
+              "label": "暴力伤害",
+              "sub_label": "轻度暴力/肢体冲突",
+              "decision": "REVIEW",
+              "decision_detail": "画面显示女方扇了男方一巴掌，男方随后捂住脸颊（帧7-11）。；出现扇耳光的肢体暴力行为，属于家庭/情感纠纷中的轻度暴力。",
+              "risk_level": "低风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 3.0,
+              "end_time": 14.0,
+              "label": "不良价值观",
+              "sub_label": "家庭矛盾/出轨",
+              "decision": "REVIEW",
+              "decision_detail": "字幕显示男方质问'你真的跟别的男人'（帧4），女方反问'你不也跟沈怀玉睡过了吗'（帧13）。；剧情涉及互相出轨，且台词'睡过了'较为直白，涉及违背公序良俗的情感关系。",
+              "risk_level": "中风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 22.0,
+              "end_time": 30.0,
+              "label": "不良价值观",
+              "sub_label": "家庭矛盾/出轨",
+              "decision": "BLOCK",
+              "decision_detail": "画面中男子强行抓着黑衣女子肩膀，字幕显示“分手不可能”、“我爱的是你”、“婚礼照旧举行”。门外白裙女子目睹这一切并痛苦地称呼男子为“宇杰哥哥”。",
+              "risk_level": "低风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 41.0,
+              "end_time": 51.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "画面中女方靠近男方挑衅，字幕出现“我昨晚跟那个人睡了很多次”、“他身体强悍”、“有力量多了”等明显带有性暗示的台词。；台词包含直接的性行为描述和性能力评价，属于低俗擦边和性暗示，不符合大众审美和平台规范。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 40.0,
+              "end_time": 58.0,
+              "label": "不良价值观",
+              "sub_label": "家庭矛盾/出轨/语言羞辱",
+              "decision": "REVIEW",
+              "decision_detail": "女方故意用出轨事实和贬低男方能力的言语来羞辱男方，男方回应“恬不知耻”、“你让我恶心”并提出分手。；展现恶劣的情感背叛和语言羞辱，虽然最终导致分手，但过程充满了负面情绪和互相伤害，缺乏正向的情感处理方式。",
+              "risk_level": "中风险",
+              "confidence": 0.9
+            }
+          ]
+        },
+        "audio_results": {
+          "decision": "BLOCK",
+          "details": [
+            {
+              "start_time": 0.0,
+              "end_time": 23.0,
+              "label": "不良价值观",
+              "sub_label": "家庭矛盾/出轨",
+              "decision": "BLOCK",
+              "decision_detail": "台词中出现“沈怀玉不是发照片了吗 还不够清楚吗”、“三年的感情不过是个笑话”、“你是得报复我吗”，表现出情感破裂、疑似出轨线索及报复心理。",
+              "text": "沈怀玉不是发照片了吗...三年的感情不过是个笑话...你是得报复我吗",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 4.0,
+              "end_time": 61.0,
+              "label": "质量问题",
+              "sub_label": "画面水印/杂字",
+              "decision": "REVIEW",
+              "decision_detail": "OCR识别出大量无意义的英文字母和符号（如 'bf', 'SN >', 'a ‘SQ! (', 'ine', 'OBNEAT }' 等），提示画面可能存在水印、杂乱背景字或双重字幕。",
+              "text": "bf...SN >...a ‘SQ! (...ine...OBNEAT }",
+              "confidence": 0.85
+            },
+            {
+              "start_time": 3.0,
+              "end_time": 14.0,
+              "label": "不良价值观",
+              "sub_label": "家庭矛盾/出轨",
+              "decision": "REVIEW",
+              "decision_detail": "字幕显示男方质问'你真的跟别的男人'（帧4），女方反问'你不也跟沈怀玉睡过了吗'（帧13）。；剧情涉及互相出轨，且台词'睡过了'较为直白，涉及违背公序良俗的情感关系。",
+              "text": "你真的跟别的男人; 你不也跟沈怀玉睡过了吗",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 22.0,
+              "end_time": 30.0,
+              "label": "不良价值观",
+              "sub_label": "家庭矛盾/出轨",
+              "decision": "BLOCK",
+              "decision_detail": "画面中男子强行抓着黑衣女子肩膀，字幕显示“分手不可能”、“我爱的是你”、“婚礼照旧举行”。门外白裙女子目睹这一切并痛苦地称呼男子为“宇杰哥哥”。",
+              "text": "分手不可能, 你是在报复我吗, 那是意外, 我爱的是你, 婚礼照旧举行, 宇杰哥哥",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 41.0,
+              "end_time": 51.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "画面中女方靠近男方挑衅，字幕出现“我昨晚跟那个人睡了很多次”、“他身体强悍”、“有力量多了”等明显带有性暗示的台词。；台词包含直接的性行为描述和性能力评价，属于低俗擦边和性暗示，不符合大众审美和平台规范。",
+              "text": "我昨晚跟那个人睡了很多次, 他身体强悍, 有力量多了",
+              "confidence": 0.95
+            }
+          ]
+        },
+        "annotations": [
+          "视频0秒 命中 不良价值观-家庭矛盾/出轨：台词中出现“沈怀玉不是发照片了吗 还不够清楚吗”、“三年的感情不过是个笑话”、“你是得报复我吗”，表现出情感破裂、疑似出轨线索及报复心理。",
+          "视频4秒 命中 质量问题-画面水印/杂字：OCR识别出大量无意义的英文字母和符号（如 'bf', 'SN >', 'a ‘SQ! (', 'ine', 'OBNEAT }' 等），提示画面可能存在水印、杂乱背景字或双重字幕。",
+          "视频7秒 命中 暴力伤害-轻度暴力/肢体冲突：画面显示女方扇了男方一巴掌，男方随后捂住脸颊（帧7-11）。；出现扇耳光的肢体暴力行为，属于家庭/情感纠纷中的轻度暴力。",
+          "视频3秒 命中 不良价值观-家庭矛盾/出轨：字幕显示男方质问'你真的跟别的男人'（帧4），女方反问'你不也跟沈怀玉睡过了吗'（帧13）。；剧情涉及互相出轨，且台词'睡过了'较为直白，涉及违背公序良俗的情感关系。",
+          "视频22秒 命中 不良价值观-家庭矛盾/出轨：画面中男子强行抓着黑衣女子肩膀，字幕显示“分手不可能”、“我爱的是你”、“婚礼照旧举行”。门外白裙女子目睹这一切并痛苦地称呼男子为“宇杰哥哥”。",
+          "视频41秒 命中 低俗与画面尺度-软色情擦边：画面中女方靠近男方挑衅，字幕出现“我昨晚跟那个人睡了很多次”、“他身体强悍”、“有力量多了”等明显带有性暗示的台词。；台词包含直接的性行为描述和性能力评价，属于低俗擦边和性暗示，不符合大众审美和平台规范。",
+          "视频40秒 命中 不良价值观-家庭矛盾/出轨/语言羞辱：女方故意用出轨事实和贬低男方能力的言语来羞辱男方，男方回应“恬不知耻”、“你让我恶心”并提出分手。；展现恶劣的情感背叛和语言羞辱，虽然最终导致分手，但过程充满了负面情绪和互相伤害，缺乏正向的情感处理方式。"
+        ]
+      },
+      "completed_at": 1783589284.4809234
+    },
+    {
+      "data_id": "capacity-limit-80-v2-20260709171559-00003",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1782783547738_312.mp4",
+      "submitted_at": 1783588560.2153513,
+      "submit_elapsed_seconds": 0.013770948047749698,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-limit-80-v2-20260709171559-00003",
+        "task_id": "capacity-limit-80-v2-20260709171559-00003",
+        "review_id": "review_8eb88757cfbd1883",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "failed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-limit-80-v2-20260709171559-00003",
+        "task_id": "capacity-limit-80-v2-20260709171559-00003",
+        "status": "failed",
+        "final_label": "",
+        "decision_label": "",
+        "video_results": {
+          "decision": "",
+          "frames": []
+        },
+        "audio_results": {
+          "decision": "",
+          "details": []
+        },
+        "annotations": []
+      },
+      "completed_at": 1783589149.3073702
+    },
+    {
+      "data_id": "capacity-limit-80-v2-20260709171559-00004",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1782783547717_451.mp4",
+      "submitted_at": 1783588560.254518,
+      "submit_elapsed_seconds": 0.014069691998884082,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-limit-80-v2-20260709171559-00004",
+        "task_id": "capacity-limit-80-v2-20260709171559-00004",
+        "review_id": "review_775fdc43a5f3e95c",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "completed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-limit-80-v2-20260709171559-00004",
+        "task_id": "capacity-limit-80-v2-20260709171559-00004",
+        "status": "completed",
+        "final_label": "BLOCK",
+        "decision_label": "BLOCK",
+        "summary": "本片主要讲述男主拯救被毁容的女主并准备为其复仇的故事。当前片段存在中风险的暴力伤害（女主毁容伤痕展示）和不良价值观（男主以暴制暴的复仇宣言）。建议在后期制作中弱化女主面部血迹和伤痕的视觉刺激，修改男主过于强调暴力的台词。同时，需密切关注后续婚礼复仇剧情，确保不出现无底线的私刑和极端暴力行为，建议修改后重新提交审核。",
+        "risk_score": 91.0,
+        "video_results": {
+          "decision": "BLOCK",
+          "frames": [
+            {
+              "time": 0.0,
+              "end_time": 16.0,
+              "label": "暴力伤害",
+              "sub_label": "血腥暴力",
+              "decision": "BLOCK",
+              "decision_detail": "在拼图的第1至16格中，被男子拥抱的女性角色面部有明显的红色血迹和伤痕，衣服脏乱，呈现出遭受过严重暴力伤害后的状态。",
+              "risk_level": "中风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 26.0,
+              "end_time": 29.0,
+              "label": "暴力伤害",
+              "sub_label": "血腥暴力",
+              "decision": "REVIEW",
+              "decision_detail": "画面显示女主面部有明显的伤痕和污渍，暗示其遭受过暴力对待。；展示暴力伤害的后果，虽然未直接展示施暴过程，但伤痕妆容可能引起观众不适。",
+              "risk_level": "中风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 17.0,
+              "end_time": 25.0,
+              "label": "不良价值观",
+              "sub_label": "极端复仇",
+              "decision": "REVIEW",
+              "decision_detail": "男主握紧拳头，字幕出现'先问问我的拳头'、'打败所有挡路的仇敌'。；台词和动作带有明显的以暴制暴和极端复仇倾向，缺乏法治观念。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 37.0,
+              "end_time": 45.0,
+              "label": "暴力伤害",
+              "sub_label": "血腥暴力",
+              "decision": "REVIEW",
+              "decision_detail": "画面中女子衣衫褴褛，脸部有明显伤痕和血迹，字幕依次显示“是陆家的人干的”“陆家为了讨好”“那个韩雨蝶”“毁了我的脸”。；剧情明确涉及故意伤害和毁容，画面展示了受害者的伤痕，属于暴力伤害和违法犯罪行为的展现。虽然是作为受害者的控诉，但毁容情节较为残酷。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 57.0,
+              "end_time": 65.0,
+              "label": "暴力伤害",
+              "sub_label": "轻度伤害展示",
+              "decision": "BLOCK",
+              "decision_detail": "画面中女主脸部和衣服上有明显的伤痕、血迹和污渍，表情委屈痛苦。",
+              "risk_level": "低风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 66.0,
+              "end_time": 73.0,
+              "label": "不良价值观",
+              "sub_label": "乱伦/近亲伦理",
+              "decision": "BLOCK",
+              "decision_detail": "男主牵起女主的手，台词明确表示要去陆家的大婚典礼上“讨个说法”，并送上“终生难忘的大礼”，暗示将进行破坏或报复行动。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            }
+          ]
+        },
+        "audio_results": {
+          "decision": "BLOCK",
+          "details": [
+            {
+              "start_time": 17.0,
+              "end_time": 25.0,
+              "label": "不良价值观",
+              "sub_label": "极端复仇",
+              "decision": "REVIEW",
+              "decision_detail": "男主握紧拳头，字幕出现'先问问我的拳头'、'打败所有挡路的仇敌'。；台词和动作带有明显的以暴制暴和极端复仇倾向，缺乏法治观念。",
+              "text": "先问问我的拳头, 打败所有挡路的仇敌",
+              "confidence": 0.85
+            },
+            {
+              "start_time": 37.0,
+              "end_time": 45.0,
+              "label": "暴力伤害",
+              "sub_label": "血腥暴力",
+              "decision": "REVIEW",
+              "decision_detail": "画面中女子衣衫褴褛，脸部有明显伤痕和血迹，字幕依次显示“是陆家的人干的”“陆家为了讨好”“那个韩雨蝶”“毁了我的脸”。；剧情明确涉及故意伤害和毁容，画面展示了受害者的伤痕，属于暴力伤害和违法犯罪行为的展现。虽然是作为受害者的控诉，但毁容情节较为残酷。",
+              "text": "是陆家的人干的，陆家为了讨好那个韩雨蝶，毁了我的脸",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 66.0,
+              "end_time": 73.0,
+              "label": "不良价值观",
+              "sub_label": "乱伦/近亲伦理",
+              "decision": "BLOCK",
+              "decision_detail": "男主牵起女主的手，台词明确表示要去陆家的大婚典礼上“讨个说法”，并送上“终生难忘的大礼”，暗示将进行破坏或报复行动。",
+              "text": "陆家今天 不是大婚典礼吗 哥哥带你去陆家婚礼 送他们一份 终生难忘的大礼",
+              "confidence": 0.85
+            }
+          ]
+        },
+        "annotations": [
+          "视频0秒 命中 暴力伤害-血腥暴力：在拼图的第1至16格中，被男子拥抱的女性角色面部有明显的红色血迹和伤痕，衣服脏乱，呈现出遭受过严重暴力伤害后的状态。",
+          "视频26秒 命中 暴力伤害-血腥暴力：画面显示女主面部有明显的伤痕和污渍，暗示其遭受过暴力对待。；展示暴力伤害的后果，虽然未直接展示施暴过程，但伤痕妆容可能引起观众不适。",
+          "视频17秒 命中 不良价值观-极端复仇：男主握紧拳头，字幕出现'先问问我的拳头'、'打败所有挡路的仇敌'。；台词和动作带有明显的以暴制暴和极端复仇倾向，缺乏法治观念。",
+          "视频37秒 命中 暴力伤害-血腥暴力：画面中女子衣衫褴褛，脸部有明显伤痕和血迹，字幕依次显示“是陆家的人干的”“陆家为了讨好”“那个韩雨蝶”“毁了我的脸”。；剧情明确涉及故意伤害和毁容，画面展示了受害者的伤痕，属于暴力伤害和违法犯罪行为的展现。虽然是作为受害者的控诉，但毁容情节较为残酷。",
+          "视频57秒 命中 暴力伤害-轻度伤害展示：画面中女主脸部和衣服上有明显的伤痕、血迹和污渍，表情委屈痛苦。",
+          "视频66秒 命中 不良价值观-乱伦/近亲伦理：男主牵起女主的手，台词明确表示要去陆家的大婚典礼上“讨个说法”，并送上“终生难忘的大礼”，暗示将进行破坏或报复行动。"
+        ]
+      },
+      "completed_at": 1783589299.501338
+    },
+    {
+      "data_id": "capacity-limit-80-v2-20260709171559-00005",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1782549515398_512.mp4",
+      "submitted_at": 1783588560.2933521,
+      "submit_elapsed_seconds": 0.013737007975578308,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-limit-80-v2-20260709171559-00005",
+        "task_id": "capacity-limit-80-v2-20260709171559-00005",
+        "review_id": "review_6b274cb1c6277377",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "completed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-limit-80-v2-20260709171559-00005",
+        "task_id": "capacity-limit-80-v2-20260709171559-00005",
+        "status": "completed",
+        "final_label": "REVIEW",
+        "decision_label": "REVIEW",
+        "summary": "本片整体为古代背景下的家庭喜剧日常，父女关系正常，无乱伦或低俗擦边风险。当前主要面临两个问题：一是视频提取的字幕存在大量乱码（质量问题），影响了审核的准确性，需排查是视频自带乱码还是提取错误；二是女主在台词中自豪地宣称倒背《女诫》《女训》（历史及名著改编-封建制度美化），存在宣扬封建女德的嫌疑。不过结合结尾父亲夸张跌倒的反应，该桥段很可能是为了制造喜剧反差。建议转人工复核，确认乱码情况及台词的真实语境，若确为喜剧反讽且无其他违规，可予通过。",
+        "risk_score": 49.0,
+        "video_results": {
+          "decision": "REVIEW",
+          "frames": [
+            {
+              "time": 0.0,
+              "end_time": 73.0,
+              "label": "质量问题",
+              "sub_label": "字幕/OCR乱码",
+              "decision": "REVIEW",
+              "decision_detail": "字幕中出现大量无意义的英文字符、符号和乱码，如 'ms S j SH : SORE iy'、'RERBARAOweH' 等，仅有极少数可读中文字符（如'你驳是武将'、'志信是说这曲非名'）。",
+              "risk_level": "低风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 44.0,
+              "end_time": 50.0,
+              "label": "历史及名著改编",
+              "sub_label": "封建制度美化",
+              "decision": "REVIEW",
+              "decision_detail": "图3至图8中，古代装扮女子在对话中表示“未婚也无妨”，并自豪地称“女诫女训 倒背如流”，“先生说我过目不忘悟性高”。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            }
+          ]
+        },
+        "audio_results": {
+          "decision": "REVIEW",
+          "details": [
+            {
+              "start_time": 0.0,
+              "end_time": 73.0,
+              "label": "质量问题",
+              "sub_label": "字幕/OCR乱码",
+              "decision": "REVIEW",
+              "decision_detail": "字幕中出现大量无意义的英文字符、符号和乱码，如 'ms S j SH : SORE iy'、'RERBARAOweH' 等，仅有极少数可读中文字符（如'你驳是武将'、'志信是说这曲非名'）。",
+              "text": "00:02 > ms S j SH : SORE iy ’\n00:08 RERBARAOweH « / 1B: / bs",
+              "confidence": 0.95
+            }
+          ]
+        },
+        "annotations": [
+          "视频0秒 命中 质量问题-字幕/OCR乱码：字幕中出现大量无意义的英文字符、符号和乱码，如 'ms S j SH : SORE iy'、'RERBARAOweH' 等，仅有极少数可读中文字符（如'你驳是武将'、'志信是说这曲非名'）。",
+          "视频44秒 命中 历史及名著改编-封建制度美化：图3至图8中，古代装扮女子在对话中表示“未婚也无妨”，并自豪地称“女诫女训 倒背如流”，“先生说我过目不忘悟性高”。"
+        ]
+      },
+      "completed_at": 1783589404.6063461
+    },
+    {
+      "data_id": "capacity-limit-80-v2-20260709171559-00006",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1782747065312_289.mp4",
+      "submitted_at": 1783588560.3321488,
+      "submit_elapsed_seconds": 0.013702088966965675,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-limit-80-v2-20260709171559-00006",
+        "task_id": "capacity-limit-80-v2-20260709171559-00006",
+        "review_id": "review_c86b515b9f39479e",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "completed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-limit-80-v2-20260709171559-00006",
+        "task_id": "capacity-limit-80-v2-20260709171559-00006",
+        "status": "completed",
+        "final_label": "BLOCK",
+        "decision_label": "BLOCK",
+        "summary": "本片存在多项严重违规，不予过审。核心问题在于将幼态形象角色与性犯罪暗示台词、针对生殖器的极端暴力行为强绑定，严重触碰未成年人保护红线。同时，视频中详细展示踩踏裆部、流血惨叫的血腥画面，并通过宾客台词对“碎蛋”进行调侃，将极端身体伤害娱乐化，属于严重的低俗暴力和不良价值观导向。此外，全片存在严重的字幕乱码质量问题。建议彻底重构剧情，删除所有涉性、极端暴力及低俗调侃内容，并修改角色形象设定。",
+        "risk_score": 93.0,
+        "video_results": {
+          "decision": "BLOCK",
+          "frames": [
+            {
+              "time": 0.0,
+              "end_time": 55.0,
+              "label": "质量问题",
+              "sub_label": "字幕乱码/识别错误",
+              "decision": "REVIEW",
+              "decision_detail": "整个视频的 OCR 字幕均为无意义的乱码、符号、拼音和零碎汉字，无法构成连贯语义。",
+              "risk_level": "低风险",
+              "confidence": 0.98
+            },
+            {
+              "time": 16.0,
+              "end_time": 16.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "字幕出现“还是QJ我”，“QJ”为“强奸”的拼音首字母缩写，结合开头男子扑向女孩的动作，构成明确的性犯罪暗示和低俗台词。",
+              "risk_level": "高风险",
+              "confidence": 0.98
+            },
+            {
+              "time": 4.0,
+              "end_time": 14.0,
+              "label": "暴力伤害",
+              "sub_label": "暴力殴打",
+              "decision": "BLOCK",
+              "decision_detail": "00:04-00:05 画面特写女孩用高跟鞋猛踢男子裆部（隐私部位），随后男子表现出极度痛苦并倒地不起（00:06-00:14）。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 0.0,
+              "end_time": 16.0,
+              "label": "特殊人群",
+              "sub_label": "未成年人成人化",
+              "decision": "REVIEW",
+              "decision_detail": "画面中的女孩呈现明显的幼态特征（双马尾、彩色头发、萝莉装扮），却参与了被成年男子扑倒、踢击男子裆部以及说出“QJ我”等极度成人化、涉性和暴力的剧情。",
+              "risk_level": "高风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 26.0,
+              "end_time": 30.0,
+              "label": "暴力伤害",
+              "sub_label": "血腥暴力",
+              "decision": "BLOCK",
+              "decision_detail": "画面显示一只穿高跟鞋的脚狠狠踩在倒地男子的裆部位置（00:26），随后男子面部极度扭曲、青筋暴起、眼角流血并大声惨叫（00:27-00:30），展现了细致的施暴过程和极度痛苦的生理反应。",
+              "risk_level": "高风险",
+              "confidence": 0.98
+            },
+            {
+              "time": 31.0,
+              "end_time": 37.0,
+              "label": "不良价值观",
+              "sub_label": "极端行为羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "场景切换到宴会厅，宾客听到惨叫声后，字幕出现“什么声音什么蛋”（00:31-00:32）和“砸坏了也不至于叫这么惨吧”（00:37），结合前序画面，明确暗示男子的生殖器被暴力踩碎。",
+              "risk_level": "高风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 51.0,
+              "end_time": 56.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "画面中一名男子躺在地上捂着下半身（裆部），字幕出现“她踹了我的要害好痛啊”，明确指向攻击男性隐私部位。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 51.0,
+              "end_time": 56.0,
+              "label": "特殊人群",
+              "sub_label": "未成年人成人化",
+              "decision": "REVIEW",
+              "decision_detail": "画面中实施踢裆行为的女孩穿着双马尾、洛丽塔短裙，造型呈现明显的幼态特征。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            }
+          ]
+        },
+        "audio_results": {
+          "decision": "BLOCK",
+          "details": [
+            {
+              "start_time": 0.0,
+              "end_time": 55.0,
+              "label": "质量问题",
+              "sub_label": "字幕乱码/识别错误",
+              "decision": "REVIEW",
+              "decision_detail": "整个视频的 OCR 字幕均为无意义的乱码、符号、拼音和零碎汉字，无法构成连贯语义。",
+              "text": "AL. M | 一 ste to od 了 而 x Sa... 习 本 一 iam x | b i EF ee es 一 44",
+              "confidence": 0.98
+            },
+            {
+              "start_time": 16.0,
+              "end_time": 16.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "字幕出现“还是QJ我”，“QJ”为“强奸”的拼音首字母缩写，结合开头男子扑向女孩的动作，构成明确的性犯罪暗示和低俗台词。",
+              "text": "还是QJ我",
+              "confidence": 0.98
+            },
+            {
+              "start_time": 31.0,
+              "end_time": 37.0,
+              "label": "不良价值观",
+              "sub_label": "极端行为羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "场景切换到宴会厅，宾客听到惨叫声后，字幕出现“什么声音什么蛋”（00:31-00:32）和“砸坏了也不至于叫这么惨吧”（00:37），结合前序画面，明确暗示男子的生殖器被暴力踩碎。",
+              "text": "什么声音什么蛋, 砸坏了也不至于叫这么惨吧",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 51.0,
+              "end_time": 56.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "画面中一名男子躺在地上捂着下半身（裆部），字幕出现“她踹了我的要害好痛啊”，明确指向攻击男性隐私部位。",
+              "text": "送我去医院，快去医院啊，她踹了我的要害好痛啊",
+              "confidence": 0.95
+            }
+          ]
+        },
+        "annotations": [
+          "视频0秒 命中 质量问题-字幕乱码/识别错误：整个视频的 OCR 字幕均为无意义的乱码、符号、拼音和零碎汉字，无法构成连贯语义。",
+          "视频16秒 命中 低俗与画面尺度-软色情擦边：字幕出现“还是QJ我”，“QJ”为“强奸”的拼音首字母缩写，结合开头男子扑向女孩的动作，构成明确的性犯罪暗示和低俗台词。",
+          "视频4秒 命中 暴力伤害-暴力殴打：00:04-00:05 画面特写女孩用高跟鞋猛踢男子裆部（隐私部位），随后男子表现出极度痛苦并倒地不起（00:06-00:14）。",
+          "视频0秒 命中 特殊人群-未成年人成人化：画面中的女孩呈现明显的幼态特征（双马尾、彩色头发、萝莉装扮），却参与了被成年男子扑倒、踢击男子裆部以及说出“QJ我”等极度成人化、涉性和暴力的剧情。",
+          "视频26秒 命中 暴力伤害-血腥暴力：画面显示一只穿高跟鞋的脚狠狠踩在倒地男子的裆部位置（00:26），随后男子面部极度扭曲、青筋暴起、眼角流血并大声惨叫（00:27-00:30），展现了细致的施暴过程和极度痛苦的生理反应。",
+          "视频31秒 命中 不良价值观-极端行为羞辱：场景切换到宴会厅，宾客听到惨叫声后，字幕出现“什么声音什么蛋”（00:31-00:32）和“砸坏了也不至于叫这么惨吧”（00:37），结合前序画面，明确暗示男子的生殖器被暴力踩碎。",
+          "视频51秒 命中 低俗与画面尺度-软色情擦边：画面中一名男子躺在地上捂着下半身（裆部），字幕出现“她踹了我的要害好痛啊”，明确指向攻击男性隐私部位。",
+          "视频51秒 命中 特殊人群-未成年人成人化：画面中实施踢裆行为的女孩穿着双马尾、洛丽塔短裙，造型呈现明显的幼态特征。"
+        ]
+      },
+      "completed_at": 1783589254.4530962
+    },
+    {
+      "data_id": "capacity-limit-80-v2-20260709171559-00007",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1782741402152_835.mp4",
+      "submitted_at": 1783588560.3710282,
+      "submit_elapsed_seconds": 0.013783873990178108,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-limit-80-v2-20260709171559-00007",
+        "task_id": "capacity-limit-80-v2-20260709171559-00007",
+        "review_id": "review_e6299ef222b25c6f",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "completed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-limit-80-v2-20260709171559-00007",
+        "task_id": "capacity-limit-80-v2-20260709171559-00007",
+        "status": "completed",
+        "final_label": "BLOCK",
+        "decision_label": "BLOCK",
+        "summary": "本片不可过审。主要问题集中在三个方面：一是触碰未成年人保护红线，片中女性角色形象偏幼态却穿着暴露，并配以'开房'等露骨性暗示台词，涉嫌未成年人成人化；二是全片充斥低俗擦边台词，如'正戏顶多5分钟'、'搞在一起'等；三是价值观导向不良，将私查酒店监控侵犯他人隐私的行为作为炫耀资本。修改优先级极高，必须彻底删除幼态角色的低俗台词与暴露画面，净化全片台词，并删除侵犯隐私的情节，否则面临下架风险。",
+        "risk_score": 96.0,
+        "video_results": {
+          "decision": "BLOCK",
+          "frames": [
+            {
+              "time": 21.0,
+              "end_time": 26.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "字幕出现'欢姐顾茶茶和韩喧搞在二起'和'睡觉'；台词'搞在一起'和'睡觉'连用，具有明显的性暗示，属于低俗擦边内容。",
+              "risk_level": "中风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 21.0,
+              "end_time": 26.0,
+              "label": "不良价值观",
+              "sub_label": "家庭矛盾/出轨",
+              "decision": "REVIEW",
+              "decision_detail": "字幕提到'欢姐顾茶茶和韩喧搞在二起'；台词暗示人物之间存在出轨或不正当男女关系。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 8.0,
+              "end_time": 14.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "男孩在对话中详细讨论他人开房的时间细节，字幕显示“从进房到退房一共就待了20分钟”、“去掉洗澡抽烟”、“正戏顶多5分钟”、“韩暄这小子不行啊”。",
+              "risk_level": "中风险",
+              "confidence": 0.98
+            },
+            {
+              "time": 5.0,
+              "end_time": 7.0,
+              "label": "不良价值观",
+              "sub_label": "隐私侵犯",
+              "decision": "BLOCK",
+              "decision_detail": "男孩向女孩炫耀获取八卦的途径，字幕显示“那五星级酒店是我瞒着家里开的”、“监控看得一清二楚”。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 26.0,
+              "end_time": 26.0,
+              "label": "质量问题",
+              "sub_label": "黑屏",
+              "decision": "REVIEW",
+              "decision_detail": "第7格画面全黑，仅有字幕“睡觉”。",
+              "risk_level": "低风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 20.0,
+              "end_time": 25.0,
+              "label": "台词字幕",
+              "sub_label": "粗俗用语",
+              "decision": "REVIEW",
+              "decision_detail": "第1、2格字幕出现“搞在一起”，第5、6格出现“老娘”。",
+              "risk_level": "低风险",
+              "confidence": 0.8
+            },
+            {
+              "time": 48.0,
+              "end_time": 48.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "在格子8（00:48）中，坐在副驾驶位的女性角色穿着红色抹胸上衣，大面积露出肩膀、锁骨和腹部。该角色面部特征和发型（双马尾）偏向幼态/未成年，结合暴露的穿着，存在软色情擦边和未成年人成人化的风险。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 50.0,
+              "end_time": 59.0,
+              "label": "特殊人群",
+              "sub_label": "未成年人成人化",
+              "decision": "REVIEW",
+              "decision_detail": "画面中女性角色呈现明显的幼态特征（彩色双马尾、面容稚嫩），穿着红色抹胸，在车内对成年男性角色说出台词“开房20分钟你知道吗”（图8，00:59）。",
+              "risk_level": "高风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 59.0,
+              "end_time": 59.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "图8（00:59）字幕出现“开房20分钟你知道吗”，结合孤男寡女在车内的场景，具有明显的性暗示。",
+              "risk_level": "中风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 60.0,
+              "end_time": 60.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "画面中男女在车内独处，格子1字幕出现“开房20分钟你知道吗”。；“开房”一词在男女独处的语境下具有明显的性暗示意味，属于低俗擦边台词。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 60.0,
+              "end_time": 60.0,
+              "label": "特殊人群",
+              "sub_label": "未成年人成人化",
+              "decision": "REVIEW",
+              "decision_detail": "格子1中，副驾驶女性角色扎双马尾、染彩发、穿着清凉，整体形象偏幼态，同时字幕出现“开房20分钟你知道吗”。；疑似未成年或刻意幼态化的角色与“开房”等性暗示台词绑定，涉嫌未成年人成人化及软色情，触碰未成年人保护红线。",
+              "risk_level": "高风险",
+              "confidence": 0.85
+            }
+          ]
+        },
+        "audio_results": {
+          "decision": "BLOCK",
+          "details": [
+            {
+              "start_time": 21.0,
+              "end_time": 26.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "字幕出现'欢姐顾茶茶和韩喧搞在二起'和'睡觉'；台词'搞在一起'和'睡觉'连用，具有明显的性暗示，属于低俗擦边内容。",
+              "text": "欢姐顾茶茶和韩喧搞在二起 睡觉",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 21.0,
+              "end_time": 26.0,
+              "label": "不良价值观",
+              "sub_label": "家庭矛盾/出轨",
+              "decision": "REVIEW",
+              "decision_detail": "字幕提到'欢姐顾茶茶和韩喧搞在二起'；台词暗示人物之间存在出轨或不正当男女关系。",
+              "text": "欢姐顾茶茶和韩喧搞在二起",
+              "confidence": 0.85
+            },
+            {
+              "start_time": 8.0,
+              "end_time": 14.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "男孩在对话中详细讨论他人开房的时间细节，字幕显示“从进房到退房一共就待了20分钟”、“去掉洗澡抽烟”、“正戏顶多5分钟”、“韩暄这小子不行啊”。",
+              "text": "从进房到退房一共就待了20分钟, 去掉洗澡抽烟, 正戏顶多5分钟, 韩暄这小子不行啊",
+              "confidence": 0.98
+            },
+            {
+              "start_time": 5.0,
+              "end_time": 7.0,
+              "label": "不良价值观",
+              "sub_label": "隐私侵犯",
+              "decision": "BLOCK",
+              "decision_detail": "男孩向女孩炫耀获取八卦的途径，字幕显示“那五星级酒店是我瞒着家里开的”、“监控看得一清二楚”。",
+              "text": "那五星级酒店是我瞒着家里开的, 监控看得一清二楚",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 26.0,
+              "end_time": 26.0,
+              "label": "质量问题",
+              "sub_label": "黑屏",
+              "decision": "REVIEW",
+              "decision_detail": "第7格画面全黑，仅有字幕“睡觉”。",
+              "text": "睡觉",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 20.0,
+              "end_time": 25.0,
+              "label": "台词字幕",
+              "sub_label": "粗俗用语",
+              "decision": "REVIEW",
+              "decision_detail": "第1、2格字幕出现“搞在一起”，第5、6格出现“老娘”。",
+              "text": "欢姐顾茶茶和韩暄搞在一起；老娘觉得好烦",
+              "confidence": 0.8
+            },
+            {
+              "start_time": 50.0,
+              "end_time": 59.0,
+              "label": "特殊人群",
+              "sub_label": "未成年人成人化",
+              "decision": "REVIEW",
+              "decision_detail": "画面中女性角色呈现明显的幼态特征（彩色双马尾、面容稚嫩），穿着红色抹胸，在车内对成年男性角色说出台词“开房20分钟你知道吗”（图8，00:59）。",
+              "text": "开房20分钟你知道吗",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 59.0,
+              "end_time": 59.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "图8（00:59）字幕出现“开房20分钟你知道吗”，结合孤男寡女在车内的场景，具有明显的性暗示。",
+              "text": "开房20分钟你知道吗",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 60.0,
+              "end_time": 60.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "画面中男女在车内独处，格子1字幕出现“开房20分钟你知道吗”。；“开房”一词在男女独处的语境下具有明显的性暗示意味，属于低俗擦边台词。",
+              "text": "开房20分钟你知道吗",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 60.0,
+              "end_time": 60.0,
+              "label": "特殊人群",
+              "sub_label": "未成年人成人化",
+              "decision": "REVIEW",
+              "decision_detail": "格子1中，副驾驶女性角色扎双马尾、染彩发、穿着清凉，整体形象偏幼态，同时字幕出现“开房20分钟你知道吗”。；疑似未成年或刻意幼态化的角色与“开房”等性暗示台词绑定，涉嫌未成年人成人化及软色情，触碰未成年人保护红线。",
+              "text": "开房20分钟你知道吗",
+              "confidence": 0.85
+            }
+          ]
+        },
+        "annotations": [
+          "视频21秒 命中 低俗与画面尺度-软色情擦边：字幕出现'欢姐顾茶茶和韩喧搞在二起'和'睡觉'；台词'搞在一起'和'睡觉'连用，具有明显的性暗示，属于低俗擦边内容。",
+          "视频21秒 命中 不良价值观-家庭矛盾/出轨：字幕提到'欢姐顾茶茶和韩喧搞在二起'；台词暗示人物之间存在出轨或不正当男女关系。",
+          "视频8秒 命中 低俗与画面尺度-软色情擦边：男孩在对话中详细讨论他人开房的时间细节，字幕显示“从进房到退房一共就待了20分钟”、“去掉洗澡抽烟”、“正戏顶多5分钟”、“韩暄这小子不行啊”。",
+          "视频5秒 命中 不良价值观-隐私侵犯：男孩向女孩炫耀获取八卦的途径，字幕显示“那五星级酒店是我瞒着家里开的”、“监控看得一清二楚”。",
+          "视频26秒 命中 质量问题-黑屏：第7格画面全黑，仅有字幕“睡觉”。",
+          "视频20秒 命中 台词字幕-粗俗用语：第1、2格字幕出现“搞在一起”，第5、6格出现“老娘”。",
+          "视频48秒 命中 低俗与画面尺度-软色情擦边：在格子8（00:48）中，坐在副驾驶位的女性角色穿着红色抹胸上衣，大面积露出肩膀、锁骨和腹部。该角色面部特征和发型（双马尾）偏向幼态/未成年，结合暴露的穿着，存在软色情擦边和未成年人成人化的风险。",
+          "视频50秒 命中 特殊人群-未成年人成人化：画面中女性角色呈现明显的幼态特征（彩色双马尾、面容稚嫩），穿着红色抹胸，在车内对成年男性角色说出台词“开房20分钟你知道吗”（图8，00:59）。",
+          "视频59秒 命中 低俗与画面尺度-软色情擦边：图8（00:59）字幕出现“开房20分钟你知道吗”，结合孤男寡女在车内的场景，具有明显的性暗示。",
+          "视频60秒 命中 低俗与画面尺度-软色情擦边：画面中男女在车内独处，格子1字幕出现“开房20分钟你知道吗”。；“开房”一词在男女独处的语境下具有明显的性暗示意味，属于低俗擦边台词。",
+          "视频60秒 命中 特殊人群-未成年人成人化：格子1中，副驾驶女性角色扎双马尾、染彩发、穿着清凉，整体形象偏幼态，同时字幕出现“开房20分钟你知道吗”。；疑似未成年或刻意幼态化的角色与“开房”等性暗示台词绑定，涉嫌未成年人成人化及软色情，触碰未成年人保护红线。"
+        ]
+      },
+      "completed_at": 1783589269.4669664
+    },
+    {
+      "data_id": "capacity-limit-80-v2-20260709171559-00008",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1782783547741_525.mp4",
+      "submitted_at": 1783588560.4097157,
+      "submit_elapsed_seconds": 0.013592641917057335,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-limit-80-v2-20260709171559-00008",
+        "task_id": "capacity-limit-80-v2-20260709171559-00008",
+        "review_id": "review_74df868275b42cd8",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "completed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-limit-80-v2-20260709171559-00008",
+        "task_id": "capacity-limit-80-v2-20260709171559-00008",
+        "status": "completed",
+        "final_label": "BLOCK",
+        "decision_label": "BLOCK",
+        "summary": "发现 6 个审核风险，最高风险等级为 high。",
+        "risk_score": 91.0,
+        "video_results": {
+          "decision": "BLOCK",
+          "frames": [
+            {
+              "time": 8.0,
+              "end_time": 31.0,
+              "label": "暴力伤害",
+              "sub_label": "威胁与暴力暗示",
+              "decision": "BLOCK",
+              "decision_detail": "台词中出现“为这个女人出头”、“同伙”、“教训还不够”（OCR识别为教名）、“我们就不该手软”、“跟我陆家作对”，暗示家族势力压迫、私刑报复或暴力冲突。",
+              "risk_level": "低风险",
+              "confidence": 0.75
+            },
+            {
+              "time": 6.0,
+              "end_time": 16.0,
+              "label": "暴力伤害",
+              "sub_label": "血腥暴力",
+              "decision": "REVIEW",
+              "decision_detail": "帧7、15、16中，一名女子脸部带有明显的伤痕和血迹，神态憔悴。结合帧14、16的字幕“给他的教训还不够”、“我们就不该手软”，表明该女子遭受了暴力对待或私刑。；画面展示了受虐待的人物形象，带有伤痕妆容，属于暴力伤害范畴。",
+              "risk_level": "中风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 14.0,
+              "end_time": 16.0,
+              "label": "不良价值观",
+              "sub_label": "极端复仇/以暴制暴",
+              "decision": "REVIEW",
+              "decision_detail": "帧14字幕“给他的教训还不够”，帧16字幕“我们就不该手软”，由反派角色（穿着华丽的女子）说出，针对的是受虐待的女子。；台词宣扬私刑和报复，缺乏法治观念，体现了以暴制暴的负面导向。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 47.0,
+              "end_time": 50.0,
+              "label": "不良价值观",
+              "sub_label": "极端复仇/以暴制暴",
+              "decision": "BLOCK",
+              "decision_detail": "画面显示深色T恤男子因言语冲突，从餐桌上拿起一把餐刀，转身用力掷向对面的白西装男子，画面特写了餐刀在空中飞向目标的轨迹。",
+              "risk_level": "高风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 38.0,
+              "end_time": 39.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "白西装男子面带嘲讽笑容，指着对面衣衫褴褛的女子，字幕显示其台词。",
+              "risk_level": "低风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 51.0,
+              "end_time": 57.0,
+              "label": "暴力伤害",
+              "sub_label": "血腥暴力",
+              "decision": "BLOCK",
+              "decision_detail": "拼图1至7格中，一名穿白西装的男子手部（疑似手腕处）受重伤并有明显红色血迹，男子表情极度痛苦大喊，随后跪倒在红地毯上，字幕多次显示“我的手”。；画面直接展示了人物手部重伤流血、极度痛苦惨叫的场景，属于暴力伤害后果的血腥展示，容易引起观众视觉和心理上的不适。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            }
+          ]
+        },
+        "audio_results": {
+          "decision": "BLOCK",
+          "details": [
+            {
+              "start_time": 8.0,
+              "end_time": 31.0,
+              "label": "暴力伤害",
+              "sub_label": "威胁与暴力暗示",
+              "decision": "BLOCK",
+              "decision_detail": "台词中出现“为这个女人出头”、“同伙”、“教训还不够”（OCR识别为教名）、“我们就不该手软”、“跟我陆家作对”，暗示家族势力压迫、私刑报复或暴力冲突。",
+              "text": "为这个女人出头...的同伙...给他的教名还不够...我们就不该手软...跟我陆家作对",
+              "confidence": 0.75
+            },
+            {
+              "start_time": 6.0,
+              "end_time": 16.0,
+              "label": "暴力伤害",
+              "sub_label": "血腥暴力",
+              "decision": "REVIEW",
+              "decision_detail": "帧7、15、16中，一名女子脸部带有明显的伤痕和血迹，神态憔悴。结合帧14、16的字幕“给他的教训还不够”、“我们就不该手软”，表明该女子遭受了暴力对待或私刑。；画面展示了受虐待的人物形象，带有伤痕妆容，属于暴力伤害范畴。",
+              "text": "",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 14.0,
+              "end_time": 16.0,
+              "label": "不良价值观",
+              "sub_label": "极端复仇/以暴制暴",
+              "decision": "REVIEW",
+              "decision_detail": "帧14字幕“给他的教训还不够”，帧16字幕“我们就不该手软”，由反派角色（穿着华丽的女子）说出，针对的是受虐待的女子。；台词宣扬私刑和报复，缺乏法治观念，体现了以暴制暴的负面导向。",
+              "text": "给他的教训还不够, 我们就不该手软",
+              "confidence": 0.85
+            },
+            {
+              "start_time": 38.0,
+              "end_time": 39.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "白西装男子面带嘲讽笑容，指着对面衣衫褴褛的女子，字幕显示其台词。",
+              "text": "一个落魄千金而已",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 51.0,
+              "end_time": 57.0,
+              "label": "暴力伤害",
+              "sub_label": "血腥暴力",
+              "decision": "BLOCK",
+              "decision_detail": "拼图1至7格中，一名穿白西装的男子手部（疑似手腕处）受重伤并有明显红色血迹，男子表情极度痛苦大喊，随后跪倒在红地毯上，字幕多次显示“我的手”。；画面直接展示了人物手部重伤流血、极度痛苦惨叫的场景，属于暴力伤害后果的血腥展示，容易引起观众视觉和心理上的不适。",
+              "text": "啊，我的手",
+              "confidence": 0.95
+            }
+          ]
+        },
+        "annotations": [
+          "视频8秒 命中 暴力伤害-威胁与暴力暗示：台词中出现“为这个女人出头”、“同伙”、“教训还不够”（OCR识别为教名）、“我们就不该手软”、“跟我陆家作对”，暗示家族势力压迫、私刑报复或暴力冲突。",
+          "视频6秒 命中 暴力伤害-血腥暴力：帧7、15、16中，一名女子脸部带有明显的伤痕和血迹，神态憔悴。结合帧14、16的字幕“给他的教训还不够”、“我们就不该手软”，表明该女子遭受了暴力对待或私刑。；画面展示了受虐待的人物形象，带有伤痕妆容，属于暴力伤害范畴。",
+          "视频14秒 命中 不良价值观-极端复仇/以暴制暴：帧14字幕“给他的教训还不够”，帧16字幕“我们就不该手软”，由反派角色（穿着华丽的女子）说出，针对的是受虐待的女子。；台词宣扬私刑和报复，缺乏法治观念，体现了以暴制暴的负面导向。",
+          "视频47秒 命中 不良价值观-极端复仇/以暴制暴：画面显示深色T恤男子因言语冲突，从餐桌上拿起一把餐刀，转身用力掷向对面的白西装男子，画面特写了餐刀在空中飞向目标的轨迹。",
+          "视频38秒 命中 不良价值观-语言羞辱：白西装男子面带嘲讽笑容，指着对面衣衫褴褛的女子，字幕显示其台词。",
+          "视频51秒 命中 暴力伤害-血腥暴力：拼图1至7格中，一名穿白西装的男子手部（疑似手腕处）受重伤并有明显红色血迹，男子表情极度痛苦大喊，随后跪倒在红地毯上，字幕多次显示“我的手”。；画面直接展示了人物手部重伤流血、极度痛苦惨叫的场景，属于暴力伤害后果的血腥展示，容易引起观众视觉和心理上的不适。"
+        ]
+      },
+      "completed_at": 1783589224.4135573
+    },
+    {
+      "data_id": "capacity-limit-80-v2-20260709171559-00009",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1782810894494_889.mp4",
+      "submitted_at": 1783588560.4485695,
+      "submit_elapsed_seconds": 0.013758608023636043,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-limit-80-v2-20260709171559-00009",
+        "task_id": "capacity-limit-80-v2-20260709171559-00009",
+        "review_id": "review_6047b81dc9e5a4cb",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "completed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-limit-80-v2-20260709171559-00009",
+        "task_id": "capacity-limit-80-v2-20260709171559-00009",
+        "status": "completed",
+        "final_label": "BLOCK",
+        "decision_label": "BLOCK",
+        "summary": "本片为古装言情题材，主要问题集中在“下药”及随后的“春药生理反应”上。男主喝下药酒后出现的面色潮红、扯衣领喘息等表现带有明显的性暗示，属于低俗擦边风险。建议删减或弱化这些生理反应的特写镜头，避免将下药作为推动男女主亲密关系的低俗噱头。修改后可复审。",
+        "risk_score": 85.0,
+        "video_results": {
+          "decision": "BLOCK",
+          "frames": [
+            {
+              "time": 12.0,
+              "end_time": 15.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "画面中男主对女主进行言语嘲讽，字幕显示“你还真是长本事了”、“你就这么爱慕虚荣”、“连脸面都不要了”。",
+              "risk_level": "低风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 25.0,
+              "end_time": 36.0,
+              "label": "医疗与迷信",
+              "sub_label": "下药/中毒",
+              "decision": "REVIEW",
+              "decision_detail": "画面显示男主拿起桌上的杯子，女主惊恐阻拦，字幕显示“别喝”。男主随后说“你给他准备的”“我偏要喝”，并仰头将杯中液体喝下。结合剧情语境，该饮品疑似被下药或有毒。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 66.0,
+              "end_time": 74.0,
+              "label": "医疗与迷信",
+              "sub_label": "下药",
+              "decision": "REVIEW",
+              "decision_detail": "男主面色潮红、扯动衣领喘息，女主台词“六月的天怎么这么热”，暗示两人被下春药（催情药物）。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 75.0,
+              "end_time": 79.0,
+              "label": "医疗与迷信",
+              "sub_label": "下药/中毒",
+              "decision": "REVIEW",
+              "decision_detail": "画面中（01:15-01:19）一古装男子面色潮红，扯动领口，表情难受。01:17-01:19字幕显示“你往这酒里加什么了”，明确表明其被下药的情节。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            }
+          ]
+        },
+        "audio_results": {
+          "decision": "BLOCK",
+          "details": [
+            {
+              "start_time": 12.0,
+              "end_time": 15.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "画面中男主对女主进行言语嘲讽，字幕显示“你还真是长本事了”、“你就这么爱慕虚荣”、“连脸面都不要了”。",
+              "text": "你还真是长本事了，你就这么爱慕虚荣，连脸面都不要了",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 25.0,
+              "end_time": 36.0,
+              "label": "医疗与迷信",
+              "sub_label": "下药/中毒",
+              "decision": "REVIEW",
+              "decision_detail": "画面显示男主拿起桌上的杯子，女主惊恐阻拦，字幕显示“别喝”。男主随后说“你给他准备的”“我偏要喝”，并仰头将杯中液体喝下。结合剧情语境，该饮品疑似被下药或有毒。",
+              "text": "别喝, 你给他准备的, 我偏要喝",
+              "confidence": 0.85
+            },
+            {
+              "start_time": 66.0,
+              "end_time": 74.0,
+              "label": "医疗与迷信",
+              "sub_label": "下药",
+              "decision": "REVIEW",
+              "decision_detail": "男主面色潮红、扯动衣领喘息，女主台词“六月的天怎么这么热”，暗示两人被下春药（催情药物）。",
+              "text": "六月的天怎么这么热",
+              "confidence": 0.85
+            },
+            {
+              "start_time": 75.0,
+              "end_time": 79.0,
+              "label": "医疗与迷信",
+              "sub_label": "下药/中毒",
+              "decision": "REVIEW",
+              "decision_detail": "画面中（01:15-01:19）一古装男子面色潮红，扯动领口，表情难受。01:17-01:19字幕显示“你往这酒里加什么了”，明确表明其被下药的情节。",
+              "text": "你往这酒里加什么了",
+              "confidence": 0.95
+            }
+          ]
+        },
+        "annotations": [
+          "视频12秒 命中 不良价值观-语言羞辱：画面中男主对女主进行言语嘲讽，字幕显示“你还真是长本事了”、“你就这么爱慕虚荣”、“连脸面都不要了”。",
+          "视频25秒 命中 医疗与迷信-下药/中毒：画面显示男主拿起桌上的杯子，女主惊恐阻拦，字幕显示“别喝”。男主随后说“你给他准备的”“我偏要喝”，并仰头将杯中液体喝下。结合剧情语境，该饮品疑似被下药或有毒。",
+          "视频66秒 命中 医疗与迷信-下药：男主面色潮红、扯动衣领喘息，女主台词“六月的天怎么这么热”，暗示两人被下春药（催情药物）。",
+          "视频75秒 命中 医疗与迷信-下药/中毒：画面中（01:15-01:19）一古装男子面色潮红，扯动领口，表情难受。01:17-01:19字幕显示“你往这酒里加什么了”，明确表明其被下药的情节。"
+        ]
+      },
+      "completed_at": 1783588908.8557925
+    },
+    {
+      "data_id": "capacity-limit-80-v2-20260709171559-00010",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1782888001524_354.mp4",
+      "submitted_at": 1783588560.4873164,
+      "submit_elapsed_seconds": 0.01365199196152389,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-limit-80-v2-20260709171559-00010",
+        "task_id": "capacity-limit-80-v2-20260709171559-00010",
+        "review_id": "review_0c59fea8741614ef",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "failed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-limit-80-v2-20260709171559-00010",
+        "task_id": "capacity-limit-80-v2-20260709171559-00010",
+        "status": "failed",
+        "final_label": "",
+        "decision_label": "",
+        "video_results": {
+          "decision": "",
+          "frames": []
+        },
+        "audio_results": {
+          "decision": "",
+          "details": []
+        },
+        "annotations": []
+      },
+      "completed_at": 1783589134.2867897
+    }
+  ]
+}

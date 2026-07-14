@@ -1,0 +1,37 @@
+{
+  "run_id": "model-api-qps-ladder-20260710T010554Z-probe-10qps-10s",
+  "generated_at": "2026-07-10T01:06:09.961454+00:00",
+  "base_url": "https://jzapi.duanju.com",
+  "model": "gemini-3.1-pro-preview",
+  "target_qps": 10.0,
+  "duration_seconds": 10.0,
+  "request_timeout_seconds": 60.0,
+  "total": 100,
+  "elapsed_seconds": 14.278708866913803,
+  "actual_started_qps": 10.0,
+  "actual_finished_qps_over_wall": 7.003434339341214,
+  "sliding_1s_started_peak": 11,
+  "sliding_1s_finished_peak": 18,
+  "sliding_60s_started_peak": 100,
+  "sliding_60s_finished_peak": 100,
+  "status_counts": {
+    "ok": 100
+  },
+  "error_counts": {},
+  "success_ratio": 1.0,
+  "ok_latency_seconds": {
+    "avg": 3.7453381209634244,
+    "p50": 3.5985456770285964,
+    "p90": 4.5755581897101365,
+    "p95": 4.786018023639917,
+    "p99": 5.1304823802330075
+  },
+  "all_latency_seconds": {
+    "avg": 3.7453381209634244,
+    "p50": 3.5985456770285964,
+    "p90": 4.5755581897101365,
+    "p95": 4.786018023639917,
+    "p99": 5.1304823802330075
+  },
+  "sample_errors": []
+}

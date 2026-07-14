@@ -1,0 +1,90 @@
+{
+  "run_id": "model-api-qps-80-10s-20260709T232046Z",
+  "generated_at": "2026-07-09T23:26:57.153609+00:00",
+  "base_url": "https://jzapi.duanju.com",
+  "model": "gemini-3.1-pro-preview",
+  "target_qps": 80.0,
+  "duration_seconds": 10.0,
+  "total": 800,
+  "elapsed_seconds": 369.20619711407926,
+  "actual_started_qps": 80.0,
+  "actual_finished_qps_over_wall": 2.166810866808966,
+  "sliding_1s_started_peak": 85,
+  "sliding_1s_finished_peak": 110,
+  "sliding_60s_started_peak": 800,
+  "sliding_60s_finished_peak": 795,
+  "status_counts": {
+    "ok": 770,
+    "error": 30
+  },
+  "error_counts": {
+    "JSONDecodeError": 30
+  },
+  "success_ratio": 0.9625,
+  "ok_latency_seconds": {
+    "avg": 4.81698695774048,
+    "p50": 4.11058989551384,
+    "p90": 7.252280650171452,
+    "p95": 8.277404488995671,
+    "p99": 11.782625594490662
+  },
+  "all_latency_seconds": {
+    "avg": 7.043013018556085,
+    "p50": 4.143254139984492,
+    "p90": 7.322396250069142,
+    "p95": 8.47305472065927,
+    "p99": 13.107185723453295
+  },
+  "sample_errors": [
+    {
+      "error": "JSONDecodeError",
+      "error_text": "Extra data: line 2 column 1 (char 38)",
+      "latency_seconds": 4.570112160057761
+    },
+    {
+      "error": "JSONDecodeError",
+      "error_text": "Extra data: line 2 column 1 (char 38)",
+      "latency_seconds": 4.9053220290225
+    },
+    {
+      "error": "JSONDecodeError",
+      "error_text": "Extra data: line 2 column 1 (char 39)",
+      "latency_seconds": 4.9870967658935115
+    },
+    {
+      "error": "JSONDecodeError",
+      "error_text": "Expecting value: line 1 column 1 (char 0)",
+      "latency_seconds": 360.57681396603584
+    },
+    {
+      "error": "JSONDecodeError",
+      "error_text": "Extra data: line 2 column 1 (char 39)",
+      "latency_seconds": 3.573356557986699
+    },
+    {
+      "error": "JSONDecodeError",
+      "error_text": "Extra data: line 2 column 1 (char 39)",
+      "latency_seconds": 6.186195404035971
+    },
+    {
+      "error": "JSONDecodeError",
+      "error_text": "Extra data: line 2 column 1 (char 39)",
+      "latency_seconds": 5.111115724896081
+    },
+    {
+      "error": "JSONDecodeError",
+      "error_text": "Expecting value: line 1 column 1 (char 0)",
+      "latency_seconds": 357.70890765695367
+    },
+    {
+      "error": "JSONDecodeError",
+      "error_text": "Extra data: line 2 column 1 (char 39)",
+      "latency_seconds": 5.1713677200023085
+    },
+    {
+      "error": "JSONDecodeError",
+      "error_text": "Extra data: line 2 column 1 (char 39)",
+      "latency_seconds": 4.353637540945783
+    }
+  ]
+}

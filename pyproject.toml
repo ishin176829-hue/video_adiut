@@ -1,0 +1,46 @@
+[project]
+name = "sn2s-video-review"
+version = "0.1.0"
+description = "SN2S video review pipeline with multimodal scanning and structured policy judgement"
+requires-python = ">=3.12"
+dependencies = [
+    "aiofiles>=24.1.0",
+    "anthropic>=0.30.0",
+    "asyncpg>=0.30.0",
+    "fastapi>=0.115.0",
+    "google-genai>=0.1.0",
+    "httpx>=0.27.0",
+    "openpyxl>=3.1.5",
+    "pydantic>=2.7.0",
+    "python-dotenv>=1.0.1",
+    "python-multipart>=0.0.9",
+    "pytest>=8.2.0",
+    "redis>=5.2.0",
+    "uvicorn[standard]>=0.30.0",
+    "pillow>=12.2.0",
+    "psutil>=7.2.2",
+    "oss2>=2.19.1",
+    "alibabacloud-sts20150401>=1.1.5",
+    "imageio-ffmpeg>=0.6.0",
+    "alibabacloud-credentials>=1.0.9",
+    "alibabacloud-tea-openapi>=0.4.4",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project.scripts]
+sn2s-video-review = "video_review.cli:main"
+sn2s-video-review-infra = "video_review.infra:main"
+sn2s-video-review-worker = "video_review.worker:main"
+
+[tool.uv]
+package = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/video_review"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

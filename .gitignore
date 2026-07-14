@@ -1,0 +1,14 @@
+.env
+.env.*
+!.env.example
+
+.venv/
+data/
+logs/
+.codex_backup/
+.pytest_cache/
+.testbrain/
+__pycache__/
+*.py[cod]
+*.pid
+.DS_Store

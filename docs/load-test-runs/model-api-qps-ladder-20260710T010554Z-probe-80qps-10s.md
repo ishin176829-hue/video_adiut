@@ -1,0 +1,96 @@
+# model-api-qps-ladder-20260710T010554Z-probe-80qps-10s
+
+```json
+{
+  "run_id": "model-api-qps-ladder-20260710T010554Z-probe-80qps-10s",
+  "generated_at": "2026-07-10T01:10:32.929123+00:00",
+  "base_url": "https://jzapi.duanju.com",
+  "model": "gemini-3.1-pro-preview",
+  "target_qps": 80.0,
+  "duration_seconds": 10.0,
+  "request_timeout_seconds": 60.0,
+  "total": 800,
+  "elapsed_seconds": 68.98970077803824,
+  "actual_started_qps": 80.0,
+  "actual_finished_qps_over_wall": 11.595933755008648,
+  "sliding_1s_started_peak": 85,
+  "sliding_1s_finished_peak": 117,
+  "sliding_60s_started_peak": 800,
+  "sliding_60s_finished_peak": 796,
+  "status_counts": {
+    "ok": 752,
+    "error": 48
+  },
+  "error_counts": {
+    "JSONDecodeError": 43,
+    "TimeoutError": 5
+  },
+  "success_ratio": 0.94,
+  "ok_latency_seconds": {
+    "avg": 6.344911010024395,
+    "p50": 4.801098247466143,
+    "p90": 15.910322912211996,
+    "p95": 17.355125502136065,
+    "p99": 19.200000316441294
+  },
+  "all_latency_seconds": {
+    "avg": 6.589776407410536,
+    "p50": 4.790567719493993,
+    "p90": 15.920053272298539,
+    "p95": 17.510427512758174,
+    "p99": 19.60161732005654
+  },
+  "sample_errors": [
+    {
+      "error": "JSONDecodeError",
+      "error_text": "Extra data: line 2 column 1 (char 38)",
+      "latency_seconds": 4.525322232977487
+    },
+    {
+      "error": "JSONDecodeError",
+      "error_text": "Extra data: line 2 column 1 (char 38)",
+      "latency_seconds": 4.944874151959084
+    },
+    {
+      "error": "JSONDecodeError",
+      "error_text": "Extra data: line 2 column 1 (char 39)",
+      "latency_seconds": 4.976752855000086
+    },
+    {
+      "error": "JSONDecodeError",
+      "error_text": "Extra data: line 2 column 1 (char 39)",
+      "latency_seconds": 5.898871827987023
+    },
+    {
+      "error": "JSONDecodeError",
+      "error_text": "Extra data: line 2 column 1 (char 39)",
+      "latency_seconds": 4.619083150057122
+    },
+    {
+      "error": "TimeoutError",
+      "error_text": "",
+      "latency_seconds": 60.003933740081266
+    },
+    {
+      "error": "JSONDecodeError",
+      "error_text": "Extra data: line 2 column 1 (char 39)",
+      "latency_seconds": 4.545637581963092
+    },
+    {
+      "error": "JSONDecodeError",
+      "error_text": "Extra data: line 2 column 1 (char 39)",
+      "latency_seconds": 4.662545608007349
+    },
+    {
+      "error": "JSONDecodeError",
+      "error_text": "Extra data: line 2 column 1 (char 39)",
+      "latency_seconds": 4.636401544092223
+    },
+    {
+      "error": "JSONDecodeError",
+      "error_text": "Extra data: line 2 column 1 (char 39)",
+      "latency_seconds": 3.9691793139791116
+    }
+  ]
+}
+```

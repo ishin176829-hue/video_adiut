@@ -1,0 +1,52 @@
+{
+  "run_id": "model-api-qps-ladder-20260710T010554Z-probe-60qps-10s",
+  "generated_at": "2026-07-10T01:09:22.433053+00:00",
+  "base_url": "https://jzapi.duanju.com",
+  "model": "gemini-3.1-pro-preview",
+  "target_qps": 60.0,
+  "duration_seconds": 10.0,
+  "request_timeout_seconds": 60.0,
+  "total": 600,
+  "elapsed_seconds": 60.07748467603233,
+  "actual_started_qps": 60.0,
+  "actual_finished_qps_over_wall": 9.987102543248913,
+  "sliding_1s_started_peak": 61,
+  "sliding_1s_finished_peak": 87,
+  "sliding_60s_started_peak": 600,
+  "sliding_60s_finished_peak": 600,
+  "status_counts": {
+    "ok": 598,
+    "error": 2
+  },
+  "error_counts": {
+    "TimeoutError": 1,
+    "JSONDecodeError": 1
+  },
+  "success_ratio": 0.9966666666666667,
+  "ok_latency_seconds": {
+    "avg": 4.0041975245883465,
+    "p50": 3.9319730979623273,
+    "p90": 4.898100514779799,
+    "p95": 5.132116954377851,
+    "p99": 5.4877774493594185
+  },
+  "all_latency_seconds": {
+    "avg": 4.099328699823042,
+    "p50": 3.9342286594910547,
+    "p90": 4.907772320462391,
+    "p95": 5.165005090343765,
+    "p99": 5.492318296929588
+  },
+  "sample_errors": [
+    {
+      "error": "TimeoutError",
+      "error_text": "",
+      "latency_seconds": 60.00901573698502
+    },
+    {
+      "error": "JSONDecodeError",
+      "error_text": "Extra data: line 2 column 1 (char 39)",
+      "latency_seconds": 5.078084453009069
+    }
+  ]
+}

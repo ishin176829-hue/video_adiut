@@ -1,0 +1,268 @@
+{
+  "generated_at": "2026-07-13T02:41:39.675937+00:00",
+  "model": "gemini-2.5-flash",
+  "base_url": "https://jzapi.duanju.com",
+  "key_pool_size": 3,
+  "stages": [
+    {
+      "qps": 10,
+      "duration_seconds": 10,
+      "total": 100,
+      "ok": 0,
+      "error": 100,
+      "success_ratio": 0.0,
+      "errors": {
+        "JSONDecodeError": 100
+      },
+      "by_key": {
+        "google_f1e60aaeef1d": {
+          "error": 34
+        },
+        "google_e9a0f34d109b": {
+          "error": 33
+        },
+        "google_0c73c95cc7f2": {
+          "error": 33
+        }
+      },
+      "latency_seconds": {
+        "p50": null,
+        "p95": null,
+        "p99": null
+      },
+      "wall_seconds": 20.59732405701652,
+      "sample_errors": [
+        {
+          "status": "error",
+          "key_id": "google_f1e60aaeef1d",
+          "error": "JSONDecodeError",
+          "error_text": "Expecting value: line 1 column 1 (char 0)",
+          "latency": 1.5221184330293909
+        },
+        {
+          "status": "error",
+          "key_id": "google_e9a0f34d109b",
+          "error": "JSONDecodeError",
+          "error_text": "Expecting value: line 1 column 1 (char 0)",
+          "latency": 0.8668675189837813
+        },
+        {
+          "status": "error",
+          "key_id": "google_0c73c95cc7f2",
+          "error": "JSONDecodeError",
+          "error_text": "Expecting value: line 1 column 1 (char 0)",
+          "latency": 1.3161883890861645
+        },
+        {
+          "status": "error",
+          "key_id": "google_f1e60aaeef1d",
+          "error": "JSONDecodeError",
+          "error_text": "Expecting value: line 1 column 1 (char 0)",
+          "latency": 1.0175125669920817
+        },
+        {
+          "status": "error",
+          "key_id": "google_e9a0f34d109b",
+          "error": "JSONDecodeError",
+          "error_text": "Expecting value: line 1 column 1 (char 0)",
+          "latency": 0.7671911349752918
+        }
+      ]
+    },
+    {
+      "qps": 20,
+      "duration_seconds": 10,
+      "total": 200,
+      "ok": 0,
+      "error": 200,
+      "success_ratio": 0.0,
+      "errors": {
+        "JSONDecodeError": 200
+      },
+      "by_key": {
+        "google_f1e60aaeef1d": {
+          "error": 67
+        },
+        "google_e9a0f34d109b": {
+          "error": 67
+        },
+        "google_0c73c95cc7f2": {
+          "error": 66
+        }
+      },
+      "latency_seconds": {
+        "p50": null,
+        "p95": null,
+        "p99": null
+      },
+      "wall_seconds": 21.165293584926985,
+      "sample_errors": [
+        {
+          "status": "error",
+          "key_id": "google_f1e60aaeef1d",
+          "error": "JSONDecodeError",
+          "error_text": "Expecting value: line 1 column 1 (char 0)",
+          "latency": 0.8546839549671859
+        },
+        {
+          "status": "error",
+          "key_id": "google_e9a0f34d109b",
+          "error": "JSONDecodeError",
+          "error_text": "Expecting value: line 1 column 1 (char 0)",
+          "latency": 1.8791197841055691
+        },
+        {
+          "status": "error",
+          "key_id": "google_0c73c95cc7f2",
+          "error": "JSONDecodeError",
+          "error_text": "Expecting value: line 1 column 1 (char 0)",
+          "latency": 0.759552277973853
+        },
+        {
+          "status": "error",
+          "key_id": "google_f1e60aaeef1d",
+          "error": "JSONDecodeError",
+          "error_text": "Expecting value: line 1 column 1 (char 0)",
+          "latency": 1.7790043309796602
+        },
+        {
+          "status": "error",
+          "key_id": "google_e9a0f34d109b",
+          "error": "JSONDecodeError",
+          "error_text": "Expecting value: line 1 column 1 (char 0)",
+          "latency": 0.9226365149952471
+        }
+      ]
+    },
+    {
+      "qps": 40,
+      "duration_seconds": 10,
+      "total": 400,
+      "ok": 0,
+      "error": 400,
+      "success_ratio": 0.0,
+      "errors": {
+        "JSONDecodeError": 400
+      },
+      "by_key": {
+        "google_f1e60aaeef1d": {
+          "error": 134
+        },
+        "google_e9a0f34d109b": {
+          "error": 133
+        },
+        "google_0c73c95cc7f2": {
+          "error": 133
+        }
+      },
+      "latency_seconds": {
+        "p50": null,
+        "p95": null,
+        "p99": null
+      },
+      "wall_seconds": 24.9757964060409,
+      "sample_errors": [
+        {
+          "status": "error",
+          "key_id": "google_f1e60aaeef1d",
+          "error": "JSONDecodeError",
+          "error_text": "Expecting value: line 1 column 1 (char 0)",
+          "latency": 0.8608973689842969
+        },
+        {
+          "status": "error",
+          "key_id": "google_e9a0f34d109b",
+          "error": "JSONDecodeError",
+          "error_text": "Expecting value: line 1 column 1 (char 0)",
+          "latency": 0.826327488059178
+        },
+        {
+          "status": "error",
+          "key_id": "google_0c73c95cc7f2",
+          "error": "JSONDecodeError",
+          "error_text": "Expecting value: line 1 column 1 (char 0)",
+          "latency": 2.757496157893911
+        },
+        {
+          "status": "error",
+          "key_id": "google_f1e60aaeef1d",
+          "error": "JSONDecodeError",
+          "error_text": "Expecting value: line 1 column 1 (char 0)",
+          "latency": 1.283044766052626
+        },
+        {
+          "status": "error",
+          "key_id": "google_e9a0f34d109b",
+          "error": "JSONDecodeError",
+          "error_text": "Expecting value: line 1 column 1 (char 0)",
+          "latency": 0.8617495270445943
+        }
+      ]
+    },
+    {
+      "qps": 60,
+      "duration_seconds": 10,
+      "total": 600,
+      "ok": 0,
+      "error": 600,
+      "success_ratio": 0.0,
+      "errors": {
+        "JSONDecodeError": 600
+      },
+      "by_key": {
+        "google_f1e60aaeef1d": {
+          "error": 200
+        },
+        "google_e9a0f34d109b": {
+          "error": 200
+        },
+        "google_0c73c95cc7f2": {
+          "error": 200
+        }
+      },
+      "latency_seconds": {
+        "p50": null,
+        "p95": null,
+        "p99": null
+      },
+      "wall_seconds": 59.70894715201575,
+      "sample_errors": [
+        {
+          "status": "error",
+          "key_id": "google_f1e60aaeef1d",
+          "error": "JSONDecodeError",
+          "error_text": "Expecting value: line 1 column 1 (char 0)",
+          "latency": 2.821661510039121
+        },
+        {
+          "status": "error",
+          "key_id": "google_e9a0f34d109b",
+          "error": "JSONDecodeError",
+          "error_text": "Expecting value: line 1 column 1 (char 0)",
+          "latency": 0.9028243209468201
+        },
+        {
+          "status": "error",
+          "key_id": "google_0c73c95cc7f2",
+          "error": "JSONDecodeError",
+          "error_text": "Expecting value: line 1 column 1 (char 0)",
+          "latency": 4.018457902013324
+        },
+        {
+          "status": "error",
+          "key_id": "google_f1e60aaeef1d",
+          "error": "JSONDecodeError",
+          "error_text": "Expecting value: line 1 column 1 (char 0)",
+          "latency": 2.3179688419913873
+        },
+        {
+          "status": "error",
+          "key_id": "google_e9a0f34d109b",
+          "error": "JSONDecodeError",
+          "error_text": "Expecting value: line 1 column 1 (char 0)",
+          "latency": 0.7858273659367114
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2209 @@
+{
+  "name": "content-risk-load-capacity-guard-20-20260709165057",
+  "generated_at": "2026-07-09T09:15:02.257609+00:00",
+  "prefix": "capacity-guard-20-20260709165057",
+  "base_url": "http://127.0.0.1:8767",
+  "app_id": "capacity-test",
+  "sample": {
+    "source": "postgres",
+    "distinct_video_urls": 20,
+    "min_duration_seconds": 10.0,
+    "max_duration_seconds": 240.0
+  },
+  "run": {
+    "total": 20,
+    "elapsed_seconds": 1444.088137323968,
+    "status_counts": {
+      "completed": 20
+    },
+    "submit_errors": 0,
+    "latency_seconds": {
+      "p50": 651.791028380394,
+      "p90": 732.9515402317047,
+      "p95": 775.5848430275922,
+      "avg": 586.925880086422
+    },
+    "model_error_result_counts": {},
+    "model_error_result_ratio": {},
+    "aborted": false
+  },
+  "db_report": {
+    "matched_jobs": 20,
+    "status_counts": {
+      "completed": 20
+    },
+    "review_seconds": {
+      "p50": 397.770787,
+      "p90": 527.7453088000002,
+      "p95": 676.5874827500004,
+      "avg": 439.03809240000004
+    },
+    "total_seconds": {
+      "p50": 649.881041,
+      "p90": 725.4647245,
+      "p95": 772.2564240000005,
+      "avg": 582.76426
+    },
+    "model_error_job_counts": {
+      "timeout": 2
+    },
+    "model_error_job_ratio": {
+      "timeout": 0.1
+    }
+  },
+  "cleanup": {
+    "matched_jobs": 20,
+    "deleted_paths": 100,
+    "deleted_bytes": 2816249142,
+    "deleted_gib": 2.6228364016860723,
+    "skipped_paths": 0,
+    "cancel_unfinished": false,
+    "redis": {
+      "stream_scanned": 1260,
+      "xack": 0,
+      "xdel": 20,
+      "active_zrem": 0
+    }
+  },
+  "disk": {
+    "before": {
+      "path": "/home",
+      "total_bytes": 214643507200,
+      "used_bytes": 163025395712,
+      "free_bytes": 51618111488,
+      "used_percent": 75.95170142281388
+    },
+    "after": {
+      "path": "/home",
+      "total_bytes": 214643507200,
+      "used_bytes": 163025301504,
+      "free_bytes": 51618205696,
+      "used_percent": 75.95165753236444
+    },
+    "guard_path": "/home",
+    "max_used_percent": 82.0
+  },
+  "sample_states": [
+    {
+      "data_id": "capacity-guard-20-20260709165057-00001",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1783143065643_522.mp4",
+      "submitted_at": 1783587057.7676818,
+      "submit_elapsed_seconds": 0.024913771077990532,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-guard-20-20260709165057-00001",
+        "task_id": "capacity-guard-20-20260709165057-00001",
+        "review_id": "review_bad0f37e49d97667",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "completed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-guard-20-20260709165057-00001",
+        "task_id": "capacity-guard-20-20260709165057-00001",
+        "status": "completed",
+        "final_label": "BLOCK",
+        "decision_label": "BLOCK",
+        "summary": "本片不可过审。视频中存在极其严重的未成年人保护违规问题，多次将未成年学生形象置于性骚扰指控、暴力胁迫、殴打流血等极端恶劣的场景中，甚至出现未成年人持凶器重伤他人的情节。片尾还包含强烈的性暴力暗示和死亡威胁。整体剧情价值观极度扭曲，触碰多项审核红线。修改优先级最高的是彻底删除所有涉及未成年人涉性、受伤害和犯罪的情节，建议直接重构核心剧情或将相关角色明确设定为成年人，并大幅削减暴力和低俗擦边内容。",
+        "risk_score": 100.0,
+        "video_results": {
+          "decision": "BLOCK",
+          "frames": [
+            {
+              "time": 2.0,
+              "end_time": 94.0,
+              "label": "质量问题",
+              "sub_label": "字幕乱码/识别错误",
+              "decision": "REVIEW",
+              "decision_detail": "字幕中存在大量无意义字符和乱码，如 'et jg | i = 二 -', 'ap eo\" ae', 'a BAT 上上' 等。",
+              "risk_level": "低风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 28.0,
+              "end_time": 30.0,
+              "label": "不良价值观",
+              "sub_label": "家庭矛盾/出轨",
+              "decision": "BLOCK",
+              "decision_detail": "台词出现“就是他勾引我”，涉及不正当男女关系或出轨指控。",
+              "risk_level": "低风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 5.0,
+              "end_time": 7.0,
+              "label": "暴力伤害",
+              "sub_label": "血腥暴力",
+              "decision": "BLOCK",
+              "decision_detail": "画面中男子坐在地上双手抱头，头部和手上均有明显的红色血迹，且伴有痛苦表情。字幕提示“志军你怎么流这么多血”。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 8.0,
+              "end_time": 15.0,
+              "label": "暴力伤害",
+              "sub_label": "血腥暴力",
+              "decision": "REVIEW",
+              "decision_detail": "画面中男子头部和手上沾满鲜血，表情痛苦；另一名女孩手持大型金属扳手作为凶器。字幕提及'砸伤'、'想杀人啊'。；直接展示头部流血的血腥画面和伤人凶器，属于暴力伤害表现。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 11.0,
+              "end_time": 15.0,
+              "label": "特殊人群",
+              "sub_label": "未成年严重不良行为",
+              "decision": "BLOCK",
+              "decision_detail": "手持大扳手砸伤男子的女孩穿着类似学生校服（白衬衫、领结），视觉年龄较小，疑似未成年人。；疑似未成年人实施严重的暴力伤害行为（用扳手砸破成年人头部），属于未成年严重不良行为展示。",
+              "risk_level": "高风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 12.0,
+              "end_time": 12.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "REVIEW",
+              "decision_detail": "女子指着女孩骂'贱人'。；出现侮辱性词汇。",
+              "risk_level": "低风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 16.0,
+              "end_time": 23.0,
+              "label": "特殊人群",
+              "sub_label": "未成年人成人化",
+              "decision": "REVIEW",
+              "decision_detail": "画面00:16-00:23中，一名身穿校服的女生（未成年形象）在仓库内，字幕显示她指控他人'大半夜闯进来想对我图谋不轨'（00:19-00:21）。随后在00:22，该女生被一名成年男性暴力推倒在地。；未成年人形象（穿校服）不得与性暗示台词（图谋不轨）、暴力伤害（被成年人推倒）等内容绑定。将未成年人卷入成人化的性骚扰纠纷并对其施加暴力，严重违反未成年人保护底线。",
+              "risk_level": "不予过审",
+              "confidence": 0.98
+            },
+            {
+              "time": 24.0,
+              "end_time": 33.0,
+              "label": "特殊人群",
+              "sub_label": "未成年人成人化",
+              "decision": "REVIEW",
+              "decision_detail": "画面中出现穿着校服（百褶裙、衬衫、领结）、扎双马尾的未成年女孩形象。00:28至00:30，成年男性台词指责女孩“就是他勾引我”、“他冲我抛媚眼”，将未成年形象与低俗、性暗示情节强绑定。",
+              "risk_level": "不予过审",
+              "confidence": 0.99
+            },
+            {
+              "time": 31.0,
+              "end_time": 31.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "00:31画面中，倒地的校服女孩裙子过短，趴在地上的姿势容易引起走光和不良联想，带有软色情擦边性质。",
+              "risk_level": "高风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 24.0,
+              "end_time": 33.0,
+              "label": "特殊人群",
+              "sub_label": "未成年严重不良行为",
+              "decision": "REVIEW",
+              "decision_detail": "00:31画面显示倒地的女孩手臂上有明显的擦伤/伤痕，结合00:24成年男性居高临下指责的画面，存在未成年人遭受暴力伤害或虐待的嫌疑。",
+              "risk_level": "高风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 34.0,
+              "end_time": 42.0,
+              "label": "特殊人群",
+              "sub_label": "未成年人成人化",
+              "decision": "REVIEW",
+              "decision_detail": "画面中受害女孩穿着明显的校服（蓝衬衫、领结、百褶裙），呈现未成年学生形象。台词和字幕中频繁出现“勾引你”、“勾引我堂弟”、“浑身臭气的老男人”、“不知羞耻”等成人化、低俗化词汇，且剧情核心是该学生被指控勾引他人。",
+              "risk_level": "高风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 37.0,
+              "end_time": 41.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "黄衣女子对坐在地上的校服女孩动手推搡/扇巴掌，并辱骂“小贱人”。随后女孩无助地趴在地上，周围人（包括其哥哥）冷眼旁观并继续进行道德指责。",
+              "risk_level": "中风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 46.0,
+              "end_time": 53.0,
+              "label": "未成年保护",
+              "sub_label": "未成年受伤害",
+              "decision": "BLOCK",
+              "decision_detail": "画面中一名穿着校服（蓝衬衫、百褶裙）的疑似未成年女孩趴在废弃仓库地上，手臂上有明显的血迹和伤痕。字幕显示“明明我才是受害者”、“为什么所有人都帮着他”。；视频展现了未成年人（学生形象）遭受暴力伤害、流血并哭诉的情节，违反了未成年人不得与伤害内容绑定的保护规则。",
+              "risk_level": "不予过审",
+              "confidence": 0.95
+            },
+            {
+              "time": 60.0,
+              "end_time": 62.0,
+              "label": "特殊人群",
+              "sub_label": "未成年人受伤害",
+              "decision": "REVIEW",
+              "decision_detail": "拼图6-8（01:00-01:02）画面中，一名穿着疑似校服、扎着双马尾的年轻女孩（具有明显的未成年学生特征）被一名成年男性从背后暴力捂住嘴巴，女孩表情惊恐挣扎，字幕显示'嗯嗯'，明确展示了针对疑似未成年人的暴力胁迫和身体伤害。",
+              "risk_level": "不予过审",
+              "confidence": 0.5
+            },
+            {
+              "time": 63.0,
+              "end_time": 64.0,
+              "label": "暴力伤害",
+              "sub_label": "威胁/暴力",
+              "decision": "BLOCK",
+              "decision_detail": "画面显示一名男子在沙发上强行压住另一人（可见被压者的腿部），姿势具有明显的强迫性。字幕显示“闭嘴再出声我弄死你”。",
+              "risk_level": "高风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 70.0,
+              "end_time": 71.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "门外有人呼喊后，室内女子（方姨）匆忙整理胸前衣物，随后才去应门。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            }
+          ]
+        },
+        "audio_results": {
+          "decision": "BLOCK",
+          "details": [
+            {
+              "start_time": 2.0,
+              "end_time": 94.0,
+              "label": "质量问题",
+              "sub_label": "字幕乱码/识别错误",
+              "decision": "REVIEW",
+              "decision_detail": "字幕中存在大量无意义字符和乱码，如 'et jg | i = 二 -', 'ap eo\" ae', 'a BAT 上上' 等。",
+              "text": "et jg | i = 二 -",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 28.0,
+              "end_time": 30.0,
+              "label": "不良价值观",
+              "sub_label": "家庭矛盾/出轨",
+              "decision": "BLOCK",
+              "decision_detail": "台词出现“就是他勾引我”，涉及不正当男女关系或出轨指控。",
+              "text": "就是他勾引我 SS",
+              "confidence": 0.85
+            },
+            {
+              "start_time": 5.0,
+              "end_time": 7.0,
+              "label": "暴力伤害",
+              "sub_label": "血腥暴力",
+              "decision": "BLOCK",
+              "decision_detail": "画面中男子坐在地上双手抱头，头部和手上均有明显的红色血迹，且伴有痛苦表情。字幕提示“志军你怎么流这么多血”。",
+              "text": "志军你怎么流这么多血",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 8.0,
+              "end_time": 15.0,
+              "label": "暴力伤害",
+              "sub_label": "血腥暴力",
+              "decision": "REVIEW",
+              "decision_detail": "画面中男子头部和手上沾满鲜血，表情痛苦；另一名女孩手持大型金属扳手作为凶器。字幕提及'砸伤'、'想杀人啊'。；直接展示头部流血的血腥画面和伤人凶器，属于暴力伤害表现。",
+              "text": "志军你怎么流这么多血，你竟敢砸伤我堂弟，你想杀人啊",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 16.0,
+              "end_time": 23.0,
+              "label": "特殊人群",
+              "sub_label": "未成年人成人化",
+              "decision": "REVIEW",
+              "decision_detail": "画面00:16-00:23中，一名身穿校服的女生（未成年形象）在仓库内，字幕显示她指控他人'大半夜闯进来想对我图谋不轨'（00:19-00:21）。随后在00:22，该女生被一名成年男性暴力推倒在地。；未成年人形象（穿校服）不得与性暗示台词（图谋不轨）、暴力伤害（被成年人推倒）等内容绑定。将未成年人卷入成人化的性骚扰纠纷并对其施加暴力，严重违反未成年人保护底线。",
+              "text": "大半夜闯进来想对我图谋不轨",
+              "confidence": 0.98
+            },
+            {
+              "start_time": 24.0,
+              "end_time": 33.0,
+              "label": "特殊人群",
+              "sub_label": "未成年人成人化",
+              "decision": "REVIEW",
+              "decision_detail": "画面中出现穿着校服（百褶裙、衬衫、领结）、扎双马尾的未成年女孩形象。00:28至00:30，成年男性台词指责女孩“就是他勾引我”、“他冲我抛媚眼”，将未成年形象与低俗、性暗示情节强绑定。",
+              "text": "就是他勾引我, 他冲我抛媚眼",
+              "confidence": 0.99
+            },
+            {
+              "start_time": 34.0,
+              "end_time": 42.0,
+              "label": "特殊人群",
+              "sub_label": "未成年人成人化",
+              "decision": "REVIEW",
+              "decision_detail": "画面中受害女孩穿着明显的校服（蓝衬衫、领结、百褶裙），呈现未成年学生形象。台词和字幕中频繁出现“勾引你”、“勾引我堂弟”、“浑身臭气的老男人”、“不知羞耻”等成人化、低俗化词汇，且剧情核心是该学生被指控勾引他人。",
+              "text": "你放屁一个浑身臭气的老男人, 我瞎了眼才会勾引你, 敢在我眼皮子底下勾引我堂弟, 我怎么会有你这么不知羞耻的妹妹",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 46.0,
+              "end_time": 53.0,
+              "label": "未成年保护",
+              "sub_label": "未成年受伤害",
+              "decision": "BLOCK",
+              "decision_detail": "画面中一名穿着校服（蓝衬衫、百褶裙）的疑似未成年女孩趴在废弃仓库地上，手臂上有明显的血迹和伤痕。字幕显示“明明我才是受害者”、“为什么所有人都帮着他”。；视频展现了未成年人（学生形象）遭受暴力伤害、流血并哭诉的情节，违反了未成年人不得与伤害内容绑定的保护规则。",
+              "text": "为什么，明明我才是受害者，为什么所有人都帮着他",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 60.0,
+              "end_time": 62.0,
+              "label": "特殊人群",
+              "sub_label": "未成年人受伤害",
+              "decision": "REVIEW",
+              "decision_detail": "拼图6-8（01:00-01:02）画面中，一名穿着疑似校服、扎着双马尾的年轻女孩（具有明显的未成年学生特征）被一名成年男性从背后暴力捂住嘴巴，女孩表情惊恐挣扎，字幕显示'嗯嗯'，明确展示了针对疑似未成年人的暴力胁迫和身体伤害。",
+              "text": "就, 嗯嗯",
+              "confidence": 0.5
+            },
+            {
+              "start_time": 63.0,
+              "end_time": 64.0,
+              "label": "暴力伤害",
+              "sub_label": "威胁/暴力",
+              "decision": "BLOCK",
+              "decision_detail": "画面显示一名男子在沙发上强行压住另一人（可见被压者的腿部），姿势具有明显的强迫性。字幕显示“闭嘴再出声我弄死你”。",
+              "text": "闭嘴再出声我弄死你",
+              "confidence": 0.95
+            }
+          ]
+        },
+        "annotations": [
+          "视频2秒 命中 质量问题-字幕乱码/识别错误：字幕中存在大量无意义字符和乱码，如 'et jg | i = 二 -', 'ap eo\" ae', 'a BAT 上上' 等。",
+          "视频28秒 命中 不良价值观-家庭矛盾/出轨：台词出现“就是他勾引我”，涉及不正当男女关系或出轨指控。",
+          "视频5秒 命中 暴力伤害-血腥暴力：画面中男子坐在地上双手抱头，头部和手上均有明显的红色血迹，且伴有痛苦表情。字幕提示“志军你怎么流这么多血”。",
+          "视频8秒 命中 暴力伤害-血腥暴力：画面中男子头部和手上沾满鲜血，表情痛苦；另一名女孩手持大型金属扳手作为凶器。字幕提及'砸伤'、'想杀人啊'。；直接展示头部流血的血腥画面和伤人凶器，属于暴力伤害表现。",
+          "视频11秒 命中 特殊人群-未成年严重不良行为：手持大扳手砸伤男子的女孩穿着类似学生校服（白衬衫、领结），视觉年龄较小，疑似未成年人。；疑似未成年人实施严重的暴力伤害行为（用扳手砸破成年人头部），属于未成年严重不良行为展示。",
+          "视频12秒 命中 不良价值观-语言羞辱：女子指着女孩骂'贱人'。；出现侮辱性词汇。",
+          "视频16秒 命中 特殊人群-未成年人成人化：画面00:16-00:23中，一名身穿校服的女生（未成年形象）在仓库内，字幕显示她指控他人'大半夜闯进来想对我图谋不轨'（00:19-00:21）。随后在00:22，该女生被一名成年男性暴力推倒在地。；未成年人形象（穿校服）不得与性暗示台词（图谋不轨）、暴力伤害（被成年人推倒）等内容绑定。将未成年人卷入成人化的性骚扰纠纷并对其施加暴力，严重违反未成年人保护底线。",
+          "视频24秒 命中 特殊人群-未成年人成人化：画面中出现穿着校服（百褶裙、衬衫、领结）、扎双马尾的未成年女孩形象。00:28至00:30，成年男性台词指责女孩“就是他勾引我”、“他冲我抛媚眼”，将未成年形象与低俗、性暗示情节强绑定。",
+          "视频31秒 命中 低俗与画面尺度-软色情擦边：00:31画面中，倒地的校服女孩裙子过短，趴在地上的姿势容易引起走光和不良联想，带有软色情擦边性质。",
+          "视频24秒 命中 特殊人群-未成年严重不良行为：00:31画面显示倒地的女孩手臂上有明显的擦伤/伤痕，结合00:24成年男性居高临下指责的画面，存在未成年人遭受暴力伤害或虐待的嫌疑。",
+          "视频34秒 命中 特殊人群-未成年人成人化：画面中受害女孩穿着明显的校服（蓝衬衫、领结、百褶裙），呈现未成年学生形象。台词和字幕中频繁出现“勾引你”、“勾引我堂弟”、“浑身臭气的老男人”、“不知羞耻”等成人化、低俗化词汇，且剧情核心是该学生被指控勾引他人。",
+          "视频37秒 命中 不良价值观-语言羞辱：黄衣女子对坐在地上的校服女孩动手推搡/扇巴掌，并辱骂“小贱人”。随后女孩无助地趴在地上，周围人（包括其哥哥）冷眼旁观并继续进行道德指责。",
+          "视频46秒 命中 未成年保护-未成年受伤害：画面中一名穿着校服（蓝衬衫、百褶裙）的疑似未成年女孩趴在废弃仓库地上，手臂上有明显的血迹和伤痕。字幕显示“明明我才是受害者”、“为什么所有人都帮着他”。；视频展现了未成年人（学生形象）遭受暴力伤害、流血并哭诉的情节，违反了未成年人不得与伤害内容绑定的保护规则。",
+          "视频60秒 命中 特殊人群-未成年人受伤害：拼图6-8（01:00-01:02）画面中，一名穿着疑似校服、扎着双马尾的年轻女孩（具有明显的未成年学生特征）被一名成年男性从背后暴力捂住嘴巴，女孩表情惊恐挣扎，字幕显示'嗯嗯'，明确展示了针对疑似未成年人的暴力胁迫和身体伤害。",
+          "视频63秒 命中 暴力伤害-威胁/暴力：画面显示一名男子在沙发上强行压住另一人（可见被压者的腿部），姿势具有明显的强迫性。字幕显示“闭嘴再出声我弄死你”。",
+          "视频70秒 命中 低俗与画面尺度-软色情擦边：门外有人呼喊后，室内女子（方姨）匆忙整理胸前衣物，随后才去应门。"
+        ]
+      },
+      "completed_at": 1783587470.5513346
+    },
+    {
+      "data_id": "capacity-guard-20-20260709165057-00002",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1780913200378_274.mp4",
+      "submitted_at": 1783587057.881987,
+      "submit_elapsed_seconds": 0.01412109809461981,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-guard-20-20260709165057-00002",
+        "task_id": "capacity-guard-20-20260709165057-00002",
+        "review_id": "review_8c2ccad31301a86c",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "completed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-guard-20-20260709165057-00002",
+        "task_id": "capacity-guard-20-20260709165057-00002",
+        "status": "completed",
+        "final_label": "BLOCK",
+        "decision_label": "BLOCK",
+        "summary": "本片整体可过审。主要问题集中在开篇部分：一是古装背景下出现了现代词汇“红药水”，存在轻微穿帮，建议修改配音或字幕；二是剧情涉及伪造“守宫砂”进行试探，“守宫砂”属于封建糟粕，虽然符合古代宅斗设定，但建议弱化其特写镜头，避免过度聚焦。整体价值观导向无严重偏差，修改上述细节后即可上线。",
+        "risk_score": 83.0,
+        "video_results": {
+          "decision": "BLOCK",
+          "frames": [
+            {
+              "time": 11.0,
+              "end_time": 14.0,
+              "label": "不良价值观",
+              "sub_label": "家庭矛盾/语言羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "画面中两名古代女子交谈，字幕显示“你表姐是不是一条披着人皮的美人蛇”、“我倒有个办法可以帮你试探一下”，存在背后非议、贬损亲属及预谋算计的情节。",
+              "risk_level": "低风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 27.0,
+              "end_time": 30.0,
+              "label": "医疗与迷信",
+              "sub_label": "下药/医疗误导",
+              "decision": "REVIEW",
+              "decision_detail": "画面中两名古装女子交谈，字幕出现“你说的红药水是什么”“对身体有害吗无害”。",
+              "risk_level": "低风险",
+              "confidence": 0.7
+            },
+            {
+              "time": 27.0,
+              "end_time": 27.0,
+              "label": "质量问题",
+              "sub_label": "台词字幕违和",
+              "decision": "REVIEW",
+              "decision_detail": "古装剧背景下，台词字幕出现现代医疗词汇“红药水”。",
+              "risk_level": "低风险",
+              "confidence": 0.8
+            },
+            {
+              "time": 32.0,
+              "end_time": 39.0,
+              "label": "封建迷信与宗教民俗",
+              "sub_label": "封建迷信",
+              "decision": "REVIEW",
+              "decision_detail": "画面中人物将红色药水滴在手腕上，形成类似“守宫砂”的红色印记。字幕显示：“我药箱里正好带了一点”、“这种药水”、“用水洗不掉”、“手揉也不行”。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            }
+          ]
+        },
+        "audio_results": {
+          "decision": "BLOCK",
+          "details": [
+            {
+              "start_time": 11.0,
+              "end_time": 14.0,
+              "label": "不良价值观",
+              "sub_label": "家庭矛盾/语言羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "画面中两名古代女子交谈，字幕显示“你表姐是不是一条披着人皮的美人蛇”、“我倒有个办法可以帮你试探一下”，存在背后非议、贬损亲属及预谋算计的情节。",
+              "text": "你表姐是不是一条披着人皮的美人蛇，我倒有个办法可以帮你试探一下",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 27.0,
+              "end_time": 30.0,
+              "label": "医疗与迷信",
+              "sub_label": "下药/医疗误导",
+              "decision": "REVIEW",
+              "decision_detail": "画面中两名古装女子交谈，字幕出现“你说的红药水是什么”“对身体有害吗无害”。",
+              "text": "你说的红药水是什么；对身体有害吗无害",
+              "confidence": 0.7
+            },
+            {
+              "start_time": 27.0,
+              "end_time": 27.0,
+              "label": "质量问题",
+              "sub_label": "台词字幕违和",
+              "decision": "REVIEW",
+              "decision_detail": "古装剧背景下，台词字幕出现现代医疗词汇“红药水”。",
+              "text": "你说的红药水是什么",
+              "confidence": 0.8
+            },
+            {
+              "start_time": 32.0,
+              "end_time": 39.0,
+              "label": "封建迷信与宗教民俗",
+              "sub_label": "封建迷信",
+              "decision": "REVIEW",
+              "decision_detail": "画面中人物将红色药水滴在手腕上，形成类似“守宫砂”的红色印记。字幕显示：“我药箱里正好带了一点”、“这种药水”、“用水洗不掉”、“手揉也不行”。",
+              "text": "我药箱里正好带了一点 这种药水 用水洗不掉 手揉也不行",
+              "confidence": 0.85
+            }
+          ]
+        },
+        "annotations": [
+          "视频11秒 命中 不良价值观-家庭矛盾/语言羞辱：画面中两名古代女子交谈，字幕显示“你表姐是不是一条披着人皮的美人蛇”、“我倒有个办法可以帮你试探一下”，存在背后非议、贬损亲属及预谋算计的情节。",
+          "视频27秒 命中 医疗与迷信-下药/医疗误导：画面中两名古装女子交谈，字幕出现“你说的红药水是什么”“对身体有害吗无害”。",
+          "视频27秒 命中 质量问题-台词字幕违和：古装剧背景下，台词字幕出现现代医疗词汇“红药水”。",
+          "视频32秒 命中 封建迷信与宗教民俗-封建迷信：画面中人物将红色药水滴在手腕上，形成类似“守宫砂”的红色印记。字幕显示：“我药箱里正好带了一点”、“这种药水”、“用水洗不掉”、“手揉也不行”。"
+        ]
+      },
+      "completed_at": 1783587430.5092933
+    },
+    {
+      "data_id": "capacity-guard-20-20260709165057-00003",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1782551584923_868.mp4",
+      "submitted_at": 1783587057.9960904,
+      "submit_elapsed_seconds": 0.013937965966761112,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-guard-20-20260709165057-00003",
+        "task_id": "capacity-guard-20-20260709165057-00003",
+        "review_id": "review_483ee9d72ef8c741",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "completed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-guard-20-20260709165057-00003",
+        "task_id": "capacity-guard-20-20260709165057-00003",
+        "status": "completed",
+        "final_label": "REVIEW",
+        "decision_label": "REVIEW",
+        "summary": "本片暂不可过审。首要问题是视频存在大面积的字幕乱码，严重影响了台词信息的传达，必须进行返工修复。其次，在剧情价值观方面，角色在餐厅的对话中直接输出了“人分三六九等”、“只配吃野菜”、“乡巴佬”等带有强烈阶层歧视和语言羞辱色彩的台词。虽然这可能是为了塑造反面角色或为后续“打脸”做铺垫，但台词过于极端，建议修改或弱化这些侮辱性表述，并确保后续剧情有明确的价值观回正情节。",
+        "risk_score": 55.0,
+        "video_results": {
+          "decision": "REVIEW",
+          "frames": [
+            {
+              "time": 0.0,
+              "end_time": 88.0,
+              "label": "质量问题",
+              "sub_label": "字幕乱码/OCR错误",
+              "decision": "REVIEW",
+              "decision_detail": "字幕中出现大量无意义的符号、字母和乱码，如“=, | D P= Es —_ — =一 <=”、“fi DSS Les |p ig > Be Pr, ie \"5 tie RS Pe wt | * Tae UES A ee”等。；字幕或OCR识别存在严重质量问题，大量乱码影响观看体验和剧情传达。",
+              "risk_level": "低风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 54.0,
+              "end_time": 62.0,
+              "label": "不良价值观",
+              "sub_label": "拜金/阶层歧视/语言羞辱",
+              "decision": "REVIEW",
+              "decision_detail": "画面中人物对话，字幕显示“这人啊就是分三六九等”（图2）、“有的人一辈子”（图3）、“就只配蹲在路边吃野菜”（图4）。；台词直接宣扬阶级观念，贬低他人，存在阶层歧视和语言羞辱，传递不良价值观。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 68.0,
+              "end_time": 73.0,
+              "label": "不良价值观",
+              "sub_label": "家庭矛盾/语言羞辱",
+              "decision": "REVIEW",
+              "decision_detail": "画面中母子在高级餐厅用餐，字幕显示母亲贬低父亲：'不像你那个爹，一辈子窝在山沟沟里'，儿子附和：'妈说的对'。；母亲对父亲进行语言贬低，儿子附和，展现了家庭成员之间的矛盾和不尊重，属于轻度不良价值观。",
+              "risk_level": "低风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 78.0,
+              "end_time": 82.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "REVIEW",
+              "decision_detail": "画面2-3中女子台词字幕为“偏偏那个老头子还不知好歹”，画面6中台词字幕为“不提那个乡巴佬”。；台词中使用了“乡巴佬”、“老头子不知好歹”等带有明显贬低、歧视和羞辱色彩的词汇，属于轻度不良价值观展现。",
+              "risk_level": "低风险",
+              "confidence": 0.9
+            }
+          ]
+        },
+        "audio_results": {
+          "decision": "REVIEW",
+          "details": [
+            {
+              "start_time": 0.0,
+              "end_time": 88.0,
+              "label": "质量问题",
+              "sub_label": "字幕乱码/OCR错误",
+              "decision": "REVIEW",
+              "decision_detail": "字幕中出现大量无意义的符号、字母和乱码，如“=, | D P= Es —_ — =一 <=”、“fi DSS Les |p ig > Be Pr, ie \"5 tie RS Pe wt | * Tae UES A ee”等。；字幕或OCR识别存在严重质量问题，大量乱码影响观看体验和剧情传达。",
+              "text": "=, | D P= Es —_ — =一 <=",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 54.0,
+              "end_time": 62.0,
+              "label": "不良价值观",
+              "sub_label": "拜金/阶层歧视/语言羞辱",
+              "decision": "REVIEW",
+              "decision_detail": "画面中人物对话，字幕显示“这人啊就是分三六九等”（图2）、“有的人一辈子”（图3）、“就只配蹲在路边吃野菜”（图4）。；台词直接宣扬阶级观念，贬低他人，存在阶层歧视和语言羞辱，传递不良价值观。",
+              "text": "这人啊就是分三六九等，有的人一辈子就只配蹲在路边吃野菜",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 68.0,
+              "end_time": 73.0,
+              "label": "不良价值观",
+              "sub_label": "家庭矛盾/语言羞辱",
+              "decision": "REVIEW",
+              "decision_detail": "画面中母子在高级餐厅用餐，字幕显示母亲贬低父亲：'不像你那个爹，一辈子窝在山沟沟里'，儿子附和：'妈说的对'。；母亲对父亲进行语言贬低，儿子附和，展现了家庭成员之间的矛盾和不尊重，属于轻度不良价值观。",
+              "text": "不像你那个爹，一辈子窝在山沟沟里，上回还抱怨个核桃奶，妈说的对",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 78.0,
+              "end_time": 82.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "REVIEW",
+              "decision_detail": "画面2-3中女子台词字幕为“偏偏那个老头子还不知好歹”，画面6中台词字幕为“不提那个乡巴佬”。；台词中使用了“乡巴佬”、“老头子不知好歹”等带有明显贬低、歧视和羞辱色彩的词汇，属于轻度不良价值观展现。",
+              "text": "偏偏那个老头子还不知好歹, 不提那个乡巴佬",
+              "confidence": 0.9
+            }
+          ]
+        },
+        "annotations": [
+          "视频0秒 命中 质量问题-字幕乱码/OCR错误：字幕中出现大量无意义的符号、字母和乱码，如“=, | D P= Es —_ — =一 <=”、“fi DSS Les |p ig > Be Pr, ie \"5 tie RS Pe wt | * Tae UES A ee”等。；字幕或OCR识别存在严重质量问题，大量乱码影响观看体验和剧情传达。",
+          "视频54秒 命中 不良价值观-拜金/阶层歧视/语言羞辱：画面中人物对话，字幕显示“这人啊就是分三六九等”（图2）、“有的人一辈子”（图3）、“就只配蹲在路边吃野菜”（图4）。；台词直接宣扬阶级观念，贬低他人，存在阶层歧视和语言羞辱，传递不良价值观。",
+          "视频68秒 命中 不良价值观-家庭矛盾/语言羞辱：画面中母子在高级餐厅用餐，字幕显示母亲贬低父亲：'不像你那个爹，一辈子窝在山沟沟里'，儿子附和：'妈说的对'。；母亲对父亲进行语言贬低，儿子附和，展现了家庭成员之间的矛盾和不尊重，属于轻度不良价值观。",
+          "视频78秒 命中 不良价值观-语言羞辱：画面2-3中女子台词字幕为“偏偏那个老头子还不知好歹”，画面6中台词字幕为“不提那个乡巴佬”。；台词中使用了“乡巴佬”、“老头子不知好歹”等带有明显贬低、歧视和羞辱色彩的词汇，属于轻度不良价值观展现。"
+        ]
+      },
+      "completed_at": 1783587350.425668
+    },
+    {
+      "data_id": "capacity-guard-20-20260709165057-00004",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1780972559338_334.mp4?copy=1",
+      "submitted_at": 1783587058.1104767,
+      "submit_elapsed_seconds": 0.014200778910890222,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-guard-20-20260709165057-00004",
+        "task_id": "capacity-guard-20-20260709165057-00004",
+        "review_id": "review_7464d009a8a08de3",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "completed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-guard-20-20260709165057-00004",
+        "task_id": "capacity-guard-20-20260709165057-00004",
+        "status": "completed",
+        "final_label": "BLOCK",
+        "decision_label": "BLOCK",
+        "summary": "本片不可过审。核心违规点在于古代背景下引入具有强烈现实映射的“倭国人”及日本武士形象，并设置下跪等屈辱性赌注，意图通过煽动民族情绪制造爽点，严重违反平台民族历史敏感红线。修改优先级最高的是对反派角色进行彻底的架空化处理，去除所有日本相关元素及敏感称谓。此外，还需修改“挖眼睛喂狗”等极端暴力台词，并修复字幕乱码和品牌露出等质量问题。完成上述全面整改后方可重新提审。",
+        "risk_score": 100.0,
+        "video_results": {
+          "decision": "BLOCK",
+          "frames": [
+            {
+              "time": 0.0,
+              "end_time": 58.0,
+              "label": "品牌商标",
+              "sub_label": "真实品牌露出",
+              "decision": "BLOCK",
+              "decision_detail": "字幕中出现真实品牌名称“人人网”",
+              "risk_level": "低风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 0.0,
+              "end_time": 58.0,
+              "label": "质量问题",
+              "sub_label": "字幕/OCR乱码",
+              "decision": "REVIEW",
+              "decision_detail": "字幕中存在大量无意义的英文字符和符号，如“fi ft, \\U/) ™ “Saas | / 上 A Bip Ae mys / mae / 1h fos”等。",
+              "risk_level": "低风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 4.0,
+              "end_time": 5.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "画面中浅蓝色衣服女子表情愤怒，字幕显示“再看把你眼睛挖了喂狗”。",
+              "risk_level": "低风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 10.0,
+              "end_time": 15.0,
+              "label": "军党政及民族红线",
+              "sub_label": "民族历史敏感",
+              "decision": "REVIEW",
+              "decision_detail": "画面中男子身穿类似日本武士服饰，腰间佩戴明显的武士刀（00:10，00:13，00:15）。字幕及台词显示该男子提出比赛赌注：“你们输了，都要行跪拜之礼”（00:13-00:15）。",
+              "risk_level": "不予过审",
+              "confidence": 0.95
+            },
+            {
+              "time": 19.0,
+              "end_time": 25.0,
+              "label": "军党政及民族红线",
+              "sub_label": "民族历史敏感",
+              "decision": "REVIEW",
+              "decision_detail": "拼图2至8（00:19-00:25），画面中出现穿着典型日本武士服饰（深色和服、武士发型、腰间佩武士刀）的男子，在类似中国古代朝堂的环境中与中方古装女子对峙。",
+              "risk_level": "不予过审",
+              "confidence": 0.95
+            },
+            {
+              "time": 28.0,
+              "end_time": 28.0,
+              "label": "军党政及民族红线",
+              "sub_label": "民族历史敏感",
+              "decision": "REVIEW",
+              "decision_detail": "画面中女子说话，字幕明确出现敏感词汇“倭国人”。",
+              "risk_level": "不予过审",
+              "confidence": 0.98
+            },
+            {
+              "time": 53.0,
+              "end_time": 54.0,
+              "label": "民族历史敏感",
+              "sub_label": "倭国/外国使臣比试",
+              "decision": "BLOCK",
+              "decision_detail": "画面中明确出现穿着日本传统服饰（和服/武士服）的男子，在古代中国朝堂场景中态度嚣张地喊道'你们还比不比了'、'废话真多'。；在古代背景短剧中出现穿着日本服饰的人物参与朝堂比试，极易涉及'打脸倭国使臣'等煽动民族情绪的敏感套路，属于平台严控的民族历史敏感红线。",
+              "risk_level": "不予过审",
+              "confidence": 0.95
+            }
+          ]
+        },
+        "audio_results": {
+          "decision": "BLOCK",
+          "details": [
+            {
+              "start_time": 0.0,
+              "end_time": 58.0,
+              "label": "品牌商标",
+              "sub_label": "真实品牌露出",
+              "decision": "BLOCK",
+              "decision_detail": "字幕中出现真实品牌名称“人人网”",
+              "text": "2人人网",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 0.0,
+              "end_time": 58.0,
+              "label": "质量问题",
+              "sub_label": "字幕/OCR乱码",
+              "decision": "REVIEW",
+              "decision_detail": "字幕中存在大量无意义的英文字符和符号，如“fi ft, \\U/) ™ “Saas | / 上 A Bip Ae mys / mae / 1h fos”等。",
+              "text": "fi ft, \\U/) ™ “Saas | / 上 A Bip Ae mys / mae / 1h fos",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 4.0,
+              "end_time": 5.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "画面中浅蓝色衣服女子表情愤怒，字幕显示“再看把你眼睛挖了喂狗”。",
+              "text": "再看把你眼睛挖了喂狗",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 10.0,
+              "end_time": 15.0,
+              "label": "军党政及民族红线",
+              "sub_label": "民族历史敏感",
+              "decision": "REVIEW",
+              "decision_detail": "画面中男子身穿类似日本武士服饰，腰间佩戴明显的武士刀（00:10，00:13，00:15）。字幕及台词显示该男子提出比赛赌注：“你们输了，都要行跪拜之礼”（00:13-00:15）。",
+              "text": "你们输了 都要行跪拜之礼",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 28.0,
+              "end_time": 28.0,
+              "label": "军党政及民族红线",
+              "sub_label": "民族历史敏感",
+              "decision": "REVIEW",
+              "decision_detail": "画面中女子说话，字幕明确出现敏感词汇“倭国人”。",
+              "text": "你倭国人",
+              "confidence": 0.98
+            }
+          ]
+        },
+        "annotations": [
+          "视频0秒 命中 品牌商标-真实品牌露出：字幕中出现真实品牌名称“人人网”",
+          "视频0秒 命中 质量问题-字幕/OCR乱码：字幕中存在大量无意义的英文字符和符号，如“fi ft, \\U/) ™ “Saas | / 上 A Bip Ae mys / mae / 1h fos”等。",
+          "视频4秒 命中 不良价值观-语言羞辱：画面中浅蓝色衣服女子表情愤怒，字幕显示“再看把你眼睛挖了喂狗”。",
+          "视频10秒 命中 军党政及民族红线-民族历史敏感：画面中男子身穿类似日本武士服饰，腰间佩戴明显的武士刀（00:10，00:13，00:15）。字幕及台词显示该男子提出比赛赌注：“你们输了，都要行跪拜之礼”（00:13-00:15）。",
+          "视频19秒 命中 军党政及民族红线-民族历史敏感：拼图2至8（00:19-00:25），画面中出现穿着典型日本武士服饰（深色和服、武士发型、腰间佩武士刀）的男子，在类似中国古代朝堂的环境中与中方古装女子对峙。",
+          "视频28秒 命中 军党政及民族红线-民族历史敏感：画面中女子说话，字幕明确出现敏感词汇“倭国人”。",
+          "视频53秒 命中 民族历史敏感-倭国/外国使臣比试：画面中明确出现穿着日本传统服饰（和服/武士服）的男子，在古代中国朝堂场景中态度嚣张地喊道'你们还比不比了'、'废话真多'。；在古代背景短剧中出现穿着日本服饰的人物参与朝堂比试，极易涉及'打脸倭国使臣'等煽动民族情绪的敏感套路，属于平台严控的民族历史敏感红线。"
+        ]
+      },
+      "completed_at": 1783587350.425671
+    },
+    {
+      "data_id": "capacity-guard-20-20260709165057-00005",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1782783547752_772.mp4",
+      "submitted_at": 1783587058.2248287,
+      "submit_elapsed_seconds": 0.014186241896823049,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-guard-20-20260709165057-00005",
+        "task_id": "capacity-guard-20-20260709165057-00005",
+        "review_id": "review_b5915f40ddff2172",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "completed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-guard-20-20260709165057-00005",
+        "task_id": "capacity-guard-20-20260709165057-00005",
+        "status": "completed",
+        "final_label": "BLOCK",
+        "decision_label": "BLOCK",
+        "summary": "本片未能过审。主要问题在于密集展现了下跪、磕头、扇耳光等极端行为羞辱和私刑逼问情节，将其作为主角打脸反派的核心爽点，严重违背现代文明和法治观念，属于高风险的不良价值观导向。此外，台词中提及“越北市的关系”暗示官商勾结，触及公职与司法红线。修改优先级最高的是删除或替换所有下跪、磕头、扇耳光的侮辱性画面，其次是修改涉政台词，最后需补充依法处理的法治回正情节。",
+        "risk_score": 88.0,
+        "video_results": {
+          "decision": "BLOCK",
+          "frames": [
+            {
+              "time": 0.0,
+              "end_time": 7.0,
+              "label": "不良价值观",
+              "sub_label": "极端行为羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "画面（00:00-00:07）中一名老年男子向他人（画面仅露出穿黑靴的双脚）下跪、趴在地上磕头，随后抬头跪地哀求。字幕显示“我错了”、“我陆家愿意赔偿道歉”。",
+              "risk_level": "高风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 21.0,
+              "end_time": 28.0,
+              "label": "不良价值观",
+              "sub_label": "极端复仇/以暴制暴",
+              "decision": "BLOCK",
+              "decision_detail": "拼图4至拼图8中，年长男子被迫跪在地上，表情屈辱且愤怒；结合拼图1至3中年轻男子居高临下的审判式台词（“你不是觉得自己错了”“你只是怕了”），展现了强迫他人下跪的私刑场景。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 25.0,
+              "end_time": 25.0,
+              "label": "公职与司法",
+              "sub_label": "暗示官商勾结/保护伞",
+              "decision": "BLOCK",
+              "decision_detail": "拼图7中，跪地的年长男子用手指着前方进行威胁，字幕显示“我们跟越北市的关系”。",
+              "risk_level": "中风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 68.0,
+              "end_time": 77.0,
+              "label": "不良价值观",
+              "sub_label": "极端复仇/以暴制暴",
+              "decision": "BLOCK",
+              "decision_detail": "画面显示长者被迫下跪，年轻男子蹲下逼问。字幕含“我劝你不要多管闲事”、“说出幕后主使”。",
+              "risk_level": "中风险",
+              "confidence": 0.75
+            },
+            {
+              "time": 81.0,
+              "end_time": 86.0,
+              "label": "不良价值观",
+              "sub_label": "极端行为羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "画面中（图3-6）年长男子跪在地上，表情狰狞地大喊“哼你没有这个资格”；随后（图7-8）该男子依然跪地但痛苦捂脸，结合前后画面强烈暗示其遭到了扇耳光等暴力羞辱。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            }
+          ]
+        },
+        "audio_results": {
+          "decision": "BLOCK",
+          "details": [
+            {
+              "start_time": 0.0,
+              "end_time": 7.0,
+              "label": "不良价值观",
+              "sub_label": "极端行为羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "画面（00:00-00:07）中一名老年男子向他人（画面仅露出穿黑靴的双脚）下跪、趴在地上磕头，随后抬头跪地哀求。字幕显示“我错了”、“我陆家愿意赔偿道歉”。",
+              "text": "我错了 我陆家愿意赔偿道歉",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 21.0,
+              "end_time": 28.0,
+              "label": "不良价值观",
+              "sub_label": "极端复仇/以暴制暴",
+              "decision": "BLOCK",
+              "decision_detail": "拼图4至拼图8中，年长男子被迫跪在地上，表情屈辱且愤怒；结合拼图1至3中年轻男子居高临下的审判式台词（“你不是觉得自己错了”“你只是怕了”），展现了强迫他人下跪的私刑场景。",
+              "text": "你敢动我们",
+              "confidence": 0.85
+            },
+            {
+              "start_time": 25.0,
+              "end_time": 25.0,
+              "label": "公职与司法",
+              "sub_label": "暗示官商勾结/保护伞",
+              "decision": "BLOCK",
+              "decision_detail": "拼图7中，跪地的年长男子用手指着前方进行威胁，字幕显示“我们跟越北市的关系”。",
+              "text": "我们跟越北市的关系",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 68.0,
+              "end_time": 77.0,
+              "label": "不良价值观",
+              "sub_label": "极端复仇/以暴制暴",
+              "decision": "BLOCK",
+              "decision_detail": "画面显示长者被迫下跪，年轻男子蹲下逼问。字幕含“我劝你不要多管闲事”、“说出幕后主使”。",
+              "text": "我劝你不要多管闲事, 说出幕后主使",
+              "confidence": 0.75
+            }
+          ]
+        },
+        "annotations": [
+          "视频0秒 命中 不良价值观-极端行为羞辱：画面（00:00-00:07）中一名老年男子向他人（画面仅露出穿黑靴的双脚）下跪、趴在地上磕头，随后抬头跪地哀求。字幕显示“我错了”、“我陆家愿意赔偿道歉”。",
+          "视频21秒 命中 不良价值观-极端复仇/以暴制暴：拼图4至拼图8中，年长男子被迫跪在地上，表情屈辱且愤怒；结合拼图1至3中年轻男子居高临下的审判式台词（“你不是觉得自己错了”“你只是怕了”），展现了强迫他人下跪的私刑场景。",
+          "视频25秒 命中 公职与司法-暗示官商勾结/保护伞：拼图7中，跪地的年长男子用手指着前方进行威胁，字幕显示“我们跟越北市的关系”。",
+          "视频68秒 命中 不良价值观-极端复仇/以暴制暴：画面显示长者被迫下跪，年轻男子蹲下逼问。字幕含“我劝你不要多管闲事”、“说出幕后主使”。",
+          "视频81秒 命中 不良价值观-极端行为羞辱：画面中（图3-6）年长男子跪在地上，表情狰狞地大喊“哼你没有这个资格”；随后（图7-8）该男子依然跪地但痛苦捂脸，结合前后画面强烈暗示其遭到了扇耳光等暴力羞辱。"
+        ]
+      },
+      "completed_at": 1783587460.5365007
+    },
+    {
+      "data_id": "capacity-guard-20-20260709165057-00006",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1782888001524_354.mp4",
+      "submitted_at": 1783587058.339325,
+      "submit_elapsed_seconds": 0.014331142068840563,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-guard-20-20260709165057-00006",
+        "task_id": "capacity-guard-20-20260709165057-00006",
+        "review_id": "review_9c29e76b9337805a",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "completed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-guard-20-20260709165057-00006",
+        "task_id": "capacity-guard-20-20260709165057-00006",
+        "status": "completed",
+        "final_label": "BLOCK",
+        "decision_label": "BLOCK",
+        "summary": "作为审核专家，本片的审核结论为【坚决不予通过】。该视频在价值观导向和底线遵守上存在极其严重的问题。首先，将初生婴儿作为暴力袭击、持刀劫持和残忍抛弃的对象，严重违反了未成年人保护的绝对红线，极易引发观众的强烈生理与心理不适。其次，在涉嫌违法的地下黑拳场景中悬挂中国国旗，构成了严重的政治违规。此外，剧集中充斥着狙击暗杀、灭门威胁等极端暴力犯罪元素且缺乏法治回正。建议制作方废弃当前涉黑、虐童、暴恐的剧情线，重新构思符合社会主义核心价值观和公序良俗的剧本。",
+        "risk_score": 100.0,
+        "video_results": {
+          "decision": "BLOCK",
+          "frames": [
+            {
+              "time": 0.0,
+              "end_time": 115.0,
+              "label": "质量问题",
+              "sub_label": "字幕乱码/识别错误",
+              "decision": "REVIEW",
+              "decision_detail": "视频前半段存在大量无意义的英文字母、符号和乱码，属于 OCR 识别错误或字幕质量问题。",
+              "risk_level": "低风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 0.0,
+              "end_time": 115.0,
+              "label": "暴力伤害",
+              "sub_label": "暴力冲突与威胁",
+              "decision": "BLOCK",
+              "decision_detail": "台词中出现明显的胁迫和暴力殴打意图，暗示正在发生肢体冲突或单方面施暴。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 0.0,
+              "end_time": 115.0,
+              "label": "违法犯罪行为",
+              "sub_label": "扰乱公共秩序",
+              "decision": "REVIEW",
+              "decision_detail": "台词提及公共医疗机构被围堵，可能涉及群体性事件、医闹或黑恶势力寻衅滋事。",
+              "risk_level": "中风险",
+              "confidence": 0.8
+            },
+            {
+              "time": 0.0,
+              "end_time": 115.0,
+              "label": "违法犯罪行为",
+              "sub_label": "遗弃罪",
+              "decision": "REVIEW",
+              "decision_detail": "台词明确指出有婴儿/儿童被丢弃，涉及遗弃罪。",
+              "risk_level": "中风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 9.0,
+              "end_time": 15.0,
+              "label": "未成年保护",
+              "sub_label": "未成年人面临伤害威胁",
+              "decision": "BLOCK",
+              "decision_detail": "00:09至00:11展示母亲抱着刚出生的婴儿，紧接着00:12至00:15通过平行剪辑展示狙击手瞄准和杀手潜伏，将新生婴儿直接置于被暗杀的极端危险语境中。",
+              "risk_level": "不予过审",
+              "confidence": 0.95
+            },
+            {
+              "time": 12.0,
+              "end_time": 15.0,
+              "label": "违法犯罪行为",
+              "sub_label": "故意伤害/枪支展示",
+              "decision": "REVIEW",
+              "decision_detail": "00:12至00:14，画面清晰展示一名男子在天台架设并使用狙击步枪瞄准对面大楼；00:15，一名蒙面黑衣人潜伏在医院走廊，准备实施暗杀或暴力犯罪。",
+              "risk_level": "高风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 22.0,
+              "end_time": 24.0,
+              "label": "暴力伤害",
+              "sub_label": "强烈死亡导向",
+              "decision": "BLOCK",
+              "decision_detail": "00:22 画面中出现一名蒙面男子使用带有瞄准镜的狙击步枪进行瞄准；00:24 画面切回病房，躺在病床上的产妇额头正中出现了一个红色的激光瞄准点。；在现代都市背景下，刻意展示针对刚生产完的产妇及新生儿所在病房的狙击暗杀情节，属于极端的暴力犯罪和强烈的死亡导向。这种将无辜弱势群体置于致命危险中的情节，容易引起观众极度不适和恐慌，违背善良风俗。",
+              "risk_level": "高风险",
+              "confidence": 0.98
+            },
+            {
+              "time": 23.0,
+              "end_time": 23.0,
+              "label": "社会舆论导向",
+              "sub_label": "公共机构负面关联",
+              "decision": "REVIEW",
+              "decision_detail": "00:23 画面清晰展示了一栋带有红十字标志和“市妇幼医院”字样的大楼外观，且该画面穿插在狙击手瞄准和产妇被锁定的镜头之间。；将具有明确现实指向性的公共医疗机构（市妇幼医院）直接作为恶性枪击暗杀事件的发生地，容易让观众产生现实代入感，可能对公共医疗机构的安全形象造成负面影响，引发社会不安。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 30.0,
+              "end_time": 32.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "血腥暴力",
+              "decision": "REVIEW",
+              "decision_detail": "画面显示在医院走廊中，一名戴头套的黑衣人奔跑并与另一名穿西装的男子发生肢体冲突（格子6-8）。；出现肢体冲突和打斗画面，属于轻度暴力行为。",
+              "risk_level": "低风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 39.0,
+              "end_time": 40.0,
+              "label": "不良价值观",
+              "sub_label": "极端复仇",
+              "decision": "BLOCK",
+              "decision_detail": "黑衣蒙面人持刀进入房间，画面字幕显示“杀你全家的人”。；台词和剧情明确宣扬灭门、极端复仇和严重违法犯罪（故意杀人），严重违背社会公序良俗和法律法规。",
+              "risk_level": "高风险",
+              "confidence": 0.98
+            },
+            {
+              "time": 33.0,
+              "end_time": 38.0,
+              "label": "暴力伤害",
+              "sub_label": "血腥暴力",
+              "decision": "BLOCK",
+              "decision_detail": "黑衣蒙面人持刀攻击西装男致其倒地（图1-图4），随后暴力踹碎房门玻璃（图6）。；画面直接展现持刀伤人和暴力破坏行为，具有较强的暴力导向和视觉刺激。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 48.0,
+              "end_time": 48.0,
+              "label": "违法犯罪行为",
+              "sub_label": "非法持枪/涉黑",
+              "decision": "REVIEW",
+              "decision_detail": "图8(00:48)中，一名戴黑色头套的蒙面男子手持手枪指向前方。；现代背景下非公职人员持枪属于严重违法行为，蒙面持枪具有明显的犯罪特征，容易渲染暴力犯罪氛围。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 41.0,
+              "end_time": 47.0,
+              "label": "暴力伤害",
+              "sub_label": "肢体冲突/殴打",
+              "decision": "REVIEW",
+              "decision_detail": "图1至图7(00:41-00:47)展示了多人在室内进行激烈的拳脚打斗，有人被击退或倒地。；存在较密集的肢体冲突和打斗动作，但未见明显血腥、断肢或极端残忍的施暴画面，属于一般动作戏范畴。",
+              "risk_level": "低风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 52.0,
+              "end_time": 56.0,
+              "label": "暴力伤害",
+              "sub_label": "杀婴/极端暴力威胁",
+              "decision": "BLOCK",
+              "decision_detail": "画面显示蒙面男子从婴儿床抱起婴儿（00:52），随后一手抱婴儿，另一手持刀直接抵在婴儿身上（00:53-00:54）；字幕和台词明确表达杀害意图：“否则我杀了这个狗崽子”。",
+              "risk_level": "不予过审",
+              "confidence": 0.99
+            },
+            {
+              "time": 49.0,
+              "end_time": 56.0,
+              "label": "违法犯罪行为",
+              "sub_label": "严重违法犯罪（绑架/故意伤害）",
+              "decision": "REVIEW",
+              "decision_detail": "蒙面男子非法闯入病房（00:49），暴力殴打防卫者致其倒地（00:50-00:51），随后劫持人质进行勒索，迫使家属举手妥协（00:55-00:56，字幕“停手你要什么我都给你”）。",
+              "risk_level": "高风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 57.0,
+              "end_time": 64.0,
+              "label": "未成年保护",
+              "sub_label": "伤害未成年人",
+              "decision": "BLOCK",
+              "decision_detail": "图6、图8中蒙面歹徒抱着一名婴儿，图7中歹徒砸碎玻璃窗，图1中男子惊恐大喊并配有字幕“别伤害孩子”。",
+              "risk_level": "不予过审",
+              "confidence": 0.98
+            },
+            {
+              "time": 58.0,
+              "end_time": 61.0,
+              "label": "违法犯罪行为",
+              "sub_label": "绑架/持枪",
+              "decision": "REVIEW",
+              "decision_detail": "图2、图3出现狙击枪瞄准镜视角对准医院外的人群，图5蒙面人配有字幕“医院被围了”。",
+              "risk_level": "高风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 69.0,
+              "end_time": 71.0,
+              "label": "特殊人群",
+              "sub_label": "未成年伤害",
+              "decision": "BLOCK",
+              "decision_detail": "画面显示黑衣蒙面人单手抱着婴儿，仅靠一根绳索从高楼外墙滑降。；将婴儿（未成年人）置于极度危险的高空滑降场景中，属于对未成年人的伤害和虐童噱头，违反未成年人保护底线。",
+              "risk_level": "不予过审",
+              "confidence": 0.95
+            },
+            {
+              "time": 65.0,
+              "end_time": 72.0,
+              "label": "违法犯罪行为",
+              "sub_label": "绑架",
+              "decision": "REVIEW",
+              "decision_detail": "男子大喊“快救我的儿子”，随后黑衣蒙面人抱着婴儿逃跑。；展示绑架婴儿的犯罪行为，属于中等违法犯罪。",
+              "risk_level": "中风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 73.0,
+              "end_time": 80.0,
+              "label": "违法犯罪行为",
+              "sub_label": "涉嫌绑架或抢劫",
+              "decision": "REVIEW",
+              "decision_detail": "图2(01:14)、图4-5(01:16-01:17)显示蒙面人骑摩托携带可疑白色包裹；图6-8(01:18-01:20)显示其被汽车追逐。",
+              "risk_level": "中风险",
+              "confidence": 0.7
+            },
+            {
+              "time": 87.0,
+              "end_time": 88.0,
+              "label": "暴力伤害",
+              "sub_label": "杀婴",
+              "decision": "BLOCK",
+              "decision_detail": "画面显示骑摩托车的蒙面人将怀中包裹着婴儿的白色襁褓直接扔向路边的垃圾堆。",
+              "risk_level": "不予过审",
+              "confidence": 0.98
+            },
+            {
+              "time": 84.0,
+              "end_time": 86.0,
+              "label": "违法犯罪行为",
+              "sub_label": "严重违法犯罪",
+              "decision": "REVIEW",
+              "decision_detail": "画面显示两名戴着黑色头套的蒙面人骑着摩托车逃窜，后座人员怀里紧紧抱着一个婴儿，后方有汽车追赶，明显为绑架或抢夺婴儿的情节。",
+              "risk_level": "高风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 91.0,
+              "end_time": 94.0,
+              "label": "不良价值观",
+              "sub_label": "极端复仇/以暴制暴",
+              "decision": "BLOCK",
+              "decision_detail": "画面中男子颈挂拳击手套，字幕显示“我眼睛瞎了都得打”，表达了不顾自身健康的强烈执念。",
+              "risk_level": "低风险",
+              "confidence": 0.7
+            },
+            {
+              "time": 99.0,
+              "end_time": 101.0,
+              "label": "特殊人群",
+              "sub_label": "未成年人保护",
+              "decision": "REVIEW",
+              "decision_detail": "画面1-3中，一名男子在垃圾袋旁发现一个被包裹的婴儿，字幕显示“谁把孩子扔这啊”。",
+              "risk_level": "低风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 106.0,
+              "end_time": 106.0,
+              "label": "违法犯罪行为",
+              "sub_label": "中等违法犯罪",
+              "decision": "REVIEW",
+              "decision_detail": "画面8为黑屏字幕，出现“2023年 地下八角笼拳击场”。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 114.0,
+              "end_time": 114.0,
+              "label": "军党政及民族红线",
+              "sub_label": "国家主权",
+              "decision": "BLOCK",
+              "decision_detail": "01:54 画面右上角在地下拳击场场景中悬挂了中国国旗。；在地下非法拳击场（黑拳）这种涉嫌违法犯罪的场景中悬挂中国国旗，严重损害国家尊严，涉嫌违反《国旗法》，容易引发极其恶劣的社会影响。",
+              "risk_level": "不予过审",
+              "confidence": 0.99
+            },
+            {
+              "time": 107.0,
+              "end_time": 112.0,
+              "label": "违法犯罪行为",
+              "sub_label": "严重违法犯罪",
+              "decision": "REVIEW",
+              "decision_detail": "01:47 画面OCR显示“地下八角笼拳击场”，01:52 字幕出现“地下霸主的巅峰之战”。；明确展示并渲染“地下拳击场”，涉及非法竞技和潜在的涉黑、赌博等违法行为，不应作为正面背景或爽点过度渲染。",
+              "risk_level": "中风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 115.0,
+              "end_time": 116.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "01:55 画面中男子穿着敞开的外套，刻意裸露胸肌和腹肌。；刻意展示男性躯体肌肉，属于裸露擦边，容易引发低俗观感。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            }
+          ]
+        },
+        "audio_results": {
+          "decision": "BLOCK",
+          "details": [
+            {
+              "start_time": 0.0,
+              "end_time": 115.0,
+              "label": "质量问题",
+              "sub_label": "字幕乱码/识别错误",
+              "decision": "REVIEW",
+              "decision_detail": "视频前半段存在大量无意义的英文字母、符号和乱码，属于 OCR 识别错误或字幕质量问题。",
+              "text": "wad NS 二 Wes tp Se : A a. sy...记忆二性二 fp? +,",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 0.0,
+              "end_time": 115.0,
+              "label": "暴力伤害",
+              "sub_label": "暴力冲突与威胁",
+              "decision": "BLOCK",
+              "decision_detail": "台词中出现明显的胁迫和暴力殴打意图，暗示正在发生肢体冲突或单方面施暴。",
+              "text": "停手你要什么我都给你...我眼睛瞎了都得打",
+              "confidence": 0.85
+            },
+            {
+              "start_time": 0.0,
+              "end_time": 115.0,
+              "label": "违法犯罪行为",
+              "sub_label": "扰乱公共秩序",
+              "decision": "REVIEW",
+              "decision_detail": "台词提及公共医疗机构被围堵，可能涉及群体性事件、医闹或黑恶势力寻衅滋事。",
+              "text": "医院被围了",
+              "confidence": 0.8
+            },
+            {
+              "start_time": 0.0,
+              "end_time": 115.0,
+              "label": "违法犯罪行为",
+              "sub_label": "遗弃罪",
+              "decision": "REVIEW",
+              "decision_detail": "台词明确指出有婴儿/儿童被丢弃，涉及遗弃罪。",
+              "text": "谁把孩子扔这啊",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 39.0,
+              "end_time": 40.0,
+              "label": "不良价值观",
+              "sub_label": "极端复仇",
+              "decision": "BLOCK",
+              "decision_detail": "黑衣蒙面人持刀进入房间，画面字幕显示“杀你全家的人”。；台词和剧情明确宣扬灭门、极端复仇和严重违法犯罪（故意杀人），严重违背社会公序良俗和法律法规。",
+              "text": "杀你全家的人",
+              "confidence": 0.98
+            },
+            {
+              "start_time": 52.0,
+              "end_time": 56.0,
+              "label": "暴力伤害",
+              "sub_label": "杀婴/极端暴力威胁",
+              "decision": "BLOCK",
+              "decision_detail": "画面显示蒙面男子从婴儿床抱起婴儿（00:52），随后一手抱婴儿，另一手持刀直接抵在婴儿身上（00:53-00:54）；字幕和台词明确表达杀害意图：“否则我杀了这个狗崽子”。",
+              "text": "否则我杀了这个狗崽子",
+              "confidence": 0.99
+            },
+            {
+              "start_time": 49.0,
+              "end_time": 56.0,
+              "label": "违法犯罪行为",
+              "sub_label": "严重违法犯罪（绑架/故意伤害）",
+              "decision": "REVIEW",
+              "decision_detail": "蒙面男子非法闯入病房（00:49），暴力殴打防卫者致其倒地（00:50-00:51），随后劫持人质进行勒索，迫使家属举手妥协（00:55-00:56，字幕“停手你要什么我都给你”）。",
+              "text": "停手你要什么我都给你",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 57.0,
+              "end_time": 64.0,
+              "label": "未成年保护",
+              "sub_label": "伤害未成年人",
+              "decision": "BLOCK",
+              "decision_detail": "图6、图8中蒙面歹徒抱着一名婴儿，图7中歹徒砸碎玻璃窗，图1中男子惊恐大喊并配有字幕“别伤害孩子”。",
+              "text": "别伤害孩子",
+              "confidence": 0.98
+            },
+            {
+              "start_time": 58.0,
+              "end_time": 61.0,
+              "label": "违法犯罪行为",
+              "sub_label": "绑架/持枪",
+              "decision": "REVIEW",
+              "decision_detail": "图2、图3出现狙击枪瞄准镜视角对准医院外的人群，图5蒙面人配有字幕“医院被围了”。",
+              "text": "医院被围了",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 91.0,
+              "end_time": 94.0,
+              "label": "不良价值观",
+              "sub_label": "极端复仇/以暴制暴",
+              "decision": "BLOCK",
+              "decision_detail": "画面中男子颈挂拳击手套，字幕显示“我眼睛瞎了都得打”，表达了不顾自身健康的强烈执念。",
+              "text": "谁都做不了我的主; 我准备了三年; 我眼睛瞎了都得打",
+              "confidence": 0.7
+            },
+            {
+              "start_time": 99.0,
+              "end_time": 101.0,
+              "label": "特殊人群",
+              "sub_label": "未成年人保护",
+              "decision": "REVIEW",
+              "decision_detail": "画面1-3中，一名男子在垃圾袋旁发现一个被包裹的婴儿，字幕显示“谁把孩子扔这啊”。",
+              "text": "谁把孩子扔这啊",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 106.0,
+              "end_time": 106.0,
+              "label": "违法犯罪行为",
+              "sub_label": "中等违法犯罪",
+              "decision": "REVIEW",
+              "decision_detail": "画面8为黑屏字幕，出现“2023年 地下八角笼拳击场”。",
+              "text": "2023年 地下八角笼拳击场",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 107.0,
+              "end_time": 112.0,
+              "label": "违法犯罪行为",
+              "sub_label": "严重违法犯罪",
+              "decision": "REVIEW",
+              "decision_detail": "01:47 画面OCR显示“地下八角笼拳击场”，01:52 字幕出现“地下霸主的巅峰之战”。；明确展示并渲染“地下拳击场”，涉及非法竞技和潜在的涉黑、赌博等违法行为，不应作为正面背景或爽点过度渲染。",
+              "text": "地下八角笼拳击场, 地下霸主的巅峰之战",
+              "confidence": 0.9
+            }
+          ]
+        },
+        "annotations": [
+          "视频0秒 命中 质量问题-字幕乱码/识别错误：视频前半段存在大量无意义的英文字母、符号和乱码，属于 OCR 识别错误或字幕质量问题。",
+          "视频0秒 命中 暴力伤害-暴力冲突与威胁：台词中出现明显的胁迫和暴力殴打意图，暗示正在发生肢体冲突或单方面施暴。",
+          "视频0秒 命中 违法犯罪行为-扰乱公共秩序：台词提及公共医疗机构被围堵，可能涉及群体性事件、医闹或黑恶势力寻衅滋事。",
+          "视频0秒 命中 违法犯罪行为-遗弃罪：台词明确指出有婴儿/儿童被丢弃，涉及遗弃罪。",
+          "视频9秒 命中 未成年保护-未成年人面临伤害威胁：00:09至00:11展示母亲抱着刚出生的婴儿，紧接着00:12至00:15通过平行剪辑展示狙击手瞄准和杀手潜伏，将新生婴儿直接置于被暗杀的极端危险语境中。",
+          "视频12秒 命中 违法犯罪行为-故意伤害/枪支展示：00:12至00:14，画面清晰展示一名男子在天台架设并使用狙击步枪瞄准对面大楼；00:15，一名蒙面黑衣人潜伏在医院走廊，准备实施暗杀或暴力犯罪。",
+          "视频22秒 命中 暴力伤害-强烈死亡导向：00:22 画面中出现一名蒙面男子使用带有瞄准镜的狙击步枪进行瞄准；00:24 画面切回病房，躺在病床上的产妇额头正中出现了一个红色的激光瞄准点。；在现代都市背景下，刻意展示针对刚生产完的产妇及新生儿所在病房的狙击暗杀情节，属于极端的暴力犯罪和强烈的死亡导向。这种将无辜弱势群体置于致命危险中的情节，容易引起观众极度不适和恐慌，违背善良风俗。",
+          "视频23秒 命中 社会舆论导向-公共机构负面关联：00:23 画面清晰展示了一栋带有红十字标志和“市妇幼医院”字样的大楼外观，且该画面穿插在狙击手瞄准和产妇被锁定的镜头之间。；将具有明确现实指向性的公共医疗机构（市妇幼医院）直接作为恶性枪击暗杀事件的发生地，容易让观众产生现实代入感，可能对公共医疗机构的安全形象造成负面影响，引发社会不安。",
+          "视频30秒 命中 低俗与画面尺度-血腥暴力：画面显示在医院走廊中，一名戴头套的黑衣人奔跑并与另一名穿西装的男子发生肢体冲突（格子6-8）。；出现肢体冲突和打斗画面，属于轻度暴力行为。",
+          "视频39秒 命中 不良价值观-极端复仇：黑衣蒙面人持刀进入房间，画面字幕显示“杀你全家的人”。；台词和剧情明确宣扬灭门、极端复仇和严重违法犯罪（故意杀人），严重违背社会公序良俗和法律法规。",
+          "视频33秒 命中 暴力伤害-血腥暴力：黑衣蒙面人持刀攻击西装男致其倒地（图1-图4），随后暴力踹碎房门玻璃（图6）。；画面直接展现持刀伤人和暴力破坏行为，具有较强的暴力导向和视觉刺激。",
+          "视频48秒 命中 违法犯罪行为-非法持枪/涉黑：图8(00:48)中，一名戴黑色头套的蒙面男子手持手枪指向前方。；现代背景下非公职人员持枪属于严重违法行为，蒙面持枪具有明显的犯罪特征，容易渲染暴力犯罪氛围。",
+          "视频41秒 命中 暴力伤害-肢体冲突/殴打：图1至图7(00:41-00:47)展示了多人在室内进行激烈的拳脚打斗，有人被击退或倒地。；存在较密集的肢体冲突和打斗动作，但未见明显血腥、断肢或极端残忍的施暴画面，属于一般动作戏范畴。",
+          "视频52秒 命中 暴力伤害-杀婴/极端暴力威胁：画面显示蒙面男子从婴儿床抱起婴儿（00:52），随后一手抱婴儿，另一手持刀直接抵在婴儿身上（00:53-00:54）；字幕和台词明确表达杀害意图：“否则我杀了这个狗崽子”。",
+          "视频49秒 命中 违法犯罪行为-严重违法犯罪（绑架/故意伤害）：蒙面男子非法闯入病房（00:49），暴力殴打防卫者致其倒地（00:50-00:51），随后劫持人质进行勒索，迫使家属举手妥协（00:55-00:56，字幕“停手你要什么我都给你”）。",
+          "视频57秒 命中 未成年保护-伤害未成年人：图6、图8中蒙面歹徒抱着一名婴儿，图7中歹徒砸碎玻璃窗，图1中男子惊恐大喊并配有字幕“别伤害孩子”。",
+          "视频58秒 命中 违法犯罪行为-绑架/持枪：图2、图3出现狙击枪瞄准镜视角对准医院外的人群，图5蒙面人配有字幕“医院被围了”。",
+          "视频69秒 命中 特殊人群-未成年伤害：画面显示黑衣蒙面人单手抱着婴儿，仅靠一根绳索从高楼外墙滑降。；将婴儿（未成年人）置于极度危险的高空滑降场景中，属于对未成年人的伤害和虐童噱头，违反未成年人保护底线。",
+          "视频65秒 命中 违法犯罪行为-绑架：男子大喊“快救我的儿子”，随后黑衣蒙面人抱着婴儿逃跑。；展示绑架婴儿的犯罪行为，属于中等违法犯罪。",
+          "视频73秒 命中 违法犯罪行为-涉嫌绑架或抢劫：图2(01:14)、图4-5(01:16-01:17)显示蒙面人骑摩托携带可疑白色包裹；图6-8(01:18-01:20)显示其被汽车追逐。",
+          "视频87秒 命中 暴力伤害-杀婴：画面显示骑摩托车的蒙面人将怀中包裹着婴儿的白色襁褓直接扔向路边的垃圾堆。",
+          "视频84秒 命中 违法犯罪行为-严重违法犯罪：画面显示两名戴着黑色头套的蒙面人骑着摩托车逃窜，后座人员怀里紧紧抱着一个婴儿，后方有汽车追赶，明显为绑架或抢夺婴儿的情节。",
+          "视频91秒 命中 不良价值观-极端复仇/以暴制暴：画面中男子颈挂拳击手套，字幕显示“我眼睛瞎了都得打”，表达了不顾自身健康的强烈执念。",
+          "视频99秒 命中 特殊人群-未成年人保护：画面1-3中，一名男子在垃圾袋旁发现一个被包裹的婴儿，字幕显示“谁把孩子扔这啊”。",
+          "视频106秒 命中 违法犯罪行为-中等违法犯罪：画面8为黑屏字幕，出现“2023年 地下八角笼拳击场”。",
+          "视频114秒 命中 军党政及民族红线-国家主权：01:54 画面右上角在地下拳击场场景中悬挂了中国国旗。；在地下非法拳击场（黑拳）这种涉嫌违法犯罪的场景中悬挂中国国旗，严重损害国家尊严，涉嫌违反《国旗法》，容易引发极其恶劣的社会影响。",
+          "视频107秒 命中 违法犯罪行为-严重违法犯罪：01:47 画面OCR显示“地下八角笼拳击场”，01:52 字幕出现“地下霸主的巅峰之战”。；明确展示并渲染“地下拳击场”，涉及非法竞技和潜在的涉黑、赌博等违法行为，不应作为正面背景或爽点过度渲染。",
+          "视频115秒 命中 低俗与画面尺度-软色情擦边：01:55 画面中男子穿着敞开的外套，刻意裸露胸肌和腹肌。；刻意展示男性躯体肌肉，属于裸露擦边，容易引发低俗观感。"
+        ]
+      },
+      "completed_at": 1783587710.876027
+    },
+    {
+      "data_id": "capacity-guard-20-20260709165057-00007",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1782783547724_630.mp4",
+      "submitted_at": 1783587058.4538703,
+      "submit_elapsed_seconds": 0.01437355496454984,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-guard-20-20260709165057-00007",
+        "task_id": "capacity-guard-20-20260709165057-00007",
+        "review_id": "review_a00e8b172364e1b2",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "completed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-guard-20-20260709165057-00007",
+        "task_id": "capacity-guard-20-20260709165057-00007",
+        "status": "completed",
+        "final_label": "BLOCK",
+        "decision_label": "BLOCK",
+        "summary": "本片属于典型的战神复仇题材，但为了制造爽点，过度渲染了受害者的惨状，出现了铁链锁人、将人比作狗等极端行为羞辱和非法拘禁的高风险内容，严重违背平台价值观底线。此外，开篇的带血刀具和后续的激烈持械冲突也存在暴力血腥风险。建议不予过审，必须删除极端虐待画面和侮辱性台词，弱化暴力冲突，并补充法治回正情节后方可重新提交审核。",
+        "risk_score": 97.0,
+        "video_results": {
+          "decision": "BLOCK",
+          "frames": [
+            {
+              "time": 31.0,
+              "end_time": 32.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "台词中出现把人比作狗的侮辱性言辞，贬低他人人格。",
+              "risk_level": "中风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 33.0,
+              "end_time": 34.0,
+              "label": "违法犯罪行为",
+              "sub_label": "中等违法犯罪",
+              "decision": "REVIEW",
+              "decision_detail": "台词暗示角色被非法控制、拘禁或绑架。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 2.0,
+              "end_time": 2.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "血腥暴力",
+              "decision": "REVIEW",
+              "decision_detail": "画面中一名身穿迷彩服的男子手持一把带有明显红色血迹的刀具特写。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 25.0,
+              "end_time": 25.0,
+              "label": "暴力伤害",
+              "sub_label": "血腥暴力/受虐惨状",
+              "decision": "BLOCK",
+              "decision_detail": "画面中名为“萧梦雪”的女性角色满脸伤痕、污渍，衣衫褴褛地蜷缩在地上，表现出极度恐惧和受虐后的惨状。结合前文台词“不知道这五年肖梦雪到底怎么样了”，暗示其遭受了长期的折磨。",
+              "risk_level": "中风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 21.0,
+              "end_time": 25.0,
+              "label": "质量问题",
+              "sub_label": "台词字幕错误",
+              "decision": "REVIEW",
+              "decision_detail": "00:21字幕显示为“肖梦雪”，而00:25角色名标注为“萧梦雪”，存在前后名字不一致的错别字问题。",
+              "risk_level": "低风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 30.0,
+              "end_time": 34.0,
+              "label": "不良价值观",
+              "sub_label": "极端行为羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "画面中女子被铁链锁住，老年男子对其进行威胁，字幕出现“是我们陆少养的一条狗”，将人贬低为动物进行极端人格侮辱。",
+              "risk_level": "高风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 30.0,
+              "end_time": 32.0,
+              "label": "违法犯罪行为",
+              "sub_label": "绑架/非法拘禁",
+              "decision": "REVIEW",
+              "decision_detail": "画面显示女子衣衫褴褛、带有伤痕，被粗大的铁链锁在墙上，明显处于被非法拘禁和虐待的状态。",
+              "risk_level": "中风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 35.0,
+              "end_time": 38.0,
+              "label": "不良价值观",
+              "sub_label": "极端行为羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "画面中一名面部污损的女子被铁链锁在石柱上，呈现被虐待和非法拘禁的状态。",
+              "risk_level": "高风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 46.0,
+              "end_time": 51.0,
+              "label": "暴力伤害",
+              "sub_label": "殴打/肢体冲突",
+              "decision": "BLOCK",
+              "decision_detail": "拼图3至8（00:46-00:51）显示，一只脚猛烈踢中老年男子的腹部，导致该男子面露惊恐、腾空飞起，最终重重摔倒在荒地上。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 52.0,
+              "end_time": 60.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "血腥暴力",
+              "decision": "REVIEW",
+              "decision_detail": "图1(00:52)显示有人被击倒在地并扬起灰尘；图4-6(00:56-00:58)显示一名穿西装的老年男性表情痛苦地趴在地上并捂着胸口，疑似受到攻击或惊吓导致身体不适；图7-8(00:59-01:00)特写了地上的金属棍，随后一只手抓住了金属棍，准备作为武器使用。；画面连续展现了暴力冲突的后果（人员倒地、老人痛苦挣扎）以及准备使用钝器（金属棍）的动作，虽然未见明显血腥，但整体呈现了较强的暴力冲突和伤害倾向，容易引起观感不适。",
+              "risk_level": "中风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 61.0,
+              "end_time": 64.0,
+              "label": "暴力伤害",
+              "sub_label": "殴打/威胁",
+              "decision": "BLOCK",
+              "decision_detail": "画面中老年男性手持棍棒，表情凶狠，并在01:04高举棍棒作势要打人。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 61.0,
+              "end_time": 62.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "字幕中出现脏话“他妈”。",
+              "risk_level": "低风险",
+              "confidence": 0.98
+            }
+          ]
+        },
+        "audio_results": {
+          "decision": "BLOCK",
+          "details": [
+            {
+              "start_time": 31.0,
+              "end_time": 32.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "台词中出现把人比作狗的侮辱性言辞，贬低他人人格。",
+              "text": "是我们陆少养的一条狗",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 33.0,
+              "end_time": 34.0,
+              "label": "违法犯罪行为",
+              "sub_label": "中等违法犯罪",
+              "decision": "REVIEW",
+              "decision_detail": "台词暗示角色被非法控制、拘禁或绑架。",
+              "text": "你现在落在我们手里",
+              "confidence": 0.85
+            },
+            {
+              "start_time": 25.0,
+              "end_time": 25.0,
+              "label": "暴力伤害",
+              "sub_label": "血腥暴力/受虐惨状",
+              "decision": "BLOCK",
+              "decision_detail": "画面中名为“萧梦雪”的女性角色满脸伤痕、污渍，衣衫褴褛地蜷缩在地上，表现出极度恐惧和受虐后的惨状。结合前文台词“不知道这五年肖梦雪到底怎么样了”，暗示其遭受了长期的折磨。",
+              "text": "萧梦雪",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 21.0,
+              "end_time": 25.0,
+              "label": "质量问题",
+              "sub_label": "台词字幕错误",
+              "decision": "REVIEW",
+              "decision_detail": "00:21字幕显示为“肖梦雪”，而00:25角色名标注为“萧梦雪”，存在前后名字不一致的错别字问题。",
+              "text": "肖梦雪到底怎么样了, 萧梦雪",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 30.0,
+              "end_time": 34.0,
+              "label": "不良价值观",
+              "sub_label": "极端行为羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "画面中女子被铁链锁住，老年男子对其进行威胁，字幕出现“是我们陆少养的一条狗”，将人贬低为动物进行极端人格侮辱。",
+              "text": "是我们陆少养的一条狗",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 61.0,
+              "end_time": 62.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "字幕中出现脏话“他妈”。",
+              "text": "臭小子你他妈谁呀",
+              "confidence": 0.98
+            }
+          ]
+        },
+        "annotations": [
+          "视频31秒 命中 不良价值观-语言羞辱：台词中出现把人比作狗的侮辱性言辞，贬低他人人格。",
+          "视频33秒 命中 违法犯罪行为-中等违法犯罪：台词暗示角色被非法控制、拘禁或绑架。",
+          "视频2秒 命中 低俗与画面尺度-血腥暴力：画面中一名身穿迷彩服的男子手持一把带有明显红色血迹的刀具特写。",
+          "视频25秒 命中 暴力伤害-血腥暴力/受虐惨状：画面中名为“萧梦雪”的女性角色满脸伤痕、污渍，衣衫褴褛地蜷缩在地上，表现出极度恐惧和受虐后的惨状。结合前文台词“不知道这五年肖梦雪到底怎么样了”，暗示其遭受了长期的折磨。",
+          "视频21秒 命中 质量问题-台词字幕错误：00:21字幕显示为“肖梦雪”，而00:25角色名标注为“萧梦雪”，存在前后名字不一致的错别字问题。",
+          "视频30秒 命中 不良价值观-极端行为羞辱：画面中女子被铁链锁住，老年男子对其进行威胁，字幕出现“是我们陆少养的一条狗”，将人贬低为动物进行极端人格侮辱。",
+          "视频30秒 命中 违法犯罪行为-绑架/非法拘禁：画面显示女子衣衫褴褛、带有伤痕，被粗大的铁链锁在墙上，明显处于被非法拘禁和虐待的状态。",
+          "视频35秒 命中 不良价值观-极端行为羞辱：画面中一名面部污损的女子被铁链锁在石柱上，呈现被虐待和非法拘禁的状态。",
+          "视频46秒 命中 暴力伤害-殴打/肢体冲突：拼图3至8（00:46-00:51）显示，一只脚猛烈踢中老年男子的腹部，导致该男子面露惊恐、腾空飞起，最终重重摔倒在荒地上。",
+          "视频52秒 命中 低俗与画面尺度-血腥暴力：图1(00:52)显示有人被击倒在地并扬起灰尘；图4-6(00:56-00:58)显示一名穿西装的老年男性表情痛苦地趴在地上并捂着胸口，疑似受到攻击或惊吓导致身体不适；图7-8(00:59-01:00)特写了地上的金属棍，随后一只手抓住了金属棍，准备作为武器使用。；画面连续展现了暴力冲突的后果（人员倒地、老人痛苦挣扎）以及准备使用钝器（金属棍）的动作，虽然未见明显血腥，但整体呈现了较强的暴力冲突和伤害倾向，容易引起观感不适。",
+          "视频61秒 命中 暴力伤害-殴打/威胁：画面中老年男性手持棍棒，表情凶狠，并在01:04高举棍棒作势要打人。",
+          "视频61秒 命中 不良价值观-语言羞辱：字幕中出现脏话“他妈”。"
+        ]
+      },
+      "completed_at": 1783587440.5241797
+    },
+    {
+      "data_id": "capacity-guard-20-20260709165057-00008",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1780972559338_334.mp4",
+      "submitted_at": 1783587058.5683742,
+      "submit_elapsed_seconds": 0.014325808035209775,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-guard-20-20260709165057-00008",
+        "task_id": "capacity-guard-20-20260709165057-00008",
+        "review_id": "review_a9f32449f4f1c709",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "completed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-guard-20-20260709165057-00008",
+        "task_id": "capacity-guard-20-20260709165057-00008",
+        "status": "completed",
+        "final_label": "BLOCK",
+        "decision_label": "BLOCK",
+        "summary": "本片不可过审。核心问题在于严重触碰了民族历史敏感红线。在古代背景下引入日本武士形象，并使用“倭国人”称呼，结合下跪磕头等极端羞辱情节制造民族对立爽点，属于平台底线禁止内容。修改优先级最高：必须彻底替换该角色的视觉形象（服饰、发型、佩刀），将其完全架空化；同时必须修改台词，删除“倭国人”及所有涉及下跪磕头的极端羞辱性赌注。此外，需顺带修改开头的语言暴力台词并修复字幕质量问题。若无法彻底架空化处理，建议直接废弃该片段。",
+        "risk_score": 100.0,
+        "video_results": {
+          "decision": "BLOCK",
+          "frames": [
+            {
+              "time": 4.0,
+              "end_time": 5.0,
+              "label": "暴力伤害",
+              "sub_label": "语言暴力/威胁",
+              "decision": "BLOCK",
+              "decision_detail": "画面中女子表情愤怒，字幕显示“再看把你眼睛挖了喂狗”。；台词包含“挖眼睛喂狗”等带有血腥和残忍色彩的威胁性语言，容易引起观众不适，属于语言暴力。",
+              "risk_level": "低风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 10.0,
+              "end_time": 15.0,
+              "label": "军党政及民族红线",
+              "sub_label": "民族历史敏感",
+              "decision": "BLOCK",
+              "decision_detail": "画面中出现穿着日本武士服、佩戴武士刀的男性角色，与中国古装女性角色比试，并提出“你们输了都要行跪拜之礼”的惩罚要求。；出现日本武士形象在中国古代背景下耀武扬威，并要求中国人行跪拜之礼，容易引发民族情绪，涉嫌近代屈辱史擦边和伤害民族情感。",
+              "risk_level": "不予过审",
+              "confidence": 0.95
+            },
+            {
+              "time": 9.0,
+              "end_time": 12.0,
+              "label": "质量问题",
+              "sub_label": "字幕错误",
+              "decision": "REVIEW",
+              "decision_detail": "图2和图3的字幕均为“赶紧的第一局我们比画”，图4和图5的字幕均为“看谁画的像”，在不同人物画面下出现重复字幕。；存在字幕重复或音画错位等制作质量问题。",
+              "risk_level": "低风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 19.0,
+              "end_time": 25.0,
+              "label": "民族历史敏感",
+              "sub_label": "倭国/日本武士元素",
+              "decision": "BLOCK",
+              "decision_detail": "在00:19至00:25的画面中（帧2、5、6、7、8），明确出现了一名穿着日本传统武士服、腰间佩戴日本武士刀的男子，站在中国古代朝堂之上，并与中方人物对峙。",
+              "risk_level": "不予过审",
+              "confidence": 0.95
+            },
+            {
+              "time": 28.0,
+              "end_time": 31.0,
+              "label": "军党政及民族红线",
+              "sub_label": "民族历史敏感",
+              "decision": "REVIEW",
+              "decision_detail": "画面中女角色指着对方，字幕显示“你倭国人”、“见到我大钱人和大钱后代”、“必须跪下磕三个响头”。",
+              "risk_level": "不予过审",
+              "confidence": 0.98
+            },
+            {
+              "time": 53.0,
+              "end_time": 54.0,
+              "label": "民族历史敏感",
+              "sub_label": "倭国/日本武士形象",
+              "decision": "BLOCK",
+              "decision_detail": "帧6(00:53)和帧7(00:54)的画面中，出现了一名穿着典型日本武士服饰（和服）、梳着武士发髻（类似月代头）、腰间佩刀的男子。；在古装短剧中出现明显的日本武士形象，通常涉及抗倭、民族冲突等敏感历史题材，极易引发民族情绪和历史虚无主义争议，触碰民族历史敏感红线。",
+              "risk_level": "不予过审",
+              "confidence": 0.95
+            }
+          ]
+        },
+        "audio_results": {
+          "decision": "BLOCK",
+          "details": [
+            {
+              "start_time": 4.0,
+              "end_time": 5.0,
+              "label": "暴力伤害",
+              "sub_label": "语言暴力/威胁",
+              "decision": "BLOCK",
+              "decision_detail": "画面中女子表情愤怒，字幕显示“再看把你眼睛挖了喂狗”。；台词包含“挖眼睛喂狗”等带有血腥和残忍色彩的威胁性语言，容易引起观众不适，属于语言暴力。",
+              "text": "再看把你眼睛挖了喂狗",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 9.0,
+              "end_time": 12.0,
+              "label": "质量问题",
+              "sub_label": "字幕错误",
+              "decision": "REVIEW",
+              "decision_detail": "图2和图3的字幕均为“赶紧的第一局我们比画”，图4和图5的字幕均为“看谁画的像”，在不同人物画面下出现重复字幕。；存在字幕重复或音画错位等制作质量问题。",
+              "text": "赶紧的第一局我们比画 看谁画的像",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 28.0,
+              "end_time": 31.0,
+              "label": "军党政及民族红线",
+              "sub_label": "民族历史敏感",
+              "decision": "REVIEW",
+              "decision_detail": "画面中女角色指着对方，字幕显示“你倭国人”、“见到我大钱人和大钱后代”、“必须跪下磕三个响头”。",
+              "text": "你倭国人 见到我大钱人和大钱后代 必须跪下磕三个响头",
+              "confidence": 0.98
+            }
+          ]
+        },
+        "annotations": [
+          "视频4秒 命中 暴力伤害-语言暴力/威胁：画面中女子表情愤怒，字幕显示“再看把你眼睛挖了喂狗”。；台词包含“挖眼睛喂狗”等带有血腥和残忍色彩的威胁性语言，容易引起观众不适，属于语言暴力。",
+          "视频10秒 命中 军党政及民族红线-民族历史敏感：画面中出现穿着日本武士服、佩戴武士刀的男性角色，与中国古装女性角色比试，并提出“你们输了都要行跪拜之礼”的惩罚要求。；出现日本武士形象在中国古代背景下耀武扬威，并要求中国人行跪拜之礼，容易引发民族情绪，涉嫌近代屈辱史擦边和伤害民族情感。",
+          "视频9秒 命中 质量问题-字幕错误：图2和图3的字幕均为“赶紧的第一局我们比画”，图4和图5的字幕均为“看谁画的像”，在不同人物画面下出现重复字幕。；存在字幕重复或音画错位等制作质量问题。",
+          "视频19秒 命中 民族历史敏感-倭国/日本武士元素：在00:19至00:25的画面中（帧2、5、6、7、8），明确出现了一名穿着日本传统武士服、腰间佩戴日本武士刀的男子，站在中国古代朝堂之上，并与中方人物对峙。",
+          "视频28秒 命中 军党政及民族红线-民族历史敏感：画面中女角色指着对方，字幕显示“你倭国人”、“见到我大钱人和大钱后代”、“必须跪下磕三个响头”。",
+          "视频53秒 命中 民族历史敏感-倭国/日本武士形象：帧6(00:53)和帧7(00:54)的画面中，出现了一名穿着典型日本武士服饰（和服）、梳着武士发髻（类似月代头）、腰间佩刀的男子。；在古装短剧中出现明显的日本武士形象，通常涉及抗倭、民族冲突等敏感历史题材，极易引发民族情绪和历史虚无主义争议，触碰民族历史敏感红线。"
+        ]
+      },
+      "completed_at": 1783587350.4256773
+    },
+    {
+      "data_id": "capacity-guard-20-20260709165057-00009",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1782549515398_225.mp4",
+      "submitted_at": 1783587058.6828895,
+      "submit_elapsed_seconds": 0.014344166964292526,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-guard-20-20260709165057-00009",
+        "task_id": "capacity-guard-20-20260709165057-00009",
+        "review_id": "review_e5398af2179357b9",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "completed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-guard-20-20260709165057-00009",
+        "task_id": "capacity-guard-20-20260709165057-00009",
+        "status": "completed",
+        "final_label": "BLOCK",
+        "decision_label": "BLOCK",
+        "summary": "本片整体为古装言情权谋题材，主线讲述死敌家族被赐婚的开局故事。剧情框架无重大违规，但存在两个主要问题：一是视频前段存在严重的字幕乱码，属于质量问题；二是两位父亲对峙时出现了“嫁过去定会弄你全家呀”这种极具现代网络粗口色彩的暴力威胁台词，存在不良价值观导向。建议优先修复字幕乱码，并将违规台词替换为符合古代语境的表达，修改后可予以通过。",
+        "risk_score": 81.0,
+        "video_results": {
+          "decision": "BLOCK",
+          "frames": [
+            {
+              "time": 0.0,
+              "end_time": 88.0,
+              "label": "质量问题",
+              "sub_label": "字幕乱码/OCR识别错误",
+              "decision": "REVIEW",
+              "decision_detail": "提供的字幕文本中存在大量无意义的符号、英文字母和乱码组合，如 '== {= — = ='、'4 | = ——— 一一一 - ooo'、'we) Os . = Ay Seem on’ 5' 等，仅有一句可读中文 '谢将军我外子斐环可是'。",
+              "risk_level": "低风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 21.0,
+              "end_time": 22.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱/暴力威胁",
+              "decision": "BLOCK",
+              "decision_detail": "画面中两名古代男子近距离对峙，字幕显示“嫁过去定会弄你全家呀”。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 45.0,
+              "end_time": 46.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "血腥暴力",
+              "decision": "REVIEW",
+              "decision_detail": "画面特写显示手指被针扎破，有一小滴血；字幕显示“哎呀小姐的手流血了”。；刺绣扎破手指属于生活中的轻微意外，且仅有一滴血，不属于刻意展示的血腥暴力或自残行为。",
+              "risk_level": "低风险",
+              "confidence": 0.95
+            }
+          ]
+        },
+        "audio_results": {
+          "decision": "BLOCK",
+          "details": [
+            {
+              "start_time": 0.0,
+              "end_time": 88.0,
+              "label": "质量问题",
+              "sub_label": "字幕乱码/OCR识别错误",
+              "decision": "REVIEW",
+              "decision_detail": "提供的字幕文本中存在大量无意义的符号、英文字母和乱码组合，如 '== {= — = ='、'4 | = ——— 一一一 - ooo'、'we) Os . = Ay Seem on’ 5' 等，仅有一句可读中文 '谢将军我外子斐环可是'。",
+              "text": "00:04 == {= — = =\n00:08 4 | = ——— 一一一 - ooo\n00:12 we) Os . = Ay Seem on’ 5",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 21.0,
+              "end_time": 22.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱/暴力威胁",
+              "decision": "BLOCK",
+              "decision_detail": "画面中两名古代男子近距离对峙，字幕显示“嫁过去定会弄你全家呀”。",
+              "text": "嫁过去定会弄你全家呀",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 45.0,
+              "end_time": 46.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "血腥暴力",
+              "decision": "REVIEW",
+              "decision_detail": "画面特写显示手指被针扎破，有一小滴血；字幕显示“哎呀小姐的手流血了”。；刺绣扎破手指属于生活中的轻微意外，且仅有一滴血，不属于刻意展示的血腥暴力或自残行为。",
+              "text": "哎呀小姐的手流血了",
+              "confidence": 0.95
+            }
+          ]
+        },
+        "annotations": [
+          "视频0秒 命中 质量问题-字幕乱码/OCR识别错误：提供的字幕文本中存在大量无意义的符号、英文字母和乱码组合，如 '== {= — = ='、'4 | = ——— 一一一 - ooo'、'we) Os . = Ay Seem on’ 5' 等，仅有一句可读中文 '谢将军我外子斐环可是'。",
+          "视频21秒 命中 不良价值观-语言羞辱/暴力威胁：画面中两名古代男子近距离对峙，字幕显示“嫁过去定会弄你全家呀”。",
+          "视频45秒 命中 低俗与画面尺度-血腥暴力：画面特写显示手指被针扎破，有一小滴血；字幕显示“哎呀小姐的手流血了”。；刺绣扎破手指属于生活中的轻微意外，且仅有一滴血，不属于刻意展示的血腥暴力或自残行为。"
+        ]
+      },
+      "completed_at": 1783587580.703711
+    },
+    {
+      "data_id": "capacity-guard-20-20260709165057-00010",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1782545070010_757.mp4",
+      "submitted_at": 1783587058.798032,
+      "submit_elapsed_seconds": 0.014961158973164856,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-guard-20-20260709165057-00010",
+        "task_id": "capacity-guard-20-20260709165057-00010",
+        "review_id": "review_8f929b83bda73adb",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "completed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-guard-20-20260709165057-00010",
+        "task_id": "capacity-guard-20-20260709165057-00010",
+        "status": "completed",
+        "final_label": "BLOCK",
+        "decision_label": "BLOCK",
+        "summary": "本片不可过审。视频最大的问题在于结尾处出现了铁链锁人、高跟鞋踩脸、栓狗链等极端践踏人格尊严的暴力虐待和羞辱情节，属于严重的高风险违规，必须彻底删除。此外，片中还存在地下黑拳背景、较多脏话与歧视性台词、女性角色暴露着装及带有BDSM暗示的软色情擦边行为，以及部分血腥特写。修改优先级：第一，彻底删除结尾的极端行为羞辱片段；第二，删减软色情擦边镜头；第三，净化全片台词，消除脏话和歧视语；第四，弱化血腥暴力展示。",
+        "risk_score": 100.0,
+        "video_results": {
+          "decision": "BLOCK",
+          "frames": [
+            {
+              "time": 49.0,
+              "end_time": 56.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "台词中出现脏话“他妈的”以及带有阶级歧视色彩的侮辱性词汇“下等人”、“垃圾”。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 8.0,
+              "end_time": 15.0,
+              "label": "违法犯罪行为",
+              "sub_label": "中等违法犯罪",
+              "decision": "REVIEW",
+              "decision_detail": "图1（00:08）字幕明确标示“地下拳馆”；图3-图6展示了狂热的观众和八角笼场地；图7-图8（00:14-00:15）展示了两名男子在笼内进行激烈的无限制格斗（包含膝击动作）。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 24.0,
+              "end_time": 30.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "血腥暴力",
+              "decision": "REVIEW",
+              "decision_detail": "图1至图4，以及图7中，光头男子在格斗过程中嘴角和下巴有明显流血，并在00:30出现面部流血的特写镜头，表情狰狞，且有咬对方拳套的野蛮动作。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 24.0,
+              "end_time": 24.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "图1画面字幕出现辱骂性词汇“狗东西”。",
+              "risk_level": "低风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 40.0,
+              "end_time": 40.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "画面中光头壮汉逼问年轻男子，字幕出现明显的脏话“你他妈能打又怎样”。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 41.0,
+              "end_time": 42.0,
+              "label": "违法犯罪行为",
+              "sub_label": "中等违法犯罪",
+              "decision": "REVIEW",
+              "decision_detail": "结合笼中格斗场景，字幕出现“还不是能用钱 买通你这个废物”，暗示地下黑拳和金钱操纵比赛（打假赛）。",
+              "risk_level": "中风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 44.0,
+              "end_time": 47.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "血腥暴力",
+              "decision": "REVIEW",
+              "decision_detail": "两人在笼中激烈打斗，年轻男子被打倒在地，00:47画面显示其嘴角有明显血迹。",
+              "risk_level": "低风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 48.0,
+              "end_time": 55.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "字幕中出现脏话和侮辱性词汇：“永远都是他妈的下等人”、“和你那个没用的瞎子爹一样”。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 52.0,
+              "end_time": 53.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "血腥暴力",
+              "decision": "REVIEW",
+              "decision_detail": "画面显示光头壮汉嘴角流血。",
+              "risk_level": "低风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 85.0,
+              "end_time": 87.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "01:25至01:27画面中，女性角色（张青雨）穿着深V红色上衣，01:27的全身镜头显示其穿着高开叉裙子，并露出大腿和吊带袜/网袜，着装较为暴露，具有性暗示意味。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 95.0,
+              "end_time": 96.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "画面显示女性穿着高开叉裙和网袜，在封闭的休息室内向赤裸上身的男性走去，并在其面前做出脱下外套的诱惑性动作。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 93.0,
+              "end_time": 93.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "血腥暴力",
+              "decision": "REVIEW",
+              "decision_detail": "画面特写显示男性面部有明显的伤痕、血迹和淤青。",
+              "risk_level": "低风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 98.0,
+              "end_time": 104.0,
+              "label": "不良价值观",
+              "sub_label": "极端行为羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "01:38-01:41画面中，一名赤裸上身的男子被铁链锁住身体，遭到两名男子持棍棒殴打，受害者手臂可见明显血迹，表情痛苦；01:44画面中，受害者倒在地上，嘴角流血，被一名女性用高跟鞋踩在脸上。",
+              "risk_level": "高风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 103.0,
+              "end_time": 104.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "01:43-01:44画面特写了一名女性穿着高开叉裙、黑丝网袜和高跟鞋走近，随后用高跟鞋踩在倒地男子的脸上。",
+              "risk_level": "中风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 110.0,
+              "end_time": 112.0,
+              "label": "不良价值观",
+              "sub_label": "极端行为羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "画面（图5）显示一女子将类似狗链的物品套在倒地男子的脖子上，字幕（图5、图6）显示“你为什么就不能当一条听话的狗呢”。",
+              "risk_level": "高风险",
+              "confidence": 0.98
+            },
+            {
+              "time": 105.0,
+              "end_time": 107.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "血腥暴力",
+              "decision": "REVIEW",
+              "decision_detail": "画面（图1-3）显示一男子满脸是血倒在地上，表情痛苦，并被穿着网袜的脚踩踏。",
+              "risk_level": "中风险",
+              "confidence": 0.9
+            }
+          ]
+        },
+        "audio_results": {
+          "decision": "BLOCK",
+          "details": [
+            {
+              "start_time": 49.0,
+              "end_time": 56.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "台词中出现脏话“他妈的”以及带有阶级歧视色彩的侮辱性词汇“下等人”、“垃圾”。",
+              "text": "永远都是他妈的下等人 和\n都是垃圾",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 8.0,
+              "end_time": 15.0,
+              "label": "违法犯罪行为",
+              "sub_label": "中等违法犯罪",
+              "decision": "REVIEW",
+              "decision_detail": "图1（00:08）字幕明确标示“地下拳馆”；图3-图6展示了狂热的观众和八角笼场地；图7-图8（00:14-00:15）展示了两名男子在笼内进行激烈的无限制格斗（包含膝击动作）。",
+              "text": "地下拳馆, 加油",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 24.0,
+              "end_time": 24.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "图1画面字幕出现辱骂性词汇“狗东西”。",
+              "text": "狗东西",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 40.0,
+              "end_time": 40.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "画面中光头壮汉逼问年轻男子，字幕出现明显的脏话“你他妈能打又怎样”。",
+              "text": "你他妈能打又怎样",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 41.0,
+              "end_time": 42.0,
+              "label": "违法犯罪行为",
+              "sub_label": "中等违法犯罪",
+              "decision": "REVIEW",
+              "decision_detail": "结合笼中格斗场景，字幕出现“还不是能用钱 买通你这个废物”，暗示地下黑拳和金钱操纵比赛（打假赛）。",
+              "text": "还不是能用钱 买通你这个废物",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 48.0,
+              "end_time": 55.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "字幕中出现脏话和侮辱性词汇：“永远都是他妈的下等人”、“和你那个没用的瞎子爹一样”。",
+              "text": "永远都是他妈的下等人, 没用的瞎子爹一样",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 110.0,
+              "end_time": 112.0,
+              "label": "不良价值观",
+              "sub_label": "极端行为羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "画面（图5）显示一女子将类似狗链的物品套在倒地男子的脖子上，字幕（图5、图6）显示“你为什么就不能当一条听话的狗呢”。",
+              "text": "你为什么就不能当一条听话的狗呢",
+              "confidence": 0.98
+            }
+          ]
+        },
+        "annotations": [
+          "视频49秒 命中 不良价值观-语言羞辱：台词中出现脏话“他妈的”以及带有阶级歧视色彩的侮辱性词汇“下等人”、“垃圾”。",
+          "视频8秒 命中 违法犯罪行为-中等违法犯罪：图1（00:08）字幕明确标示“地下拳馆”；图3-图6展示了狂热的观众和八角笼场地；图7-图8（00:14-00:15）展示了两名男子在笼内进行激烈的无限制格斗（包含膝击动作）。",
+          "视频24秒 命中 低俗与画面尺度-血腥暴力：图1至图4，以及图7中，光头男子在格斗过程中嘴角和下巴有明显流血，并在00:30出现面部流血的特写镜头，表情狰狞，且有咬对方拳套的野蛮动作。",
+          "视频24秒 命中 不良价值观-语言羞辱：图1画面字幕出现辱骂性词汇“狗东西”。",
+          "视频40秒 命中 不良价值观-语言羞辱：画面中光头壮汉逼问年轻男子，字幕出现明显的脏话“你他妈能打又怎样”。",
+          "视频41秒 命中 违法犯罪行为-中等违法犯罪：结合笼中格斗场景，字幕出现“还不是能用钱 买通你这个废物”，暗示地下黑拳和金钱操纵比赛（打假赛）。",
+          "视频44秒 命中 低俗与画面尺度-血腥暴力：两人在笼中激烈打斗，年轻男子被打倒在地，00:47画面显示其嘴角有明显血迹。",
+          "视频48秒 命中 不良价值观-语言羞辱：字幕中出现脏话和侮辱性词汇：“永远都是他妈的下等人”、“和你那个没用的瞎子爹一样”。",
+          "视频52秒 命中 低俗与画面尺度-血腥暴力：画面显示光头壮汉嘴角流血。",
+          "视频85秒 命中 低俗与画面尺度-软色情擦边：01:25至01:27画面中，女性角色（张青雨）穿着深V红色上衣，01:27的全身镜头显示其穿着高开叉裙子，并露出大腿和吊带袜/网袜，着装较为暴露，具有性暗示意味。",
+          "视频95秒 命中 低俗与画面尺度-软色情擦边：画面显示女性穿着高开叉裙和网袜，在封闭的休息室内向赤裸上身的男性走去，并在其面前做出脱下外套的诱惑性动作。",
+          "视频93秒 命中 低俗与画面尺度-血腥暴力：画面特写显示男性面部有明显的伤痕、血迹和淤青。",
+          "视频98秒 命中 不良价值观-极端行为羞辱：01:38-01:41画面中，一名赤裸上身的男子被铁链锁住身体，遭到两名男子持棍棒殴打，受害者手臂可见明显血迹，表情痛苦；01:44画面中，受害者倒在地上，嘴角流血，被一名女性用高跟鞋踩在脸上。",
+          "视频103秒 命中 低俗与画面尺度-软色情擦边：01:43-01:44画面特写了一名女性穿着高开叉裙、黑丝网袜和高跟鞋走近，随后用高跟鞋踩在倒地男子的脸上。",
+          "视频110秒 命中 不良价值观-极端行为羞辱：画面（图5）显示一女子将类似狗链的物品套在倒地男子的脖子上，字幕（图5、图6）显示“你为什么就不能当一条听话的狗呢”。",
+          "视频105秒 命中 低俗与画面尺度-血腥暴力：画面（图1-3）显示一男子满脸是血倒在地上，表情痛苦，并被穿着网袜的脚踩踏。"
+        ]
+      },
+      "completed_at": 1783587490.574226
+    }
+  ]
+}

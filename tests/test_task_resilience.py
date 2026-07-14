@@ -1,0 +1,397 @@
+import os
+import tempfile
+from pathlib import Path
+import asyncio
+from contextlib import asynccontextmanager
+import gc
+import warnings
+
+os.environ["VIDEO_REVIEW_DATA_DIR"] = tempfile.mkdtemp(prefix="video-review-test-")
+
+from video_review.models import CreateReviewRequest, ReviewJob, ReviewStatus, SegmentPlan, SegmentReviewResult
+from video_review.config import settings
+
+settings.data_dir = Path(os.environ["VIDEO_REVIEW_DATA_DIR"])
+
+import video_review.tasks as tasks
+from video_review.tasks import (
+    _analyze_frame_batch_resilient,
+    _analyze_subtitle_resilient,
+    _exception_text,
+    _is_rate_limit_error,
+    _is_transient_model_error,
+    _manual_review_result,
+    _persist_job_with_retry,
+    _run_frame_batches_concurrently,
+)
+
+
+def test_gateway_timeout_is_transient_model_error():
+    exc = RuntimeError("504 Gateway Time-out")
+
+    assert _is_transient_model_error(exc)
+
+
+def test_rate_limit_error_is_detected_separately():
+    assert _is_rate_limit_error(RuntimeError("429 RESOURCE_EXHAUSTED"))
+    assert not _is_rate_limit_error(RuntimeError("504 Gateway Time-out"))
+
+
+def test_timeout_error_has_non_empty_error_text():
+    assert _exception_text(asyncio.TimeoutError()) == "TimeoutError: 模型调用超时"
+
+
+def test_stale_reconcile_sends_failed_callback(monkeypatch):
+    async def scenario():
+        request = CreateReviewRequest(
+            video_url="https://example.com/a.mp4",
+            callback_url="https://audit.example.com/callback",
+            callback_secret="callback-secret",
+        )
+        calls = []
+
+        async def fake_mark_stale_processing_jobs_failed(**kwargs):
+            return [{"review_id": "review_stale", "request": request.model_dump(mode="json")}]
+
+        async def fake_update_job(review_id, **kwargs):
+            calls.append(("update", review_id, kwargs))
+
+        async def fake_add_event(review_id, event_type, data):
+            calls.append(("event", review_id, event_type, data))
+
+        async def fake_send_review_callback(review_id, callback_request, status, **kwargs):
+            calls.append(("callback", review_id, callback_request, status, kwargs))
+
+        monkeypatch.setattr(tasks, "mark_stale_processing_jobs_failed", fake_mark_stale_processing_jobs_failed)
+        monkeypatch.setattr(tasks, "update_job", fake_update_job)
+        monkeypatch.setattr(tasks, "add_event", fake_add_event)
+        monkeypatch.setattr(tasks, "send_review_callback", fake_send_review_callback)
+
+        count = await tasks.reconcile_stale_reviews()
+
+        assert count == 1
+        callback = next(item for item in calls if item[0] == "callback")
+        assert callback[1] == "review_stale"
+        assert callback[3] == "failed"
+        assert callback[4]["error"] == "STALE_PROCESSING_TIMEOUT"
+
+    asyncio.run(scenario())
+
+
+def test_model_timeout_closes_unstarted_coroutine_when_qpm_slot_fails(monkeypatch):
+    async def scenario():
+        @asynccontextmanager
+        async def failing_slot():
+            raise TimeoutError("qpm full")
+            yield
+
+        class UnstartedAwaitable:
+            def __init__(self):
+                self.closed = False
+
+            def close(self):
+                self.closed = True
+
+            def __await__(self):
+                async def inner():
+                    return "unused"
+
+                return inner().__await__()
+
+        monkeypatch.setattr(tasks, "model_qpm_slot", failing_slot)
+        awaitable = UnstartedAwaitable()
+
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always", RuntimeWarning)
+            try:
+                await tasks._call_model_with_timeout(awaitable)
+            except TimeoutError:
+                pass
+            gc.collect()
+
+        assert awaitable.closed
+        assert not [
+            warning
+            for warning in caught
+            if "was never awaited" in str(warning.message)
+        ]
+
+
+def test_terminal_job_persistence_retries_transient_database_failure(monkeypatch):
+    async def scenario():
+        attempts = 0
+
+        async def fake_persist_job(job):
+            nonlocal attempts
+            attempts += 1
+            if attempts < 3:
+                raise RuntimeError("pool busy")
+
+        async def fake_sleep(seconds):
+            return None
+
+        monkeypatch.setattr(tasks, "persist_job", fake_persist_job)
+        monkeypatch.setattr(tasks.asyncio, "sleep", fake_sleep)
+        job = ReviewJob(
+            review_id="review_terminal",
+            status=ReviewStatus.COMPLETED,
+            phase="done",
+            message="审核完成",
+        )
+
+        await _persist_job_with_retry(job, attempts=5)
+
+        assert attempts == 3
+
+    asyncio.run(scenario())
+
+
+def test_subtitle_timeout_degrades_to_visual_review(monkeypatch):
+    async def scenario():
+        events = []
+
+        class Analyzer:
+            async def analyze_subtitle_text(self, *args, **kwargs):
+                raise asyncio.TimeoutError
+
+        async def fake_add_event(review_id, event_type, data):
+            events.append((review_id, event_type, data))
+
+        monkeypatch.setattr(tasks, "add_event", fake_add_event)
+        monkeypatch.setattr(settings, "model_qpm_limit", 0)
+
+        result = await _analyze_subtitle_resilient(
+            review_id="review_test",
+            analyzer=Analyzer(),
+            subtitle_text="测试字幕",
+            video_title="测试视频",
+            subtitle_source="ocr",
+        )
+
+        assert result is None
+        assert "继续视觉审核" in events[-1][2]["text"]
+        assert "TimeoutError" in events[-1][2]["text"]
+
+    asyncio.run(scenario())
+
+
+def test_manual_review_result_marks_batch_time_range():
+    segment = SegmentPlan(
+        segment_index=1,
+        start_seconds=0,
+        end_seconds=10,
+        start_time="00:00",
+        end_time="00:10",
+    )
+    batch = [
+        {"timestamp": "00:04", "timestamp_seconds": 4, "frame_index": 5},
+        {"timestamp": "00:05", "timestamp_seconds": 5, "frame_index": 6},
+    ]
+
+    result = _manual_review_result(segment, batch, RuntimeError("504 Gateway Time-out"))
+
+    assert result.findings[0].sub_category == "模型超时人工复核"
+    assert result.findings[0].start_time == "00:04"
+    assert result.findings[0].end_time == "00:05"
+    assert result.findings[0].value_correction_advice.main
+
+
+def test_frame_batches_run_with_bounded_concurrency(monkeypatch):
+    async def scenario():
+        settings.frame_batch_concurrency = 2
+        segment = SegmentPlan(
+            segment_index=1,
+            start_seconds=0,
+            end_seconds=4,
+            start_time="00:00",
+            end_time="00:04",
+        )
+        active = 0
+        max_active = 0
+
+        async def fake_add_event(*args, **kwargs):
+            return None
+
+        async def fake_analyze(**kwargs):
+            nonlocal active, max_active
+            active += 1
+            max_active = max(max_active, active)
+            await asyncio.sleep(0.01)
+            active -= 1
+            batch = kwargs["batch"]
+            return [
+                SegmentReviewResult(
+                    segment_index=segment.segment_index,
+                    start_time=batch[0]["timestamp"],
+                    end_time=batch[-1]["timestamp"],
+                    summary=batch[0]["timestamp"],
+                )
+            ]
+
+        monkeypatch.setattr(tasks, "add_event", fake_add_event)
+        monkeypatch.setattr(tasks, "_analyze_frame_batch_resilient", fake_analyze)
+        batches = [
+            (1, [{"timestamp": "00:00", "timestamp_seconds": 0, "frame_index": 1}]),
+            (2, [{"timestamp": "00:01", "timestamp_seconds": 1, "frame_index": 2}]),
+            (3, [{"timestamp": "00:02", "timestamp_seconds": 2, "frame_index": 3}]),
+        ]
+
+        results = await _run_frame_batches_concurrently(
+            review_id="review_test",
+            analyzer=object(),
+            policy=object(),
+            asset=object(),
+            segment=segment,
+            batches=batches,
+            batch_total=len(batches),
+            frame_fps=1,
+            video_title="test",
+        )
+
+        assert max_active == 2
+        assert [result.summary for result in results] == ["00:00", "00:01", "00:02"]
+
+    asyncio.run(scenario())
+
+
+def test_frame_batch_timeout_stops_splitting_at_configured_depth(monkeypatch):
+    async def scenario():
+        settings.frame_sheet_enabled = False
+        settings.frame_batch_min_size = 4
+        settings.frame_batch_max_split_depth = 1
+        calls = 0
+
+        class Analyzer:
+            model = "test-model"
+
+            async def analyze_frames_segment(self, *args, **kwargs):
+                return None
+
+        async def fake_timeout(operation, **kwargs):
+            nonlocal calls
+            calls += 1
+            raise asyncio.TimeoutError
+
+        async def fake_add_event(*args, **kwargs):
+            return None
+
+        async def fake_get_cache(*args, **kwargs):
+            return None
+
+        monkeypatch.setattr(tasks, "_call_model_with_timeout", fake_timeout)
+        monkeypatch.setattr(tasks, "add_event", fake_add_event)
+        monkeypatch.setattr(tasks, "get_frame_batch_cache", fake_get_cache)
+
+        segment = SegmentPlan(
+            segment_index=1,
+            start_seconds=0,
+            end_seconds=16,
+            start_time="00:00",
+            end_time="00:16",
+        )
+        batch = [
+            {"timestamp": f"00:{index:02d}", "timestamp_seconds": index, "frame_index": index}
+            for index in range(16)
+        ]
+        asset = type("Asset", (), {"sha256": "hash"})()
+        policy = type("Policy", (), {"version": "v1"})()
+
+        results = await _analyze_frame_batch_resilient(
+            review_id="review_test",
+            analyzer=Analyzer(),
+            policy=policy,
+            asset=asset,
+            segment=segment,
+            batch=batch,
+            frame_fps=1,
+            video_title="test",
+        )
+
+        assert calls == 3
+        assert len(results) == 2
+        assert all(result.findings[0].sub_category == "模型超时人工复核" for result in results)
+
+    asyncio.run(scenario())
+
+
+def test_frame_batch_rate_limit_retries_same_batch_without_splitting(monkeypatch):
+    async def scenario():
+        settings.frame_sheet_enabled = False
+        settings.model_rate_limit_retry_attempts = 2
+        settings.model_rate_limit_backoff_seconds = 0
+        settings.model_retry_jitter_seconds = 0
+        calls = 0
+
+        class Analyzer:
+            model = "test-model"
+
+            async def analyze_frames_segment(self, batch, segment, video_title=None):
+                nonlocal calls
+                calls += 1
+                if calls == 1:
+                    raise RuntimeError("429 RESOURCE_EXHAUSTED")
+                return SegmentReviewResult(
+                    segment_index=segment.segment_index,
+                    start_time=segment.start_time,
+                    end_time=segment.end_time,
+                )
+
+        async def fake_add_event(*args, **kwargs):
+            return None
+
+        async def fake_get_cache(*args, **kwargs):
+            return None
+
+        async def fake_set_cache(*args, **kwargs):
+            return None
+
+        async def fake_safe_persist(awaitable):
+            awaitable.close()
+
+        @asynccontextmanager
+        async def fake_model_qpm_slot():
+            yield
+
+        async def fake_sleep(seconds):
+            return None
+
+        async def fake_record_model_call_result(*args, **kwargs):
+            return None
+
+        monkeypatch.setattr(tasks, "model_qpm_slot", fake_model_qpm_slot)
+        monkeypatch.setattr(tasks, "record_model_call_result", fake_record_model_call_result)
+        monkeypatch.setattr("video_review.model_retry.asyncio.sleep", fake_sleep)
+        monkeypatch.setattr(tasks, "add_event", fake_add_event)
+        monkeypatch.setattr(tasks, "get_frame_batch_cache", fake_get_cache)
+        monkeypatch.setattr(tasks, "set_frame_batch_cache", fake_set_cache)
+        monkeypatch.setattr(tasks, "_safe_persist", fake_safe_persist)
+
+        segment = SegmentPlan(
+            segment_index=1,
+            start_seconds=0,
+            end_seconds=16,
+            start_time="00:00",
+            end_time="00:16",
+        )
+        batch = [
+            {"timestamp": f"00:{index:02d}", "timestamp_seconds": index, "frame_index": index}
+            for index in range(16)
+        ]
+        asset = type("Asset", (), {"sha256": "hash", "video_id": "video_test"})()
+        policy = type("Policy", (), {"version": "v1"})()
+
+        results = await _analyze_frame_batch_resilient(
+            review_id="review_test",
+            analyzer=Analyzer(),
+            policy=policy,
+            asset=asset,
+            segment=segment,
+            batch=batch,
+            frame_fps=1,
+            video_title="test",
+        )
+
+        assert calls == 2
+        assert len(results) == 1
+
+    asyncio.run(scenario())

@@ -1,0 +1,31 @@
+{
+  "generated_at": "2026-07-13T02:42:24.023291+00:00",
+  "model": "gemini-2.5-flash",
+  "base_url": "https://jzapi.duanju.com",
+  "key_pool_size": 3,
+  "stages": [
+    {
+      "qps": 1,
+      "duration_seconds": 1,
+      "total": 1,
+      "ok": 1,
+      "error": 0,
+      "success_ratio": 1.0,
+      "errors": {},
+      "by_key": {
+        "google_f1e60aaeef1d": {
+          "ok": 1
+        },
+        "google_e9a0f34d109b": {},
+        "google_0c73c95cc7f2": {}
+      },
+      "latency_seconds": {
+        "p50": 1.367512848926708,
+        "p95": 1.367512848926708,
+        "p99": 1.367512848926708
+      },
+      "wall_seconds": 1.3711516429902986,
+      "sample_errors": []
+    }
+  ]
+}

@@ -1,0 +1,536 @@
+{
+  "name": "content-risk-load-capacity-smoke-20260709152952",
+  "generated_at": "2026-07-09T07:36:42.633268+00:00",
+  "prefix": "capacity-smoke-20260709152952",
+  "base_url": "https://video-audit.duanju.com",
+  "app_id": "capacity-test",
+  "sample": {
+    "source": "postgres",
+    "distinct_video_urls": 3,
+    "min_duration_seconds": 10,
+    "max_duration_seconds": 600
+  },
+  "run": {
+    "total": 3,
+    "elapsed_seconds": 409.79044857190456,
+    "status_counts": {
+      "completed": 2,
+      "failed": 1
+    },
+    "submit_errors": 0,
+    "latency_seconds": {
+      "p50": 362.51012134552,
+      "p90": 388.2335121154785,
+      "p95": 391.44893596172335,
+      "avg": 328.40909028053284
+    },
+    "model_error_result_counts": {},
+    "model_error_result_ratio": {}
+  },
+  "db_report": {
+    "matched_jobs": 3,
+    "status_counts": {
+      "completed": 2,
+      "failed": 1
+    },
+    "review_seconds": {
+      "p50": 354.16986,
+      "p90": 379.1152256,
+      "p95": 382.2333963,
+      "avg": 316.3275806666667
+    },
+    "total_seconds": {
+      "p50": 358.131825,
+      "p90": 384.71046659999996,
+      "p95": 388.03279679999997,
+      "avg": 321.31102366666664
+    },
+    "model_error_job_counts": {},
+    "model_error_job_ratio": {}
+  },
+  "sample_states": [
+    {
+      "data_id": "capacity-smoke-20260709152952-00001",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1780913200378_274.mp4",
+      "submitted_at": 1783582192.9167662,
+      "submit_elapsed_seconds": 0.06917245802469552,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-smoke-20260709152952-00001",
+        "task_id": "capacity-smoke-20260709152952-00001",
+        "review_id": "review_b689a66e3694c342",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "completed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-smoke-20260709152952-00001",
+        "task_id": "capacity-smoke-20260709152952-00001",
+        "status": "completed",
+        "final_label": "BLOCK",
+        "decision_label": "BLOCK",
+        "summary": "本片为古装宅斗题材，主要问题在于全片存在严重的字幕乱码，导致台词无法正常阅读，严重影响视频质量，必须返工。此外，古装背景下出现“红药水”等现代词汇存在穿帮嫌疑，需修改台词。剧情中涉及伪造“守宫砂”的情节属于古代封建糟粕，虽作为剧情道具出现风险较低，但需注意避免正向宣扬。建议重新生成字幕，并修改不符合时代背景的台词后重新提交审核。",
+        "risk_score": 84.0,
+        "video_results": {
+          "decision": "BLOCK",
+          "frames": [
+            {
+              "time": 0.0,
+              "end_time": 131.0,
+              "label": "质量问题",
+              "sub_label": "字幕乱码",
+              "decision": "REVIEW",
+              "decision_detail": "字幕文本中充斥大量如 'Cy gaat = a AT ee pare'、'祭35天这丫尖丹节区闫了' 等无意义字符和乱码。；字幕文件损坏或OCR识别严重错误，导致无法正常阅读台词。",
+              "risk_level": "低风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 27.0,
+              "end_time": 30.0,
+              "label": "质量问题",
+              "sub_label": "穿帮/台词违和",
+              "decision": "REVIEW",
+              "decision_detail": "图7（00:27）字幕显示“你说的红药水是什么”，图8（00:30）字幕显示“对身体有害吗无害”。画面人物均为古装打扮。；在古装剧背景下出现现代医疗词汇“红药水”，破坏了时代设定的沉浸感，属于台词设计不严谨或穿帮。若剧情包含穿越设定则可能合理，但单凭当前画面显得违和。",
+              "risk_level": "低风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 32.0,
+              "end_time": 39.0,
+              "label": "不良价值观",
+              "sub_label": "性别物化",
+              "decision": "BLOCK",
+              "decision_detail": "画面展示将红色药水滴在女子手腕上形成类似守宫砂的红印，字幕强调印记无法洗掉或揉掉。",
+              "risk_level": "低风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 40.0,
+              "end_time": 48.0,
+              "label": "医疗与迷信",
+              "sub_label": "医疗误导",
+              "decision": "REVIEW",
+              "decision_detail": "拼图1-2、6显示用白布擦拭手腕红斑，拼图3、6字幕出现“竟如此神奇”、“当然药水给我留下吧”，表现药水具有瞬间消除痕迹的奇效。",
+              "risk_level": "低风险",
+              "confidence": 0.95
+            }
+          ]
+        },
+        "audio_results": {
+          "decision": "BLOCK",
+          "details": [
+            {
+              "start_time": 0.0,
+              "end_time": 131.0,
+              "label": "质量问题",
+              "sub_label": "字幕乱码",
+              "decision": "REVIEW",
+              "decision_detail": "字幕文本中充斥大量如 'Cy gaat = a AT ee pare'、'祭35天这丫尖丹节区闫了' 等无意义字符和乱码。；字幕文件损坏或OCR识别严重错误，导致无法正常阅读台词。",
+              "text": "Cy gaat = a AT ee pare... 祭35天这丫尖丹节区闫了",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 27.0,
+              "end_time": 30.0,
+              "label": "质量问题",
+              "sub_label": "穿帮/台词违和",
+              "decision": "REVIEW",
+              "decision_detail": "图7（00:27）字幕显示“你说的红药水是什么”，图8（00:30）字幕显示“对身体有害吗无害”。画面人物均为古装打扮。；在古装剧背景下出现现代医疗词汇“红药水”，破坏了时代设定的沉浸感，属于台词设计不严谨或穿帮。若剧情包含穿越设定则可能合理，但单凭当前画面显得违和。",
+              "text": "你说的红药水是什么；对身体有害吗无害",
+              "confidence": 0.85
+            },
+            {
+              "start_time": 32.0,
+              "end_time": 39.0,
+              "label": "不良价值观",
+              "sub_label": "性别物化",
+              "decision": "BLOCK",
+              "decision_detail": "画面展示将红色药水滴在女子手腕上形成类似守宫砂的红印，字幕强调印记无法洗掉或揉掉。",
+              "text": "我药箱里正好带了一点，这种药水，用水洗不掉，手揉也不行",
+              "confidence": 0.85
+            },
+            {
+              "start_time": 40.0,
+              "end_time": 48.0,
+              "label": "医疗与迷信",
+              "sub_label": "医疗误导",
+              "decision": "REVIEW",
+              "decision_detail": "拼图1-2、6显示用白布擦拭手腕红斑，拼图3、6字幕出现“竟如此神奇”、“当然药水给我留下吧”，表现药水具有瞬间消除痕迹的奇效。",
+              "text": "竟如此神奇, 我可以试一下吗, 当然药水给我留下吧, 我想试一试",
+              "confidence": 0.95
+            }
+          ]
+        },
+        "annotations": [
+          "视频0秒 命中 质量问题-字幕乱码：字幕文本中充斥大量如 'Cy gaat = a AT ee pare'、'祭35天这丫尖丹节区闫了' 等无意义字符和乱码。；字幕文件损坏或OCR识别严重错误，导致无法正常阅读台词。",
+          "视频27秒 命中 质量问题-穿帮/台词违和：图7（00:27）字幕显示“你说的红药水是什么”，图8（00:30）字幕显示“对身体有害吗无害”。画面人物均为古装打扮。；在古装剧背景下出现现代医疗词汇“红药水”，破坏了时代设定的沉浸感，属于台词设计不严谨或穿帮。若剧情包含穿越设定则可能合理，但单凭当前画面显得违和。",
+          "视频32秒 命中 不良价值观-性别物化：画面展示将红色药水滴在女子手腕上形成类似守宫砂的红印，字幕强调印记无法洗掉或揉掉。",
+          "视频40秒 命中 医疗与迷信-医疗误导：拼图1-2、6显示用白布擦拭手腕红斑，拼图3、6字幕出现“竟如此神奇”、“当然药水给我留下吧”，表现药水具有瞬间消除痕迹的奇效。"
+        ]
+      },
+      "completed_at": 1783582587.581126
+    },
+    {
+      "data_id": "capacity-smoke-20260709152952-00002",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1783143065644_149.mp4",
+      "submitted_at": 1783582193.9386008,
+      "submit_elapsed_seconds": 0.020758784958161414,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-smoke-20260709152952-00002",
+        "task_id": "capacity-smoke-20260709152952-00002",
+        "review_id": "review_df8606b73758c934",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "failed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-smoke-20260709152952-00002",
+        "task_id": "capacity-smoke-20260709152952-00002",
+        "status": "failed",
+        "final_label": "",
+        "decision_label": "",
+        "video_results": {
+          "decision": "",
+          "frames": []
+        },
+        "audio_results": {
+          "decision": "",
+          "details": []
+        },
+        "annotations": [],
+        "error_message": "Expecting value: line 1 column 1 (char 0)"
+      },
+      "completed_at": 1783582421.9913905
+    },
+    {
+      "data_id": "capacity-smoke-20260709152952-00003",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1783143065643_522.mp4",
+      "submitted_at": 1783582194.9614017,
+      "submit_elapsed_seconds": 0.02171701390761882,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-smoke-20260709152952-00003",
+        "task_id": "capacity-smoke-20260709152952-00003",
+        "review_id": "review_4e6c52d01fe7bf3f",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "completed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "capacity-smoke-20260709152952-00003",
+        "task_id": "capacity-smoke-20260709152952-00003",
+        "status": "completed",
+        "final_label": "BLOCK",
+        "decision_label": "BLOCK",
+        "summary": "本片存在严重违规，不予过审。核心问题在于将未成年人（校服形象）置于性丑闻、暴力伤害和绑架胁迫的中心，严重触碰未成年人保护红线。此外，片中充斥着血腥流血镜头、家庭成员间的恶毒辱骂与肢体暴力，以及带有性暴力暗示的绑架情节，价值观导向极其负面。建议彻底废弃当前剧情设定，若需重拍，必须将所有涉事角色修改为成年人，并大幅削减暴力、血腥及低俗诬陷情节。",
+        "risk_score": 100.0,
+        "video_results": {
+          "decision": "BLOCK",
+          "frames": [
+            {
+              "time": 0.0,
+              "end_time": 94.0,
+              "label": "不良价值观",
+              "sub_label": "家庭矛盾/出轨",
+              "decision": "BLOCK",
+              "decision_detail": "台词出现“就是他勾引我”，暗示出轨或不正当男女关系。",
+              "risk_level": "低风险",
+              "confidence": 0.8
+            },
+            {
+              "time": 0.0,
+              "end_time": 94.0,
+              "label": "质量问题",
+              "sub_label": "字幕/OCR乱码",
+              "decision": "REVIEW",
+              "decision_detail": "提供的字幕文本中存在大量无意义的字符和乱码，如“et jg | i = 二 -”、“ap eo\" ae”等。",
+              "risk_level": "低风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 5.0,
+              "end_time": 7.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "血腥暴力",
+              "decision": "REVIEW",
+              "decision_detail": "帧6至帧8中，一名男子坐在地上双手抱头，其头部、手部以及旁边的地面上均有明显的红色血迹，且字幕配合表现其痛苦状态。；画面直接且清晰地展示了人物大量流血的受伤状态，视觉上具有一定的血腥刺激性，容易引起观众不适。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 11.0,
+              "end_time": 15.0,
+              "label": "特殊人群",
+              "sub_label": "未成年严重不良行为",
+              "decision": "REVIEW",
+              "decision_detail": "画面00:11至00:15中，一名穿着类似学生制服、面容稚嫩的女孩（疑似未成年人）手持一把大扳手。字幕和台词指控她砸伤了男子：“你竟敢砸伤我堂弟”、“你想杀人啊”。未成年人被设定为实施严重暴力伤害的主体。",
+              "risk_level": "不予过审",
+              "confidence": 0.95
+            },
+            {
+              "time": 8.0,
+              "end_time": 15.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "血腥暴力",
+              "decision": "REVIEW",
+              "decision_detail": "画面00:08至00:10中，一名男子痛苦地捂住头部，头部和手上可见明显血迹。00:11至00:15展示了疑似作案工具的大扳手。字幕提及“流这么多血”、“砸伤”、“杀人”。",
+              "risk_level": "中风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 12.0,
+              "end_time": 12.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "画面00:12中，女子指着女孩骂，字幕显示“贱人”。",
+              "risk_level": "低风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 19.0,
+              "end_time": 23.0,
+              "label": "特殊人群",
+              "sub_label": "未成年人成人化",
+              "decision": "REVIEW",
+              "decision_detail": "画面中一名穿着校服（蓝衬衫、灰百褶裙、领结、双马尾）疑似未成年学生的女性角色，台词说出'大半夜闯进来想对我图谋不轨'，涉及性侵/性骚扰指控；随后在00:22-00:23被成年男性暴力推倒在地。未成年人物与性暗示台词及暴力伤害严重绑定。",
+              "risk_level": "不予过审",
+              "confidence": 0.95
+            },
+            {
+              "time": 19.0,
+              "end_time": 21.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "台词出现'大半夜闯进来想对我图谋不轨'，明确指向性侵犯或性骚扰意图。",
+              "risk_level": "中风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 22.0,
+              "end_time": 23.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "血腥暴力",
+              "decision": "REVIEW",
+              "decision_detail": "画面中成年男性（皮衣男）用力将女性推倒在地，女性摔倒在坚硬的地面上。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 24.0,
+              "end_time": 33.0,
+              "label": "特殊人群",
+              "sub_label": "未成年人成人化",
+              "decision": "REVIEW",
+              "decision_detail": "画面中一名穿着校服、扎双马尾的疑似未成年少女倒在地上（图6，00:31可见其手臂有明显红色伤痕，且短裙倒地姿势略显不雅）。成年男性（志军）在图4(00:28)和图5(00:30)中指责该少女：“就是他(她)勾引我”、“他(她)冲我抛媚眼”。少女在图7(00:32)和图8(00:33)中反击：“你放屁一个浑身臭气的老男人”。",
+              "risk_level": "不予过审",
+              "confidence": 0.98
+            },
+            {
+              "time": 34.0,
+              "end_time": 42.0,
+              "label": "特殊人群",
+              "sub_label": "未成年人成人化",
+              "decision": "BLOCK",
+              "decision_detail": "画面中一名穿着类似校服、扎双马尾的疑似未成年/学生形象女孩，被指责“勾引老男人”（00:34）、“勾引我堂弟”（00:40），并被成年女性扇耳光辱骂“小贱人”（00:37），被哥哥辱骂“不知羞耻的妹妹”（00:42）。；将疑似未成年/学生形象的角色与“勾引老男人”、“勾引堂弟”等性丑闻和成人化情感纠纷绑定，并对其施加暴力和语言羞辱，严重违反未成年人保护底线。",
+              "risk_level": "不予过审",
+              "confidence": 0.95
+            },
+            {
+              "time": 37.0,
+              "end_time": 42.0,
+              "label": "不良价值观",
+              "sub_label": "家庭矛盾/语言羞辱",
+              "decision": "REVIEW",
+              "decision_detail": "成年女性扇女孩耳光并骂“小贱人”（00:37），随后指责其“勾引我堂弟”（00:40）；皮夹克男子作为哥哥，不分青红皂白指责倒地的妹妹“不知羞耻”（00:42）。；展现家庭成员之间的暴力殴打、恶毒语言羞辱（小贱人、不知羞耻）和涉及作风问题的诬陷，宣扬有毒的家庭关系。",
+              "risk_level": "中风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 46.0,
+              "end_time": 53.0,
+              "label": "特殊人群",
+              "sub_label": "未成年严重不良行为",
+              "decision": "REVIEW",
+              "decision_detail": "图2至图8中，一名身穿校服的疑似未成年女生倒在地上，手臂可见明显伤痕与血迹，被成年人按压肩膀，表情痛苦哭泣。",
+              "risk_level": "高风险",
+              "confidence": 0.75
+            },
+            {
+              "time": 60.0,
+              "end_time": 62.0,
+              "label": "特殊人群",
+              "sub_label": "未成年人遭受暴力与胁迫",
+              "decision": "REVIEW",
+              "decision_detail": "画面中一名成年男性从背后突然捂住一名穿着类似校服、面容稚嫩的未成年女孩的嘴，女孩流泪并表现出极度惊恐挣扎，涉嫌针对未成年人的暴力胁迫或侵害。",
+              "risk_level": "不予过审",
+              "confidence": 0.98
+            },
+            {
+              "time": 60.0,
+              "end_time": 62.0,
+              "label": "违法犯罪行为",
+              "sub_label": "绑架/故意伤害",
+              "decision": "REVIEW",
+              "decision_detail": "成年男性从背后捂住女孩的嘴，限制其人身自由，结合前序按门铃的情节，属于明显的入室绑架或暴力胁迫犯罪行为。",
+              "risk_level": "高风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 63.0,
+              "end_time": 64.0,
+              "label": "暴力伤害",
+              "sub_label": "暴力威胁",
+              "decision": "BLOCK",
+              "decision_detail": "男子压在沙发上，台词含死亡威胁。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 70.0,
+              "end_time": 71.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "女子整理衣领，结合前序场景有性暗示嫌疑。",
+              "risk_level": "中风险",
+              "confidence": 0.8
+            }
+          ]
+        },
+        "audio_results": {
+          "decision": "BLOCK",
+          "details": [
+            {
+              "start_time": 0.0,
+              "end_time": 94.0,
+              "label": "不良价值观",
+              "sub_label": "家庭矛盾/出轨",
+              "decision": "BLOCK",
+              "decision_detail": "台词出现“就是他勾引我”，暗示出轨或不正当男女关系。",
+              "text": "就是他勾引我 SS",
+              "confidence": 0.8
+            },
+            {
+              "start_time": 0.0,
+              "end_time": 94.0,
+              "label": "质量问题",
+              "sub_label": "字幕/OCR乱码",
+              "decision": "REVIEW",
+              "decision_detail": "提供的字幕文本中存在大量无意义的字符和乱码，如“et jg | i = 二 -”、“ap eo\" ae”等。",
+              "text": "et jg | i = 二 -",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 5.0,
+              "end_time": 7.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "血腥暴力",
+              "decision": "REVIEW",
+              "decision_detail": "帧6至帧8中，一名男子坐在地上双手抱头，其头部、手部以及旁边的地面上均有明显的红色血迹，且字幕配合表现其痛苦状态。；画面直接且清晰地展示了人物大量流血的受伤状态，视觉上具有一定的血腥刺激性，容易引起观众不适。",
+              "text": "啊啊；志军你怎么流这么多血",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 11.0,
+              "end_time": 15.0,
+              "label": "特殊人群",
+              "sub_label": "未成年严重不良行为",
+              "decision": "REVIEW",
+              "decision_detail": "画面00:11至00:15中，一名穿着类似学生制服、面容稚嫩的女孩（疑似未成年人）手持一把大扳手。字幕和台词指控她砸伤了男子：“你竟敢砸伤我堂弟”、“你想杀人啊”。未成年人被设定为实施严重暴力伤害的主体。",
+              "text": "你竟敢砸伤我堂弟，你想杀人啊",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 8.0,
+              "end_time": 15.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "血腥暴力",
+              "decision": "REVIEW",
+              "decision_detail": "画面00:08至00:10中，一名男子痛苦地捂住头部，头部和手上可见明显血迹。00:11至00:15展示了疑似作案工具的大扳手。字幕提及“流这么多血”、“砸伤”、“杀人”。",
+              "text": "志军你怎么流这么多血，你竟敢砸伤我堂弟，你想杀人啊",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 12.0,
+              "end_time": 12.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "画面00:12中，女子指着女孩骂，字幕显示“贱人”。",
+              "text": "贱人",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 19.0,
+              "end_time": 23.0,
+              "label": "特殊人群",
+              "sub_label": "未成年人成人化",
+              "decision": "REVIEW",
+              "decision_detail": "画面中一名穿着校服（蓝衬衫、灰百褶裙、领结、双马尾）疑似未成年学生的女性角色，台词说出'大半夜闯进来想对我图谋不轨'，涉及性侵/性骚扰指控；随后在00:22-00:23被成年男性暴力推倒在地。未成年人物与性暗示台词及暴力伤害严重绑定。",
+              "text": "大半夜闯进来想对我图谋不轨",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 19.0,
+              "end_time": 21.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "台词出现'大半夜闯进来想对我图谋不轨'，明确指向性侵犯或性骚扰意图。",
+              "text": "大半夜闯进来想对我图谋不轨",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 63.0,
+              "end_time": 64.0,
+              "label": "暴力伤害",
+              "sub_label": "暴力威胁",
+              "decision": "BLOCK",
+              "decision_detail": "男子压在沙发上，台词含死亡威胁。",
+              "text": "闭嘴再出声我弄死你",
+              "confidence": 0.85
+            }
+          ]
+        },
+        "annotations": [
+          "视频0秒 命中 不良价值观-家庭矛盾/出轨：台词出现“就是他勾引我”，暗示出轨或不正当男女关系。",
+          "视频0秒 命中 质量问题-字幕/OCR乱码：提供的字幕文本中存在大量无意义的字符和乱码，如“et jg | i = 二 -”、“ap eo\" ae”等。",
+          "视频5秒 命中 低俗与画面尺度-血腥暴力：帧6至帧8中，一名男子坐在地上双手抱头，其头部、手部以及旁边的地面上均有明显的红色血迹，且字幕配合表现其痛苦状态。；画面直接且清晰地展示了人物大量流血的受伤状态，视觉上具有一定的血腥刺激性，容易引起观众不适。",
+          "视频11秒 命中 特殊人群-未成年严重不良行为：画面00:11至00:15中，一名穿着类似学生制服、面容稚嫩的女孩（疑似未成年人）手持一把大扳手。字幕和台词指控她砸伤了男子：“你竟敢砸伤我堂弟”、“你想杀人啊”。未成年人被设定为实施严重暴力伤害的主体。",
+          "视频8秒 命中 低俗与画面尺度-血腥暴力：画面00:08至00:10中，一名男子痛苦地捂住头部，头部和手上可见明显血迹。00:11至00:15展示了疑似作案工具的大扳手。字幕提及“流这么多血”、“砸伤”、“杀人”。",
+          "视频12秒 命中 不良价值观-语言羞辱：画面00:12中，女子指着女孩骂，字幕显示“贱人”。",
+          "视频19秒 命中 特殊人群-未成年人成人化：画面中一名穿着校服（蓝衬衫、灰百褶裙、领结、双马尾）疑似未成年学生的女性角色，台词说出'大半夜闯进来想对我图谋不轨'，涉及性侵/性骚扰指控；随后在00:22-00:23被成年男性暴力推倒在地。未成年人物与性暗示台词及暴力伤害严重绑定。",
+          "视频19秒 命中 低俗与画面尺度-软色情擦边：台词出现'大半夜闯进来想对我图谋不轨'，明确指向性侵犯或性骚扰意图。",
+          "视频22秒 命中 低俗与画面尺度-血腥暴力：画面中成年男性（皮衣男）用力将女性推倒在地，女性摔倒在坚硬的地面上。",
+          "视频24秒 命中 特殊人群-未成年人成人化：画面中一名穿着校服、扎双马尾的疑似未成年少女倒在地上（图6，00:31可见其手臂有明显红色伤痕，且短裙倒地姿势略显不雅）。成年男性（志军）在图4(00:28)和图5(00:30)中指责该少女：“就是他(她)勾引我”、“他(她)冲我抛媚眼”。少女在图7(00:32)和图8(00:33)中反击：“你放屁一个浑身臭气的老男人”。",
+          "视频34秒 命中 特殊人群-未成年人成人化：画面中一名穿着类似校服、扎双马尾的疑似未成年/学生形象女孩，被指责“勾引老男人”（00:34）、“勾引我堂弟”（00:40），并被成年女性扇耳光辱骂“小贱人”（00:37），被哥哥辱骂“不知羞耻的妹妹”（00:42）。；将疑似未成年/学生形象的角色与“勾引老男人”、“勾引堂弟”等性丑闻和成人化情感纠纷绑定，并对其施加暴力和语言羞辱，严重违反未成年人保护底线。",
+          "视频37秒 命中 不良价值观-家庭矛盾/语言羞辱：成年女性扇女孩耳光并骂“小贱人”（00:37），随后指责其“勾引我堂弟”（00:40）；皮夹克男子作为哥哥，不分青红皂白指责倒地的妹妹“不知羞耻”（00:42）。；展现家庭成员之间的暴力殴打、恶毒语言羞辱（小贱人、不知羞耻）和涉及作风问题的诬陷，宣扬有毒的家庭关系。",
+          "视频46秒 命中 特殊人群-未成年严重不良行为：图2至图8中，一名身穿校服的疑似未成年女生倒在地上，手臂可见明显伤痕与血迹，被成年人按压肩膀，表情痛苦哭泣。",
+          "视频60秒 命中 特殊人群-未成年人遭受暴力与胁迫：画面中一名成年男性从背后突然捂住一名穿着类似校服、面容稚嫩的未成年女孩的嘴，女孩流泪并表现出极度惊恐挣扎，涉嫌针对未成年人的暴力胁迫或侵害。",
+          "视频60秒 命中 违法犯罪行为-绑架/故意伤害：成年男性从背后捂住女孩的嘴，限制其人身自由，结合前序按门铃的情节，属于明显的入室绑架或暴力胁迫犯罪行为。",
+          "视频63秒 命中 暴力伤害-暴力威胁：男子压在沙发上，台词含死亡威胁。",
+          "视频70秒 命中 低俗与画面尺度-软色情擦边：女子整理衣领，结合前序场景有性暗示嫌疑。"
+        ]
+      },
+      "completed_at": 1783582557.471523
+    }
+  ]
+}

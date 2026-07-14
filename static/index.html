@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SN2S 视频审核工作台</title>
+    <link rel="icon" href="/static/any2script-icon.svg" />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <img src="/static/any2script-icon.svg" alt="" />
+          <div>
+            <strong>SN2S</strong>
+            <span>视频审核</span>
+          </div>
+        </div>
+        <nav>
+          <a href="#create" class="nav-link active">创建审核</a>
+          <a href="#progress" class="nav-link">任务进度</a>
+          <a href="#report" class="nav-link">审核报告</a>
+          <a href="#system" class="nav-link">服务器监控</a>
+          <a href="#admin" class="nav-link">后台管理</a>
+          <a href="#rules" class="nav-link">规则库</a>
+          <a href="/docs" class="nav-link" target="_blank" rel="noreferrer">接口文档</a>
+        </nav>
+        <div class="status-card">
+          <span class="dot" id="healthDot"></span>
+          <div>
+            <strong id="healthText">检查服务中</strong>
+            <small>端口 8767</small>
+          </div>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <h1>视频审核工作台</h1>
+            <p>视频链接/本地文件 -> 证据抽帧 -> 多模态审核 -> 结构化裁决</p>
+          </div>
+          <div class="top-actions">
+            <button class="ghost" id="refreshPolicyBtn">刷新规则</button>
+            <button class="primary" id="focusCreateBtn">新建审核</button>
+          </div>
+        </header>
+
+        <section class="grid hero-grid">
+          <article class="panel create-panel" id="create">
+            <div class="panel-title">
+              <div>
+                <h2>创建审核</h2>
+              <p>填写视频链接，或从电脑选择本地视频文件。</p>
+              </div>
+              <span class="badge">审核任务</span>
+            </div>
+            <form id="reviewForm" class="form">
+              <label>
+                视频链接（可多行，单次最多 50 个）
+                <textarea id="videoUrls" name="video_urls" rows="4" placeholder="https://qiniu.duanju.com/ORIGIN/example-01.mp4&#10;https://qiniu.duanju.com/ORIGIN/example-02.mp4"></textarea>
+              </label>
+              <label>
+                本地文件（可多选，单次最多 50 个）
+                <input id="localFile" name="file" type="file" multiple accept=".mp4,.mov,.webm,.mkv,.avi,video/mp4,video/quicktime,video/webm,video/x-matroska,video/*" />
+              </label>
+              <div class="selected-files" id="selectedFiles" aria-live="polite"></div>
+              <div class="two-col">
+                <label>
+                  视频标题
+                  <input id="videoTitle" name="video_title" placeholder="短剧名-第N集" />
+                </label>
+                <label>
+                  审核时间段（秒）
+                  <div class="range-row">
+                    <input id="startSeconds" name="start_seconds" type="number" min="0" placeholder="第 n 秒" />
+                    <span>到</span>
+                    <input id="endSeconds" name="end_seconds" type="number" min="1" placeholder="第 m 秒" />
+                  </div>
+                </label>
+              </div>
+              <details class="advanced">
+                <summary>高级设置</summary>
+                <div class="two-col">
+                  <label>
+                    分段秒数
+                    <input id="segmentSeconds" name="segment_seconds" type="number" min="30" max="600" value="180" />
+                  </label>
+                  <label>
+                    采样 FPS
+                    <input id="fps" name="fps" type="number" min="1" max="10" value="1" />
+                  </label>
+                </div>
+              </details>
+              <div class="form-message" id="formMessage" role="status" aria-live="polite"></div>
+              <button class="primary submit" id="submitBtn" type="submit">创建并开始审核</button>
+            </form>
+            <div class="hint">
+              不填审核时间段时会审核完整视频。正式审核会将抽帧图片按批次传给多模态模型接口。
+            </div>
+          </article>
+
+          <article class="panel" id="progress">
+            <div class="panel-title">
+              <div>
+                <h2>任务进度</h2>
+                <p>输入 review_id 查询或连接事件流。</p>
+              </div>
+            </div>
+            <div class="review-id-row">
+              <input id="reviewIdInput" placeholder="review_xxxxxxxxxxxxxxxx" />
+              <button class="ghost" id="loadJobBtn">加载</button>
+              <button class="ghost" id="streamBtn">监听</button>
+            </div>
+            <div class="batch-list" id="batchList"></div>
+            <div class="progress-card">
+              <div class="progress-meta">
+                <strong id="jobStatus">未创建任务</strong>
+                <span id="jobPhase">等待调度</span>
+              </div>
+              <div class="progress-track"><div id="progressBar"></div></div>
+              <p id="jobMessage">创建任务后会在这里展示审核进度。</p>
+            </div>
+            <div class="event-log" id="eventLog"></div>
+          </article>
+        </section>
+
+        <section class="grid report-grid">
+          <article class="panel" id="report">
+            <div class="panel-title">
+              <div>
+                <h2>审核报告</h2>
+                <p>整片主线、价值观判断、回正建议和命中项。</p>
+              </div>
+              <button class="ghost" id="loadReportBtn">刷新报告</button>
+            </div>
+            <div class="report-summary">
+              <div>
+                <small>审核结论</small>
+                <strong id="decisionText">-</strong>
+              </div>
+              <div>
+                <small>风险分</small>
+                <strong id="riskScore">-</strong>
+              </div>
+              <div>
+                <small>命中项</small>
+                <strong id="findingCount">-</strong>
+              </div>
+            </div>
+            <div class="narrative" id="narrative"></div>
+            <div class="findings" id="findings"></div>
+          </article>
+
+          <article class="panel system-panel" id="system">
+            <div class="panel-title">
+              <div>
+                <h2>服务器监控</h2>
+                <p>CPU、内存和负载历史趋势。</p>
+              </div>
+              <div class="panel-actions">
+                <select id="systemWindow">
+                  <option value="1800">最近 30 分钟</option>
+                  <option value="3600">最近 1 小时</option>
+                  <option value="600">最近 10 分钟</option>
+                </select>
+                <button class="ghost" id="refreshSystemBtn">刷新</button>
+              </div>
+            </div>
+            <div class="system-summary">
+              <div>
+                <small>CPU 使用率</small>
+                <strong id="systemCpu">-</strong>
+              </div>
+              <div>
+                <small>内存使用率</small>
+                <strong id="systemMemory">-</strong>
+              </div>
+              <div>
+                <small>内存占用</small>
+                <strong id="systemMemoryUsed">-</strong>
+              </div>
+              <div>
+                <small>1 分钟负载</small>
+                <strong id="systemLoad">-</strong>
+              </div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-head">
+                <strong>CPU / 内存使用历史趋势</strong>
+                <span id="systemHost">-</span>
+              </div>
+              <canvas id="systemChart" height="260"></canvas>
+              <div class="chart-legend">
+                <span><i class="legend-cpu"></i>CPU</span>
+                <span><i class="legend-memory"></i>内存</span>
+                <span><i class="legend-threshold"></i>80% 阈值</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="panel admin-panel" id="admin">
+            <div class="panel-title">
+              <div>
+                <h2>后台管理</h2>
+                <p>视频时长、上传耗时、审核耗时和总耗时统计。</p>
+              </div>
+              <button class="ghost" id="refreshAdminBtn">刷新数据</button>
+            </div>
+            <div class="admin-stats">
+              <div>
+                <small>总任务</small>
+                <strong id="adminTotal">-</strong>
+              </div>
+              <div>
+                <small>审核中</small>
+                <strong id="adminProcessing">-</strong>
+              </div>
+              <div>
+                <small>已完成</small>
+                <strong id="adminCompleted">-</strong>
+              </div>
+              <div>
+                <small>失败</small>
+                <strong id="adminFailed">-</strong>
+              </div>
+              <div>
+                <small>累计分钟</small>
+                <strong id="adminVideoMinutes">-</strong>
+              </div>
+              <div>
+                <small>平均总耗时</small>
+                <strong id="adminAvgTotal">-</strong>
+              </div>
+            </div>
+            <div class="admin-toolbar">
+              <select id="adminStatusFilter">
+                <option value="">全部状态</option>
+                <option value="pending">等待中</option>
+                <option value="processing">审核中</option>
+                <option value="completed">已完成</option>
+                <option value="failed">失败</option>
+                <option value="cancelled">已取消</option>
+              </select>
+              <label>
+                开始时间
+                <input id="adminCreatedFrom" type="datetime-local" />
+              </label>
+              <label>
+                结束时间
+                <input id="adminCreatedTo" type="datetime-local" />
+              </label>
+              <input id="adminLimit" type="number" min="10" max="500" value="100" />
+              <button class="ghost" id="clearAdminTimeBtn" type="button">清空时间</button>
+            </div>
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>视频</th>
+                    <th>状态</th>
+                    <th>时长</th>
+                    <th>上传</th>
+                    <th>排队</th>
+                    <th>审核</th>
+                    <th>总耗时</th>
+                    <th>结论</th>
+                    <th>创建时间</th>
+                  </tr>
+                </thead>
+                <tbody id="adminRows">
+                  <tr><td colspan="9">加载中...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="panel" id="rules">
+            <div class="panel-title">
+              <div>
+                <h2>规则库</h2>
+                <p id="policyVersion">加载中...</p>
+              </div>
+            </div>
+            <div class="rules-list" id="rulesList"></div>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script src="https://gosspublic.alicdn.com/aliyun-oss-sdk-6.20.0.min.js"></script>
+    <script src="/static/app.js"></script>
+  </body>
+</html>

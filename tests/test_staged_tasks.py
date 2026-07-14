@@ -1,0 +1,148 @@
+import asyncio
+import importlib
+import sys
+
+from video_review.models import CreateReviewRequest, VideoAsset
+from video_review.queue import ReviewQueueStage
+
+
+def import_tasks(monkeypatch, tmp_path):
+    monkeypatch.setenv("VIDEO_REVIEW_DATA_DIR", str(tmp_path / "data"))
+    for name in list(sys.modules):
+        if name in {"video_review.config", "video_review.store", "video_review.tasks"}:
+            sys.modules.pop(name)
+    tasks = importlib.import_module("video_review.tasks")
+    config = importlib.import_module("video_review.config")
+    return tasks, config.settings
+
+
+def test_preprocess_stage_prepares_asset_and_enqueues_model(monkeypatch, tmp_path):
+    tasks, settings = import_tasks(monkeypatch, tmp_path)
+
+    async def scenario():
+        settings.data_dir = tmp_path
+        settings.ensure_dirs()
+        video_path = tmp_path / "raw.mp4"
+        video_path.write_bytes(b"fake")
+        request = CreateReviewRequest(oss_bucket="bucket", oss_key="key.mp4", video_title="demo")
+        tasks.create_job(request, review_id="review_stage")
+        enqueued = []
+
+        async def fake_download_oss_video(bucket, object_key, **kwargs):
+            assert bucket == "bucket"
+            assert object_key == "key.mp4"
+            return VideoAsset(
+                video_id="video_stage",
+                source_url="oss://bucket/key.mp4",
+                local_path=str(video_path),
+                sha256="sha",
+                content_length=4,
+            )
+
+        def fake_enrich(asset):
+            asset.duration_seconds = 12
+            asset.width = 640
+            asset.height = 360
+            return asset
+
+        def fake_extract_frames(asset, **kwargs):
+            frame_dir = settings.derived_dir / asset.video_id / "frames"
+            frame_dir.mkdir(parents=True, exist_ok=True)
+            (frame_dir / "000001.jpg").write_bytes(b"jpg")
+            return frame_dir
+
+        async def fake_enqueue(review_id, queued_request, stage):
+            enqueued.append((review_id, queued_request.oss_key, stage))
+            return "1-0"
+
+        monkeypatch.setattr(tasks, "download_oss_video", fake_download_oss_video)
+        monkeypatch.setattr(tasks, "enrich_asset", fake_enrich)
+        monkeypatch.setattr(tasks, "extract_frames", fake_extract_frames)
+        monkeypatch.setattr(tasks, "enqueue_review_stage", fake_enqueue)
+
+        await tasks.run_preprocess_stage("review_stage", request)
+
+        job = tasks.store.get_job("review_stage")
+        assert job.video_id == "video_stage"
+        assert job.local_path == str(video_path)
+        assert (settings.derived_dir / "video_stage" / "asset.json").exists()
+        assert enqueued == [("review_stage", "key.mp4", ReviewQueueStage.MODEL)]
+
+    asyncio.run(scenario())
+
+
+def test_model_stage_reuses_preprocessed_asset_without_downloading(monkeypatch, tmp_path):
+    tasks, settings = import_tasks(monkeypatch, tmp_path)
+
+    async def scenario():
+        settings.data_dir = tmp_path
+        settings.ensure_dirs()
+        video_path = tmp_path / "raw.mp4"
+        video_path.write_bytes(b"fake")
+        request = CreateReviewRequest(oss_bucket="bucket", oss_key="key.mp4", video_title="demo")
+        tasks.create_job(request, review_id="review_model_stage")
+        asset = VideoAsset(video_id="video_model", local_path=str(video_path), sha256="sha", duration_seconds=12)
+        asset_dir = settings.derived_dir / asset.video_id
+        asset_dir.mkdir(parents=True, exist_ok=True)
+        (asset_dir / "asset.json").write_text(asset.model_dump_json(), encoding="utf-8")
+        await tasks.update_job("review_model_stage", video_id=asset.video_id, local_path=asset.local_path)
+        called = []
+
+        async def fake_download_oss_video(*args, **kwargs):
+            raise AssertionError("model stage must not download source video")
+
+        async def fake_run_model(review_id, model_request, model_asset):
+            called.append((review_id, model_asset.video_id, model_asset.local_path))
+
+        monkeypatch.setattr(tasks, "download_oss_video", fake_download_oss_video)
+        monkeypatch.setattr(tasks, "_run_model_review", fake_run_model)
+
+        await tasks.run_model_stage("review_model_stage", request)
+
+        assert called == [("review_model_stage", "video_model", str(video_path))]
+
+    asyncio.run(scenario())
+
+
+def test_preprocess_requeues_retryable_source_failure_without_marking_review_failed(monkeypatch, tmp_path):
+    tasks, settings = import_tasks(monkeypatch, tmp_path)
+
+    async def scenario():
+        from video_review.downloader import SourceDownloadError
+
+        request = CreateReviewRequest(video_url="https://qiniu.duanju.com/demo.mp4")
+        tasks.create_job(request, review_id="review_download_retry")
+        scheduled = []
+
+        async def fake_download_video(*args, **kwargs):
+            raise SourceDownloadError(
+                code="source_connect_timeout",
+                retryable=True,
+                host="qiniu.duanju.com",
+                attempts=3,
+            )
+
+        async def fake_schedule(review_id, retry_request, *, delay_seconds, attempt):
+            scheduled.append((review_id, retry_request.metadata, delay_seconds, attempt))
+            return "retry-1"
+
+        monkeypatch.setattr(tasks, "download_video", fake_download_video)
+        monkeypatch.setattr(tasks, "schedule_download_retry", fake_schedule)
+        monkeypatch.setattr(settings, "download_task_retry_attempts", 3, raising=False)
+        monkeypatch.setattr(settings, "download_task_retry_delays_seconds", "60,300,900", raising=False)
+
+        await tasks.run_preprocess_stage("review_download_retry", request)
+
+        job = tasks.store.get_job("review_download_retry")
+        assert job.status.value == "pending"
+        assert job.phase == "download_retry"
+        assert scheduled == [
+            (
+                "review_download_retry",
+                {"download_retry_attempt": 1, "download_retry_reason": "source_connect_timeout"},
+                60,
+                1,
+            )
+        ]
+
+    asyncio.run(scenario())

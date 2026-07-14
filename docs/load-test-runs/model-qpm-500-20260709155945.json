@@ -1,0 +1,156 @@
+{
+  "run_id": "model-qpm-500-20260709155945",
+  "generated_at": "2026-07-09T16:01:05.921793+00:00",
+  "target_qpm": 500,
+  "duration_seconds": 60,
+  "total": 500,
+  "elapsed_seconds": 80.0128391829785,
+  "actual_start_qpm": 382,
+  "actual_finish_qpm": 407,
+  "status_counts": {
+    "empty": 495,
+    "ok": 5
+  },
+  "error_counts": {
+    "empty_response": 495
+  },
+  "success_ratio": 0.01,
+  "latency_seconds": {
+    "avg": 18.6640447138343,
+    "p50": 23.63592361996416,
+    "p90": 27.936659515020438,
+    "p95": 27.936659515020438,
+    "p99": 27.936659515020438
+  },
+  "started_by_minute": {
+    "2026-07-09T15:59:00+00:00": 118,
+    "2026-07-09T16:00:00+00:00": 382
+  },
+  "finished_by_minute": {
+    "2026-07-09T15:59:00+00:00": 91,
+    "2026-07-09T16:00:00+00:00": 407,
+    "2026-07-09T16:01:00+00:00": 2
+  },
+  "sample_errors": [
+    {
+      "index": 4,
+      "status": "empty",
+      "error": "empty_response",
+      "latency": 2.8826534539693967
+    },
+    {
+      "index": 2,
+      "status": "empty",
+      "error": "empty_response",
+      "latency": 3.467369585065171
+    },
+    {
+      "index": 7,
+      "status": "empty",
+      "error": "empty_response",
+      "latency": 3.0221107449615374
+    },
+    {
+      "index": 11,
+      "status": "empty",
+      "error": "empty_response",
+      "latency": 2.6218626260524616
+    },
+    {
+      "index": 3,
+      "status": "empty",
+      "error": "empty_response",
+      "latency": 3.592407049960457
+    },
+    {
+      "index": 15,
+      "status": "empty",
+      "error": "empty_response",
+      "latency": 2.300560107920319
+    },
+    {
+      "index": 8,
+      "status": "empty",
+      "error": "empty_response",
+      "latency": 3.173390122014098
+    },
+    {
+      "index": 10,
+      "status": "empty",
+      "error": "empty_response",
+      "latency": 2.9771879389882088
+    },
+    {
+      "index": 1,
+      "status": "empty",
+      "error": "empty_response",
+      "latency": 4.250847927061841
+    },
+    {
+      "index": 13,
+      "status": "empty",
+      "error": "empty_response",
+      "latency": 2.8782282159663737
+    },
+    {
+      "index": 17,
+      "status": "empty",
+      "error": "empty_response",
+      "latency": 2.763164105010219
+    },
+    {
+      "index": 5,
+      "status": "empty",
+      "error": "empty_response",
+      "latency": 4.355710647068918
+    },
+    {
+      "index": 16,
+      "status": "empty",
+      "error": "empty_response",
+      "latency": 3.2087239760439843
+    },
+    {
+      "index": 18,
+      "status": "empty",
+      "error": "empty_response",
+      "latency": 3.032258721999824
+    },
+    {
+      "index": 21,
+      "status": "empty",
+      "error": "empty_response",
+      "latency": 2.785108045092784
+    },
+    {
+      "index": 19,
+      "status": "empty",
+      "error": "empty_response",
+      "latency": 3.1793872009729967
+    },
+    {
+      "index": 6,
+      "status": "empty",
+      "error": "empty_response",
+      "latency": 4.782618107972667
+    },
+    {
+      "index": 9,
+      "status": "empty",
+      "error": "empty_response",
+      "latency": 4.44828743301332
+    },
+    {
+      "index": 14,
+      "status": "empty",
+      "error": "empty_response",
+      "latency": 3.988059502094984
+    },
+    {
+      "index": 12,
+      "status": "empty",
+      "error": "empty_response",
+      "latency": 4.392476229928434
+    }
+  ]
+}

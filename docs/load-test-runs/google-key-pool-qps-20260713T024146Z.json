@@ -1,0 +1,41 @@
+{
+  "generated_at": "2026-07-13T02:41:46.781346+00:00",
+  "model": "gemini-2.5-flash",
+  "base_url": "https://jzapi.duanju.com",
+  "key_pool_size": 3,
+  "stages": [
+    {
+      "qps": 1,
+      "duration_seconds": 1,
+      "total": 1,
+      "ok": 0,
+      "error": 1,
+      "success_ratio": 0.0,
+      "errors": {
+        "JSONDecodeError": 1
+      },
+      "by_key": {
+        "google_f1e60aaeef1d": {
+          "error": 1
+        },
+        "google_e9a0f34d109b": {},
+        "google_0c73c95cc7f2": {}
+      },
+      "latency_seconds": {
+        "p50": null,
+        "p95": null,
+        "p99": null
+      },
+      "wall_seconds": 1.4980889849830419,
+      "sample_errors": [
+        {
+          "status": "error",
+          "key_id": "google_f1e60aaeef1d",
+          "error": "JSONDecodeError",
+          "error_text": "Expecting value: line 1 column 1 (char 0)",
+          "latency": 1.4945807619951665
+        }
+      ]
+    }
+  ]
+}

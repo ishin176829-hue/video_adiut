@@ -1,0 +1,31 @@
+{
+  "name": "postgres-video-sample",
+  "generated_at": "2026-07-09T16:40:22.356718+00:00",
+  "count": 158,
+  "limit": 1000,
+  "min_duration_seconds": 1.0,
+  "max_duration_seconds": 1200.0,
+  "output": "docs/load-test-runs/postgres-samples-20260710-video-qpm.txt",
+  "urls": [
+    "https://qiniu.duanju.com/ORIGIN/origin_1782975851585_27.mp4",
+    "https://qiniu.duanju.com/ORIGIN/origin_1776868209755_870.mp4",
+    "https://qiniu.duanju.com/ORIGIN/origin_1782631464101_515.mp4",
+    "https://qiniu.duanju.com/ORIGIN/origin_1782798215379_236.mp4",
+    "https://qiniu.duanju.com/ORIGIN/origin_1782888001524_354.mp4",
+    "https://qiniu.duanju.com/ORIGIN/origin_1782891255246_299.mp4",
+    "https://qiniu.duanju.com/ORIGIN/origin_1782975851591_519.mp4",
+    "https://qiniu.duanju.com/ORIGIN/origin_1778203711890_479.mp4",
+    "https://qiniu.duanju.com/ORIGIN/origin_1782783547724_630.mp4",
+    "https://qiniu.duanju.com/ORIGIN/origin_1782783547741_525.mp4",
+    "https://qiniu.duanju.com/ORIGIN/origin_1782734585482_953.mp4",
+    "https://qiniu.duanju.com/ORIGIN/origin_1776868209764_313.mp4",
+    "https://qiniu.duanju.com/ORIGIN/origin_1782902445119_594.mp4",
+    "https://qiniu.duanju.com/ORIGIN/origin_1781269158043_348.mp4",
+    "https://qiniu.duanju.com/ORIGIN/origin_1782958337420_228.mp4",
+    "https://qiniu.duanju.com/ORIGIN/origin_1782783547730_810.mp4",
+    "https://qiniu.duanju.com/ORIGIN/origin_1781974591174_18.mp4",
+    "https://qiniu.duanju.com/ORIGIN/origin_1780567659135_402.mp4",
+    "https://qiniu.duanju.com/ORIGIN/origin_1781269158029_875.mp4",
+    "https://qiniu.duanju.com/ORIGIN/origin_1782814156530_290.mp4"
+  ]
+}

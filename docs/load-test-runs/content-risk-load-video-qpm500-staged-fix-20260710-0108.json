@@ -1,0 +1,1026 @@
+{
+  "name": "content-risk-load-video-qpm500-staged-fix-20260710-0108",
+  "generated_at": "2026-07-09T18:08:24.236312+00:00",
+  "prefix": "video-qpm500-staged-fix-20260710-0108",
+  "base_url": "http://127.0.0.1:8767",
+  "app_id": "capacity-test",
+  "sample": {
+    "source": "file_or_cli",
+    "distinct_video_urls": 158,
+    "min_duration_seconds": 10,
+    "max_duration_seconds": 600
+  },
+  "run": {
+    "total": 158,
+    "elapsed_seconds": 3614.6391505829524,
+    "status_counts": {
+      "completed": 94,
+      "failed": 28,
+      "processing": 36
+    },
+    "submit_errors": 0,
+    "latency_seconds": {
+      "p50": 585.7433429956436,
+      "p90": 841.8467425584794,
+      "p95": 914.7037903904915,
+      "avg": 559.2038542735772
+    },
+    "model_error_result_counts": {
+      "timeout": 27,
+      "model_exception": 1
+    },
+    "model_error_result_ratio": {
+      "model_exception": 0.006329113924050633,
+      "timeout": 0.17088607594936708
+    },
+    "aborted": false
+  },
+  "db_report": {
+    "matched_jobs": 158,
+    "status_counts": {
+      "completed": 94,
+      "failed": 28,
+      "processing": 36
+    },
+    "review_seconds": {
+      "p50": 236.3976745,
+      "p90": 367.97810430000004,
+      "p95": 425.8583361499999,
+      "avg": 245.69272881967214
+    },
+    "total_seconds": {
+      "p50": 580.427985,
+      "p90": 836.7034418,
+      "p95": 910.6353386,
+      "avg": 554.1783326721311
+    },
+    "model_error_job_counts": {
+      "timeout": 35,
+      "model_exception": 1,
+      "429": 4,
+      "504": 2
+    },
+    "model_error_job_ratio": {
+      "429": 0.02531645569620253,
+      "504": 0.012658227848101266,
+      "model_exception": 0.006329113924050633,
+      "timeout": 0.22151898734177214
+    }
+  },
+  "cleanup": null,
+  "disk": {
+    "before": {
+      "path": "/home",
+      "total_bytes": 1099406770176,
+      "used_bytes": 185629704192,
+      "free_bytes": 913777065984,
+      "used_percent": 16.88453348002243
+    },
+    "after": {
+      "path": "/home",
+      "total_bytes": 1099406770176,
+      "used_bytes": 201710682112,
+      "free_bytes": 897696088064,
+      "used_percent": 18.34722939533189
+    },
+    "guard_path": "/home",
+    "max_used_percent": 85.0
+  },
+  "sample_states": [
+    {
+      "data_id": "video-qpm500-staged-fix-20260710-0108-00001",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1782975851585_27.mp4",
+      "submitted_at": 1783616889.4738522,
+      "submit_elapsed_seconds": 0.02550683100707829,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "video-qpm500-staged-fix-20260710-0108-00001",
+        "task_id": "video-qpm500-staged-fix-20260710-0108-00001",
+        "review_id": "review_41a7567d93fbe006",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "completed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "video-qpm500-staged-fix-20260710-0108-00001",
+        "task_id": "video-qpm500-staged-fix-20260710-0108-00001",
+        "status": "completed",
+        "final_label": "BLOCK",
+        "decision_label": "BLOCK",
+        "summary": "本片为古代宫斗宅斗题材，主线围绕真假千金和宫廷权谋展开。审核发现多处违规风险：首先，存在高风险的极端复仇价值观，角色明确宣扬杀人是唯一目的；其次，存在中风险的软色情擦边，如玉楼春青楼暗示和假太监身份揭露时的低俗台词；此外，还有下毒、夺子等封建糟粕情节。基础质量方面，字幕存在大量乱码和错别字。建议驳回，要求片方全面修正字幕，删除或修改低俗擦边台词，并将极端复仇动机进行正向升华后方可重新提交审核。",
+        "risk_score": 98.0,
+        "video_results": {
+          "decision": "BLOCK",
+          "frames": [
+            {
+              "time": 0.0,
+              "end_time": 160.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "字幕中出现敏感词汇“交合”，虽疑似OCR识别错误，但字面含义涉嫌低俗。；“交合”一词具有明确的性暗示与性行为含义，属于低俗台词。结合上下文“真假千金”与身世揭秘的剧情，此处极大概率为OCR识别错误（如原台词可能为“亲生”等），但文本本身存在违规风险，需人工介入核实。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 0.0,
+              "end_time": 160.0,
+              "label": "质量问题",
+              "sub_label": "字幕乱码/错别字",
+              "decision": "REVIEW",
+              "decision_detail": "字幕文本中存在大量无意义的英文字符、符号乱码以及错别字（如将“稳婆”识别为“稳玻”，“土匪”识别为“山菲”，“一出”识别为“一遇”）。；OCR识别质量极差，包含大量干扰字符和错别字，严重影响内容理解和观众的观看体验。",
+              "risk_level": "低风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 6.0,
+              "end_time": 6.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "第7帧画面中，年轻男性角色对女性角色说，字幕显示：“我想与你同去玉楼春”。；台词中提及的“玉楼春”常指代古代的风月场所（青楼），男性邀请女性前往此类场所，带有不当的性暗示和低俗擦边嫌疑。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 18.0,
+              "end_time": 25.0,
+              "label": "质量问题",
+              "sub_label": "水印",
+              "decision": "REVIEW",
+              "decision_detail": "拼图1至8（00:18-00:25）画面右上角持续出现“常喜”字样的固定水印。",
+              "risk_level": "低风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 36.0,
+              "end_time": 38.0,
+              "label": "暴力伤害",
+              "sub_label": "毒害",
+              "decision": "BLOCK",
+              "decision_detail": "画面1中一名穿着朴素的女子端着杯子，画面2和3中该女子的特写镜头配有字幕“这是毒药”，明确展示了下毒或毒害的情节意图。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 44.0,
+              "end_time": 44.0,
+              "label": "质量问题",
+              "sub_label": "台词字幕",
+              "decision": "REVIEW",
+              "decision_detail": "画面8中出现的字幕“小民从竟起自然生了皇子”存在明显的错别字或语义不通顺，可能是后期制作或OCR识别错误。",
+              "risk_level": "低风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 55.0,
+              "end_time": 58.0,
+              "label": "不良价值观",
+              "sub_label": "家庭矛盾/伦理冲突",
+              "decision": "BLOCK",
+              "decision_detail": "画面中红衣女子（贵妃身份）对蓝衣女子（被称为姐姐）说“功劳却被我全揽走了”、“当真对姐姐有些愧疚”，结合字幕“我孕育贵妃母子”，暗示姐姐替妹妹生育或妹妹抢夺了姐姐生育的孩子，存在“借腹生子”或“夺子”的宫斗伦理冲突。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 85.0,
+              "end_time": 92.0,
+              "label": "暴力伤害",
+              "sub_label": "暴力冲突背景",
+              "decision": "BLOCK",
+              "decision_detail": "字幕描述过去的暴力事件：'霍老夫人临盆时遭遇山匪...山匪放火烧庙'。",
+              "risk_level": "低风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 93.0,
+              "end_time": 103.0,
+              "label": "特殊人群",
+              "sub_label": "孕妇/公职次要负面",
+              "decision": "REVIEW",
+              "decision_detail": "画面1-2字幕显示“另一名孕妇和孩子却葬身火海”；画面5-7字幕显示“那名孕妇竟是山匪的同伙”。；台词中提及孕妇和孩子在火灾中死亡，并将孕妇设定为山匪同伙，属于对孕妇的负面描述和伤害叙述。但由于是古代背景下的往事陈述，无直接视觉展现，属于剧情设定的次要负面，风险较低。",
+              "risk_level": "低风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 113.0,
+              "end_time": 114.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱/轻度虐待",
+              "decision": "REVIEW",
+              "decision_detail": "图7至图8中，华服女子逼近深衣女子，字幕显示“要么像个畜生”、“被她踩在脚下为生”。；台词包含强烈的贬低和侮辱性词汇（“畜生”、“踩在脚下”），属于语言羞辱。虽然在古装宫斗/宅斗题材中作为反派刻画或冲突激化手段较为常见，但仍需注意尺度，避免过度渲染阶级压迫和人格侮辱。",
+              "risk_level": "低风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 144.0,
+              "end_time": 152.0,
+              "label": "不良价值观",
+              "sub_label": "极端利己/不择手段",
+              "decision": "BLOCK",
+              "decision_detail": "拼图1至8中，衣着华丽的女子对另一名蓝衣女子傲慢地陈述，字幕显示其炫耀权力和财富，并明确表达为了得到想要的东西可以不择手段。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 155.0,
+              "end_time": 160.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "画面中身穿官服的角色靠近女子耳边，并抓着女子的手腕，字幕显示“我有两个秘密想告诉你”、“第一其实我不是阉人”。；“假太监”设定并配以“其实我不是阉人”的台词，结合耳语、抓手腕等亲密肢体动作，具有明显的性暗示和软色情擦边意味，容易引发低俗联想。",
+              "risk_level": "中风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 161.0,
+              "end_time": 164.0,
+              "label": "不良价值观",
+              "sub_label": "极端复仇",
+              "decision": "BLOCK",
+              "decision_detail": "图1至图4中，两名古装女子对话，字幕清晰显示：“第二我活着唯一的目的 就是杀了当今皇帝李泽川”。；台词明确宣扬将杀人（刺杀皇帝）作为人生唯一目的，属于极端的复仇导向，传递了以暴制暴和仇恨至上的不良价值观。",
+              "risk_level": "高风险",
+              "confidence": 0.95
+            }
+          ]
+        },
+        "audio_results": {
+          "decision": "BLOCK",
+          "details": [
+            {
+              "start_time": 0.0,
+              "end_time": 160.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "字幕中出现敏感词汇“交合”，虽疑似OCR识别错误，但字面含义涉嫌低俗。；“交合”一词具有明确的性暗示与性行为含义，属于低俗台词。结合上下文“真假千金”与身世揭秘的剧情，此处极大概率为OCR识别错误（如原台词可能为“亲生”等），但文本本身存在违规风险，需人工介入核实。",
+              "text": "第一其实我不是交合",
+              "confidence": 0.85
+            },
+            {
+              "start_time": 0.0,
+              "end_time": 160.0,
+              "label": "质量问题",
+              "sub_label": "字幕乱码/错别字",
+              "decision": "REVIEW",
+              "decision_detail": "字幕文本中存在大量无意义的英文字符、符号乱码以及错别字（如将“稳婆”识别为“稳玻”，“土匪”识别为“山菲”，“一出”识别为“一遇”）。；OCR识别质量极差，包含大量干扰字符和错别字，严重影响内容理解和观众的观看体验。",
+              "text": "v hi, SR Ja He MY Ae . 7 / 当时明明是姐姐你找的稳玻 / 名孕妇竟是山菲的同伙 / 故意演了一遇",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 6.0,
+              "end_time": 6.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "第7帧画面中，年轻男性角色对女性角色说，字幕显示：“我想与你同去玉楼春”。；台词中提及的“玉楼春”常指代古代的风月场所（青楼），男性邀请女性前往此类场所，带有不当的性暗示和低俗擦边嫌疑。",
+              "text": "我想与你同去玉楼春",
+              "confidence": 0.85
+            },
+            {
+              "start_time": 36.0,
+              "end_time": 38.0,
+              "label": "暴力伤害",
+              "sub_label": "毒害",
+              "decision": "BLOCK",
+              "decision_detail": "画面1中一名穿着朴素的女子端着杯子，画面2和3中该女子的特写镜头配有字幕“这是毒药”，明确展示了下毒或毒害的情节意图。",
+              "text": "这是毒药",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 44.0,
+              "end_time": 44.0,
+              "label": "质量问题",
+              "sub_label": "台词字幕",
+              "decision": "REVIEW",
+              "decision_detail": "画面8中出现的字幕“小民从竟起自然生了皇子”存在明显的错别字或语义不通顺，可能是后期制作或OCR识别错误。",
+              "text": "小民从竟起自然生了皇子",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 55.0,
+              "end_time": 58.0,
+              "label": "不良价值观",
+              "sub_label": "家庭矛盾/伦理冲突",
+              "decision": "BLOCK",
+              "decision_detail": "画面中红衣女子（贵妃身份）对蓝衣女子（被称为姐姐）说“功劳却被我全揽走了”、“当真对姐姐有些愧疚”，结合字幕“我孕育贵妃母子”，暗示姐姐替妹妹生育或妹妹抢夺了姐姐生育的孩子，存在“借腹生子”或“夺子”的宫斗伦理冲突。",
+              "text": "我孕育贵妃母子, 功劳却被我全揽走了, 当真对姐姐有些愧疚",
+              "confidence": 0.85
+            },
+            {
+              "start_time": 85.0,
+              "end_time": 92.0,
+              "label": "暴力伤害",
+              "sub_label": "暴力冲突背景",
+              "decision": "BLOCK",
+              "decision_detail": "字幕描述过去的暴力事件：'霍老夫人临盆时遭遇山匪...山匪放火烧庙'。",
+              "text": "霍老夫人临盆时遭遇山匪 与一名孕妇一同躲进破庙 各自诞下女婴 山匪放火烧庙 霍家慌乱中抱走了一个婴儿",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 93.0,
+              "end_time": 103.0,
+              "label": "特殊人群",
+              "sub_label": "孕妇/公职次要负面",
+              "decision": "REVIEW",
+              "decision_detail": "画面1-2字幕显示“另一名孕妇和孩子却葬身火海”；画面5-7字幕显示“那名孕妇竟是山匪的同伙”。；台词中提及孕妇和孩子在火灾中死亡，并将孕妇设定为山匪同伙，属于对孕妇的负面描述和伤害叙述。但由于是古代背景下的往事陈述，无直接视觉展现，属于剧情设定的次要负面，风险较低。",
+              "text": "另一名孕妇和孩子 却葬身火海 那名孕妇竟是山匪的同伙",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 113.0,
+              "end_time": 114.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱/轻度虐待",
+              "decision": "REVIEW",
+              "decision_detail": "图7至图8中，华服女子逼近深衣女子，字幕显示“要么像个畜生”、“被她踩在脚下为生”。；台词包含强烈的贬低和侮辱性词汇（“畜生”、“踩在脚下”），属于语言羞辱。虽然在古装宫斗/宅斗题材中作为反派刻画或冲突激化手段较为常见，但仍需注意尺度，避免过度渲染阶级压迫和人格侮辱。",
+              "text": "要么像个畜生，被她踩在脚下为生",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 144.0,
+              "end_time": 152.0,
+              "label": "不良价值观",
+              "sub_label": "极端利己/不择手段",
+              "decision": "BLOCK",
+              "decision_detail": "拼图1至8中，衣着华丽的女子对另一名蓝衣女子傲慢地陈述，字幕显示其炫耀权力和财富，并明确表达为了得到想要的东西可以不择手段。",
+              "text": "可我知道我如今权倾朝野，有花不完的钱...只要是我想要得到的东西，无论用什么手段",
+              "confidence": 0.85
+            },
+            {
+              "start_time": 155.0,
+              "end_time": 160.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "软色情擦边",
+              "decision": "REVIEW",
+              "decision_detail": "画面中身穿官服的角色靠近女子耳边，并抓着女子的手腕，字幕显示“我有两个秘密想告诉你”、“第一其实我不是阉人”。；“假太监”设定并配以“其实我不是阉人”的台词，结合耳语、抓手腕等亲密肢体动作，具有明显的性暗示和软色情擦边意味，容易引发低俗联想。",
+              "text": "我有两个秘密想告诉你 第一其实我不是阉人 第二我活着唯一的目的",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 161.0,
+              "end_time": 164.0,
+              "label": "不良价值观",
+              "sub_label": "极端复仇",
+              "decision": "BLOCK",
+              "decision_detail": "图1至图4中，两名古装女子对话，字幕清晰显示：“第二我活着唯一的目的 就是杀了当今皇帝李泽川”。；台词明确宣扬将杀人（刺杀皇帝）作为人生唯一目的，属于极端的复仇导向，传递了以暴制暴和仇恨至上的不良价值观。",
+              "text": "第二我活着唯一的目的 就是杀了当今皇帝李泽川",
+              "confidence": 0.95
+            }
+          ]
+        },
+        "annotations": [
+          "视频0秒 命中 低俗与画面尺度-软色情擦边：字幕中出现敏感词汇“交合”，虽疑似OCR识别错误，但字面含义涉嫌低俗。；“交合”一词具有明确的性暗示与性行为含义，属于低俗台词。结合上下文“真假千金”与身世揭秘的剧情，此处极大概率为OCR识别错误（如原台词可能为“亲生”等），但文本本身存在违规风险，需人工介入核实。",
+          "视频0秒 命中 质量问题-字幕乱码/错别字：字幕文本中存在大量无意义的英文字符、符号乱码以及错别字（如将“稳婆”识别为“稳玻”，“土匪”识别为“山菲”，“一出”识别为“一遇”）。；OCR识别质量极差，包含大量干扰字符和错别字，严重影响内容理解和观众的观看体验。",
+          "视频6秒 命中 低俗与画面尺度-软色情擦边：第7帧画面中，年轻男性角色对女性角色说，字幕显示：“我想与你同去玉楼春”。；台词中提及的“玉楼春”常指代古代的风月场所（青楼），男性邀请女性前往此类场所，带有不当的性暗示和低俗擦边嫌疑。",
+          "视频18秒 命中 质量问题-水印：拼图1至8（00:18-00:25）画面右上角持续出现“常喜”字样的固定水印。",
+          "视频36秒 命中 暴力伤害-毒害：画面1中一名穿着朴素的女子端着杯子，画面2和3中该女子的特写镜头配有字幕“这是毒药”，明确展示了下毒或毒害的情节意图。",
+          "视频44秒 命中 质量问题-台词字幕：画面8中出现的字幕“小民从竟起自然生了皇子”存在明显的错别字或语义不通顺，可能是后期制作或OCR识别错误。",
+          "视频55秒 命中 不良价值观-家庭矛盾/伦理冲突：画面中红衣女子（贵妃身份）对蓝衣女子（被称为姐姐）说“功劳却被我全揽走了”、“当真对姐姐有些愧疚”，结合字幕“我孕育贵妃母子”，暗示姐姐替妹妹生育或妹妹抢夺了姐姐生育的孩子，存在“借腹生子”或“夺子”的宫斗伦理冲突。",
+          "视频85秒 命中 暴力伤害-暴力冲突背景：字幕描述过去的暴力事件：'霍老夫人临盆时遭遇山匪...山匪放火烧庙'。",
+          "视频93秒 命中 特殊人群-孕妇/公职次要负面：画面1-2字幕显示“另一名孕妇和孩子却葬身火海”；画面5-7字幕显示“那名孕妇竟是山匪的同伙”。；台词中提及孕妇和孩子在火灾中死亡，并将孕妇设定为山匪同伙，属于对孕妇的负面描述和伤害叙述。但由于是古代背景下的往事陈述，无直接视觉展现，属于剧情设定的次要负面，风险较低。",
+          "视频113秒 命中 不良价值观-语言羞辱/轻度虐待：图7至图8中，华服女子逼近深衣女子，字幕显示“要么像个畜生”、“被她踩在脚下为生”。；台词包含强烈的贬低和侮辱性词汇（“畜生”、“踩在脚下”），属于语言羞辱。虽然在古装宫斗/宅斗题材中作为反派刻画或冲突激化手段较为常见，但仍需注意尺度，避免过度渲染阶级压迫和人格侮辱。",
+          "视频144秒 命中 不良价值观-极端利己/不择手段：拼图1至8中，衣着华丽的女子对另一名蓝衣女子傲慢地陈述，字幕显示其炫耀权力和财富，并明确表达为了得到想要的东西可以不择手段。",
+          "视频155秒 命中 低俗与画面尺度-软色情擦边：画面中身穿官服的角色靠近女子耳边，并抓着女子的手腕，字幕显示“我有两个秘密想告诉你”、“第一其实我不是阉人”。；“假太监”设定并配以“其实我不是阉人”的台词，结合耳语、抓手腕等亲密肢体动作，具有明显的性暗示和软色情擦边意味，容易引发低俗联想。",
+          "视频161秒 命中 不良价值观-极端复仇：图1至图4中，两名古装女子对话，字幕清晰显示：“第二我活着唯一的目的 就是杀了当今皇帝李泽川”。；台词明确宣扬将杀人（刺杀皇帝）作为人生唯一目的，属于极端的复仇导向，传递了以暴制暴和仇恨至上的不良价值观。"
+        ]
+      },
+      "completed_at": 1783617538.6367862
+    },
+    {
+      "data_id": "video-qpm500-staged-fix-20260710-0108-00002",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1776868209755_870.mp4",
+      "submitted_at": 1783616889.5220568,
+      "submit_elapsed_seconds": 0.014102935907430947,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "video-qpm500-staged-fix-20260710-0108-00002",
+        "task_id": "video-qpm500-staged-fix-20260710-0108-00002",
+        "review_id": "review_68628018b3f1e72c",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "failed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "video-qpm500-staged-fix-20260710-0108-00002",
+        "task_id": "video-qpm500-staged-fix-20260710-0108-00002",
+        "status": "failed",
+        "final_label": "",
+        "decision_label": "",
+        "video_results": {
+          "decision": "",
+          "frames": []
+        },
+        "audio_results": {
+          "decision": "",
+          "details": []
+        },
+        "annotations": [],
+        "error_message": "ConnectTimeout"
+      },
+      "completed_at": 1783617107.5826204
+    },
+    {
+      "data_id": "video-qpm500-staged-fix-20260710-0108-00003",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1782631464101_515.mp4",
+      "submitted_at": 1783616889.569684,
+      "submit_elapsed_seconds": 0.013528889045119286,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "video-qpm500-staged-fix-20260710-0108-00003",
+        "task_id": "video-qpm500-staged-fix-20260710-0108-00003",
+        "review_id": "review_481cf1ce28407898",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "processing",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "video-qpm500-staged-fix-20260710-0108-00003",
+        "task_id": "video-qpm500-staged-fix-20260710-0108-00003",
+        "status": "processing",
+        "final_label": "",
+        "decision_label": "",
+        "video_results": {
+          "decision": "",
+          "frames": []
+        },
+        "audio_results": {
+          "decision": "",
+          "details": []
+        },
+        "annotations": []
+      }
+    },
+    {
+      "data_id": "video-qpm500-staged-fix-20260710-0108-00004",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1782798215379_236.mp4",
+      "submitted_at": 1783616889.6174483,
+      "submit_elapsed_seconds": 0.013671952998265624,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "video-qpm500-staged-fix-20260710-0108-00004",
+        "task_id": "video-qpm500-staged-fix-20260710-0108-00004",
+        "review_id": "review_4dbc3ae8376835f7",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "processing",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "video-qpm500-staged-fix-20260710-0108-00004",
+        "task_id": "video-qpm500-staged-fix-20260710-0108-00004",
+        "status": "processing",
+        "final_label": "",
+        "decision_label": "",
+        "video_results": {
+          "decision": "",
+          "frames": []
+        },
+        "audio_results": {
+          "decision": "",
+          "details": []
+        },
+        "annotations": []
+      }
+    },
+    {
+      "data_id": "video-qpm500-staged-fix-20260710-0108-00005",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1782888001524_354.mp4",
+      "submitted_at": 1783616889.6648135,
+      "submit_elapsed_seconds": 0.01327225100249052,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "video-qpm500-staged-fix-20260710-0108-00005",
+        "task_id": "video-qpm500-staged-fix-20260710-0108-00005",
+        "review_id": "review_6cb3bd0daa652390",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "processing",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "video-qpm500-staged-fix-20260710-0108-00005",
+        "task_id": "video-qpm500-staged-fix-20260710-0108-00005",
+        "status": "processing",
+        "final_label": "",
+        "decision_label": "",
+        "video_results": {
+          "decision": "",
+          "frames": []
+        },
+        "audio_results": {
+          "decision": "",
+          "details": []
+        },
+        "annotations": []
+      }
+    },
+    {
+      "data_id": "video-qpm500-staged-fix-20260710-0108-00006",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1782891255246_299.mp4",
+      "submitted_at": 1783616889.712155,
+      "submit_elapsed_seconds": 0.013248267001472414,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "video-qpm500-staged-fix-20260710-0108-00006",
+        "task_id": "video-qpm500-staged-fix-20260710-0108-00006",
+        "review_id": "review_db388d7ac1b879f7",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "failed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "video-qpm500-staged-fix-20260710-0108-00006",
+        "task_id": "video-qpm500-staged-fix-20260710-0108-00006",
+        "status": "failed",
+        "final_label": "",
+        "decision_label": "",
+        "video_results": {
+          "decision": "",
+          "frames": []
+        },
+        "audio_results": {
+          "decision": "",
+          "details": []
+        },
+        "annotations": [],
+        "error_message": "ConnectTimeout"
+      },
+      "completed_at": 1783617067.4789622
+    },
+    {
+      "data_id": "video-qpm500-staged-fix-20260710-0108-00007",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1782975851591_519.mp4",
+      "submitted_at": 1783616889.759523,
+      "submit_elapsed_seconds": 0.013272112933918834,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "video-qpm500-staged-fix-20260710-0108-00007",
+        "task_id": "video-qpm500-staged-fix-20260710-0108-00007",
+        "review_id": "review_63d3c38f71a5b694",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "failed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "video-qpm500-staged-fix-20260710-0108-00007",
+        "task_id": "video-qpm500-staged-fix-20260710-0108-00007",
+        "status": "failed",
+        "final_label": "",
+        "decision_label": "",
+        "video_results": {
+          "decision": "",
+          "frames": []
+        },
+        "audio_results": {
+          "decision": "",
+          "details": []
+        },
+        "annotations": [],
+        "error_message": "ConnectTimeout"
+      },
+      "completed_at": 1783616977.2410128
+    },
+    {
+      "data_id": "video-qpm500-staged-fix-20260710-0108-00008",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1778203711890_479.mp4",
+      "submitted_at": 1783616889.806885,
+      "submit_elapsed_seconds": 0.013270147028379142,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "video-qpm500-staged-fix-20260710-0108-00008",
+        "task_id": "video-qpm500-staged-fix-20260710-0108-00008",
+        "review_id": "review_9e358c2c6bb31f47",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "completed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "video-qpm500-staged-fix-20260710-0108-00008",
+        "task_id": "video-qpm500-staged-fix-20260710-0108-00008",
+        "status": "completed",
+        "final_label": "REVIEW",
+        "decision_label": "REVIEW",
+        "summary": "本片不可过审。核心问题在于严重违背未成年人保护原则，将婴儿设定为宫斗工具并让其说出成人化的侮辱性词汇（“贱人”），此为触碰底线的高风险违规，必须彻底删除或重拍相关片段。其次，剧情中涉及的“见鬼”等封建迷信元素也需要通过修改台词（如解释为幻觉或做梦）来进行弱化处理。建议优先解决未成年人成人化问题，再调整迷信设定。",
+        "risk_score": 52.0,
+        "video_results": {
+          "decision": "REVIEW",
+          "frames": [
+            {
+              "time": 16.0,
+              "end_time": 20.0,
+              "label": "特殊人群",
+              "sub_label": "未成年人成人化",
+              "decision": "REVIEW",
+              "decision_detail": "在 00:16（格子 4）和 00:20（格子 8）的画面中，一个穿着龙袍的婴儿开口说话，对应的字幕显示其台词为“贱人”。",
+              "risk_level": "不予过审",
+              "confidence": 0.98
+            },
+            {
+              "time": 41.0,
+              "end_time": 46.0,
+              "label": "封建迷信与宗教民俗",
+              "sub_label": "鬼神崇拜/巫术法术",
+              "decision": "REVIEW",
+              "decision_detail": "画面中女子与抱婴儿的男子对话，字幕出现“看不见的东西”、“皇儿经常能见到”、“陛下的表哥伯伯”、“难道是体内流着纯正血脉”，暗示婴儿能看到死去的亲属鬼魂。；剧情设定婴儿能看到死去的亲属（鬼魂），属于宣扬封建迷信中的鬼神之说，且将其与“纯正血脉”绑定，存在不良导向。",
+              "risk_level": "中风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 58.0,
+              "end_time": 63.0,
+              "label": "封建迷信与宗教民俗",
+              "sub_label": "鬼神崇拜/巫术法术",
+              "decision": "REVIEW",
+              "decision_detail": "画面中皇帝抱着婴儿，字幕显示“能见朕之所见”、“此乃上天对朕多年修行的感应”。；台词涉及“上天感应”、“修行”及超自然能力，带有封建迷信或玄幻色彩。但在古代架空背景下，作为世界观设定，风险较低。",
+              "risk_level": "低风险",
+              "confidence": 0.9
+            }
+          ]
+        },
+        "audio_results": {
+          "decision": "REVIEW",
+          "details": [
+            {
+              "start_time": 16.0,
+              "end_time": 20.0,
+              "label": "特殊人群",
+              "sub_label": "未成年人成人化",
+              "decision": "REVIEW",
+              "decision_detail": "在 00:16（格子 4）和 00:20（格子 8）的画面中，一个穿着龙袍的婴儿开口说话，对应的字幕显示其台词为“贱人”。",
+              "text": "贱人",
+              "confidence": 0.98
+            },
+            {
+              "start_time": 41.0,
+              "end_time": 46.0,
+              "label": "封建迷信与宗教民俗",
+              "sub_label": "鬼神崇拜/巫术法术",
+              "decision": "REVIEW",
+              "decision_detail": "画面中女子与抱婴儿的男子对话，字幕出现“看不见的东西”、“皇儿经常能见到”、“陛下的表哥伯伯”、“难道是体内流着纯正血脉”，暗示婴儿能看到死去的亲属鬼魂。；剧情设定婴儿能看到死去的亲属（鬼魂），属于宣扬封建迷信中的鬼神之说，且将其与“纯正血脉”绑定，存在不良导向。",
+              "text": "看不见的东西 皇儿经常能见到 陛下的表哥伯伯 难道是体内流着纯正血脉",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 58.0,
+              "end_time": 63.0,
+              "label": "封建迷信与宗教民俗",
+              "sub_label": "鬼神崇拜/巫术法术",
+              "decision": "REVIEW",
+              "decision_detail": "画面中皇帝抱着婴儿，字幕显示“能见朕之所见”、“此乃上天对朕多年修行的感应”。；台词涉及“上天感应”、“修行”及超自然能力，带有封建迷信或玄幻色彩。但在古代架空背景下，作为世界观设定，风险较低。",
+              "text": "能见朕之所见，此乃上天对朕多年修行的感应",
+              "confidence": 0.9
+            }
+          ]
+        },
+        "annotations": [
+          "视频16秒 命中 特殊人群-未成年人成人化：在 00:16（格子 4）和 00:20（格子 8）的画面中，一个穿着龙袍的婴儿开口说话，对应的字幕显示其台词为“贱人”。",
+          "视频41秒 命中 封建迷信与宗教民俗-鬼神崇拜/巫术法术：画面中女子与抱婴儿的男子对话，字幕出现“看不见的东西”、“皇儿经常能见到”、“陛下的表哥伯伯”、“难道是体内流着纯正血脉”，暗示婴儿能看到死去的亲属鬼魂。；剧情设定婴儿能看到死去的亲属（鬼魂），属于宣扬封建迷信中的鬼神之说，且将其与“纯正血脉”绑定，存在不良导向。",
+          "视频58秒 命中 封建迷信与宗教民俗-鬼神崇拜/巫术法术：画面中皇帝抱着婴儿，字幕显示“能见朕之所见”、“此乃上天对朕多年修行的感应”。；台词涉及“上天感应”、“修行”及超自然能力，带有封建迷信或玄幻色彩。但在古代架空背景下，作为世界观设定，风险较低。"
+        ]
+      },
+      "completed_at": 1783617127.636456
+    },
+    {
+      "data_id": "video-qpm500-staged-fix-20260710-0108-00009",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1782783547724_630.mp4",
+      "submitted_at": 1783616889.8542268,
+      "submit_elapsed_seconds": 0.0132490040268749,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "video-qpm500-staged-fix-20260710-0108-00009",
+        "task_id": "video-qpm500-staged-fix-20260710-0108-00009",
+        "review_id": "review_e16cda611d07248f",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "completed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "video-qpm500-staged-fix-20260710-0108-00009",
+        "task_id": "video-qpm500-staged-fix-20260710-0108-00009",
+        "status": "completed",
+        "final_label": "BLOCK",
+        "decision_label": "BLOCK",
+        "summary": "发现 13 个审核风险，最高风险等级为 high。",
+        "risk_score": 97.0,
+        "video_results": {
+          "decision": "BLOCK",
+          "frames": [
+            {
+              "time": 31.0,
+              "end_time": 31.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "REVIEW",
+              "decision_detail": "台词出现“是我们陆少养的一条狗”；将人比作狗，属于贬低人格的语言羞辱，容易引发不适。",
+              "risk_level": "中风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 33.0,
+              "end_time": 33.0,
+              "label": "违法犯罪行为",
+              "sub_label": "绑架/非法拘禁",
+              "decision": "REVIEW",
+              "decision_detail": "台词出现“你现在落在我们手里”；暗示受害者被绑架或非法拘禁，属于违法犯罪行为。",
+              "risk_level": "中风险",
+              "confidence": 0.9
+            },
+            {
+              "time": 0.0,
+              "end_time": 66.0,
+              "label": "质量问题",
+              "sub_label": "台词字幕/OCR乱码",
+              "decision": "REVIEW",
+              "decision_detail": "字幕中存在大量如“aa ws”、“ener \\ _—”、“THE simeere”等无意义字符；OCR 识别错误或画面中存在干扰文本，导致提取的字幕包含大量乱码，影响观看体验和审核准确性。",
+              "risk_level": "低风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 2.0,
+              "end_time": 2.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "血腥暴力",
+              "decision": "REVIEW",
+              "decision_detail": "男子手持带血刀具。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 3.0,
+              "end_time": 6.0,
+              "label": "军党政及民族红线",
+              "sub_label": "涉政军党",
+              "decision": "REVIEW",
+              "decision_detail": "军装打扮，台词提打仗。",
+              "risk_level": "低风险",
+              "confidence": 0.7
+            },
+            {
+              "time": 16.0,
+              "end_time": 17.0,
+              "label": "暴力伤害",
+              "sub_label": "死亡/凶杀背景陈述",
+              "decision": "REVIEW",
+              "decision_detail": "图7-8展示俯视废墟场景，底部字幕显示'五年前龙虎被杀'。；字幕明确提及人物'被杀'，涉及凶杀暴力事件的背景陈述。但由于仅为文字交代，未展示任何血腥、暴力的具体过程或尸体画面，因此风险较低。",
+              "risk_level": "低风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 25.0,
+              "end_time": 25.0,
+              "label": "暴力伤害",
+              "sub_label": "血腥暴力",
+              "decision": "BLOCK",
+              "decision_detail": "拼图格子8（00:25）画面中出现一名女子（字幕标为“萧梦雪”），蜷缩着身体，脸上有明显的伤痕、血迹和污渍，衣服破旧，呈现出被暴力伤害或虐待后的惨状。",
+              "risk_level": "低风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 26.0,
+              "end_time": 34.0,
+              "label": "不良价值观",
+              "sub_label": "极端行为羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "画面中一名年轻女子被铁链锁在墙上，衣衫破烂且面部/身体有疑似血迹和污迹（00:30-00:32）。一名老年男子对其进行俯视和言语威胁，字幕显示：“你是以前的萧家大小姐啊”（00:27-00:29），“我告诉你 是我们陆少养的一条狗”（00:30-00:32），“你现在落在我们手里 最好听话一点”（00:33-00:34）。",
+              "risk_level": "高风险",
+              "confidence": 0.98
+            },
+            {
+              "time": 35.0,
+              "end_time": 38.0,
+              "label": "不良价值观",
+              "sub_label": "极端行为羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "拼图1至4（00:35-00:38）中，一名女子衣衫褴褛，脸上有污渍和疑似伤痕，被粗大的铁链拴在墙上，限制了人身自由，呈现出被非法拘禁和非人虐待的状态。",
+              "risk_level": "高风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 46.0,
+              "end_time": 51.0,
+              "label": "暴力伤害",
+              "sub_label": "血腥暴力",
+              "decision": "BLOCK",
+              "decision_detail": "画面第3帧至第8帧显示，一名老年男子遭到侧方飞踢，脚部直接击中其身体，导致老年男子面露惊恐，随后向后飞出并重重摔倒在地上。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 52.0,
+              "end_time": 60.0,
+              "label": "低俗与画面尺度",
+              "sub_label": "血腥暴力",
+              "decision": "REVIEW",
+              "decision_detail": "画面显示一名老年男性被击倒在地（00:52），随后痛苦地捂住胸口挣扎（00:56-00:58），最后捡起地上的金属管疑似准备作为武器反击（00:59-01:00）。",
+              "risk_level": "中风险",
+              "confidence": 0.85
+            },
+            {
+              "time": 61.0,
+              "end_time": 64.0,
+              "label": "暴力伤害",
+              "sub_label": "殴打/威胁",
+              "decision": "BLOCK",
+              "decision_detail": "画面01:01至01:04显示，一名老年男子捡起一根长棍状武器（疑似铁管或球棒），随后向镜头方向奔跑，并高举武器做出准备攻击的姿态。；画面直接展示了持械威胁和即将发生的物理攻击行为，属于暴力伤害范畴。",
+              "risk_level": "中风险",
+              "confidence": 0.95
+            },
+            {
+              "time": 61.0,
+              "end_time": 62.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "画面01:01和01:02的字幕中出现了明显的粗俗词汇。；台词及字幕中包含“他妈”等脏话，属于语言粗俗。",
+              "risk_level": "低风险",
+              "confidence": 0.99
+            }
+          ]
+        },
+        "audio_results": {
+          "decision": "BLOCK",
+          "details": [
+            {
+              "start_time": 31.0,
+              "end_time": 31.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "REVIEW",
+              "decision_detail": "台词出现“是我们陆少养的一条狗”；将人比作狗，属于贬低人格的语言羞辱，容易引发不适。",
+              "text": "JI 是我们陆少养的一条狗",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 33.0,
+              "end_time": 33.0,
+              "label": "违法犯罪行为",
+              "sub_label": "绑架/非法拘禁",
+              "decision": "REVIEW",
+              "decision_detail": "台词出现“你现在落在我们手里”；暗示受害者被绑架或非法拘禁，属于违法犯罪行为。",
+              "text": "你现在落在我们手里",
+              "confidence": 0.9
+            },
+            {
+              "start_time": 0.0,
+              "end_time": 66.0,
+              "label": "质量问题",
+              "sub_label": "台词字幕/OCR乱码",
+              "decision": "REVIEW",
+              "decision_detail": "字幕中存在大量如“aa ws”、“ener \\ _—”、“THE simeere”等无意义字符；OCR 识别错误或画面中存在干扰文本，导致提取的字幕包含大量乱码，影响观看体验和审核准确性。",
+              "text": "aa ws, ener \\ _—, THE simeere 等",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 3.0,
+              "end_time": 6.0,
+              "label": "军党政及民族红线",
+              "sub_label": "涉政军党",
+              "decision": "REVIEW",
+              "decision_detail": "军装打扮，台词提打仗。",
+              "text": "老大等仗打完了",
+              "confidence": 0.7
+            },
+            {
+              "start_time": 16.0,
+              "end_time": 17.0,
+              "label": "暴力伤害",
+              "sub_label": "死亡/凶杀背景陈述",
+              "decision": "REVIEW",
+              "decision_detail": "图7-8展示俯视废墟场景，底部字幕显示'五年前龙虎被杀'。；字幕明确提及人物'被杀'，涉及凶杀暴力事件的背景陈述。但由于仅为文字交代，未展示任何血腥、暴力的具体过程或尸体画面，因此风险较低。",
+              "text": "五年前龙虎被杀",
+              "confidence": 0.95
+            },
+            {
+              "start_time": 25.0,
+              "end_time": 25.0,
+              "label": "暴力伤害",
+              "sub_label": "血腥暴力",
+              "decision": "BLOCK",
+              "decision_detail": "拼图格子8（00:25）画面中出现一名女子（字幕标为“萧梦雪”），蜷缩着身体，脸上有明显的伤痕、血迹和污渍，衣服破旧，呈现出被暴力伤害或虐待后的惨状。",
+              "text": "萧梦雪",
+              "confidence": 0.85
+            },
+            {
+              "start_time": 26.0,
+              "end_time": 34.0,
+              "label": "不良价值观",
+              "sub_label": "极端行为羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "画面中一名年轻女子被铁链锁在墙上，衣衫破烂且面部/身体有疑似血迹和污迹（00:30-00:32）。一名老年男子对其进行俯视和言语威胁，字幕显示：“你是以前的萧家大小姐啊”（00:27-00:29），“我告诉你 是我们陆少养的一条狗”（00:30-00:32），“你现在落在我们手里 最好听话一点”（00:33-00:34）。",
+              "text": "你是以前的萧家大小姐啊 我告诉你 是我们陆少养的一条狗 你现在落在我们手里 最好听话一点",
+              "confidence": 0.98
+            },
+            {
+              "start_time": 61.0,
+              "end_time": 62.0,
+              "label": "不良价值观",
+              "sub_label": "语言羞辱",
+              "decision": "BLOCK",
+              "decision_detail": "画面01:01和01:02的字幕中出现了明显的粗俗词汇。；台词及字幕中包含“他妈”等脏话，属于语言粗俗。",
+              "text": "臭小子你他妈谁呀",
+              "confidence": 0.99
+            }
+          ]
+        },
+        "annotations": [
+          "视频31秒 命中 不良价值观-语言羞辱：台词出现“是我们陆少养的一条狗”；将人比作狗，属于贬低人格的语言羞辱，容易引发不适。",
+          "视频33秒 命中 违法犯罪行为-绑架/非法拘禁：台词出现“你现在落在我们手里”；暗示受害者被绑架或非法拘禁，属于违法犯罪行为。",
+          "视频0秒 命中 质量问题-台词字幕/OCR乱码：字幕中存在大量如“aa ws”、“ener \\ _—”、“THE simeere”等无意义字符；OCR 识别错误或画面中存在干扰文本，导致提取的字幕包含大量乱码，影响观看体验和审核准确性。",
+          "视频2秒 命中 低俗与画面尺度-血腥暴力：男子手持带血刀具。",
+          "视频3秒 命中 军党政及民族红线-涉政军党：军装打扮，台词提打仗。",
+          "视频16秒 命中 暴力伤害-死亡/凶杀背景陈述：图7-8展示俯视废墟场景，底部字幕显示'五年前龙虎被杀'。；字幕明确提及人物'被杀'，涉及凶杀暴力事件的背景陈述。但由于仅为文字交代，未展示任何血腥、暴力的具体过程或尸体画面，因此风险较低。",
+          "视频25秒 命中 暴力伤害-血腥暴力：拼图格子8（00:25）画面中出现一名女子（字幕标为“萧梦雪”），蜷缩着身体，脸上有明显的伤痕、血迹和污渍，衣服破旧，呈现出被暴力伤害或虐待后的惨状。",
+          "视频26秒 命中 不良价值观-极端行为羞辱：画面中一名年轻女子被铁链锁在墙上，衣衫破烂且面部/身体有疑似血迹和污迹（00:30-00:32）。一名老年男子对其进行俯视和言语威胁，字幕显示：“你是以前的萧家大小姐啊”（00:27-00:29），“我告诉你 是我们陆少养的一条狗”（00:30-00:32），“你现在落在我们手里 最好听话一点”（00:33-00:34）。",
+          "视频35秒 命中 不良价值观-极端行为羞辱：拼图1至4（00:35-00:38）中，一名女子衣衫褴褛，脸上有污渍和疑似伤痕，被粗大的铁链拴在墙上，限制了人身自由，呈现出被非法拘禁和非人虐待的状态。",
+          "视频46秒 命中 暴力伤害-血腥暴力：画面第3帧至第8帧显示，一名老年男子遭到侧方飞踢，脚部直接击中其身体，导致老年男子面露惊恐，随后向后飞出并重重摔倒在地上。",
+          "视频52秒 命中 低俗与画面尺度-血腥暴力：画面显示一名老年男性被击倒在地（00:52），随后痛苦地捂住胸口挣扎（00:56-00:58），最后捡起地上的金属管疑似准备作为武器反击（00:59-01:00）。",
+          "视频61秒 命中 暴力伤害-殴打/威胁：画面01:01至01:04显示，一名老年男子捡起一根长棍状武器（疑似铁管或球棒），随后向镜头方向奔跑，并高举武器做出准备攻击的姿态。；画面直接展示了持械威胁和即将发生的物理攻击行为，属于暴力伤害范畴。",
+          "视频61秒 命中 不良价值观-语言羞辱：画面01:01和01:02的字幕中出现了明显的粗俗词汇。；台词及字幕中包含“他妈”等脏话，属于语言粗俗。"
+        ]
+      },
+      "completed_at": 1783617197.8384724
+    },
+    {
+      "data_id": "video-qpm500-staged-fix-20260710-0108-00010",
+      "video_url": "https://qiniu.duanju.com/ORIGIN/origin_1782783547741_525.mp4",
+      "submitted_at": 1783616889.9015334,
+      "submit_elapsed_seconds": 0.013213573954999447,
+      "submit_status_code": 200,
+      "submit_response": {
+        "code": 0,
+        "message": "success",
+        "data_id": "video-qpm500-staged-fix-20260710-0108-00010",
+        "task_id": "video-qpm500-staged-fix-20260710-0108-00010",
+        "review_id": "review_46b9f6b7cdb03fce",
+        "status": "submitted",
+        "idempotent": false
+      },
+      "submit_error": null,
+      "status": "failed",
+      "last_result": {
+        "code": 0,
+        "message": "success",
+        "data_id": "video-qpm500-staged-fix-20260710-0108-00010",
+        "task_id": "video-qpm500-staged-fix-20260710-0108-00010",
+        "status": "failed",
+        "final_label": "",
+        "decision_label": "",
+        "video_results": {
+          "decision": "",
+          "frames": []
+        },
+        "audio_results": {
+          "decision": "",
+          "details": []
+        },
+        "annotations": [],
+        "error_message": "ConnectTimeout"
+      },
+      "completed_at": 1783617007.3138568
+    }
+  ]
+}

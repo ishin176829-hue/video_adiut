@@ -1,0 +1,116 @@
+{
+  "generated_at": "2026-07-13T03:47:29.428525+00:00",
+  "model": "gemini-2.5-flash",
+  "base_url": "https://jzapi.duanju.com",
+  "key_pool_size": 3,
+  "stages": [
+    {
+      "qps": 10,
+      "duration_seconds": 10,
+      "total": 100,
+      "ok": 100,
+      "error": 0,
+      "success_ratio": 1.0,
+      "errors": {},
+      "by_key": {
+        "google_f1e60aaeef1d": {
+          "ok": 34
+        },
+        "google_e9a0f34d109b": {
+          "ok": 33
+        },
+        "google_0c73c95cc7f2": {
+          "ok": 33
+        }
+      },
+      "latency_seconds": {
+        "p50": 1.484801737475209,
+        "p95": 3.060299114341614,
+        "p99": 3.8558190236450183
+      },
+      "wall_seconds": 12.175319005036727,
+      "sample_errors": []
+    },
+    {
+      "qps": 20,
+      "duration_seconds": 10,
+      "total": 200,
+      "ok": 200,
+      "error": 0,
+      "success_ratio": 1.0,
+      "errors": {},
+      "by_key": {
+        "google_f1e60aaeef1d": {
+          "ok": 67
+        },
+        "google_e9a0f34d109b": {
+          "ok": 67
+        },
+        "google_0c73c95cc7f2": {
+          "ok": 66
+        }
+      },
+      "latency_seconds": {
+        "p50": 1.2054460700019263,
+        "p95": 2.8103870839520817,
+        "p99": 3.3611985787213774
+      },
+      "wall_seconds": 13.872262898017652,
+      "sample_errors": []
+    },
+    {
+      "qps": 40,
+      "duration_seconds": 10,
+      "total": 400,
+      "ok": 400,
+      "error": 0,
+      "success_ratio": 1.0,
+      "errors": {},
+      "by_key": {
+        "google_f1e60aaeef1d": {
+          "ok": 134
+        },
+        "google_e9a0f34d109b": {
+          "ok": 133
+        },
+        "google_0c73c95cc7f2": {
+          "ok": 133
+        }
+      },
+      "latency_seconds": {
+        "p50": 1.2678381635341793,
+        "p95": 3.0035266163700705,
+        "p99": 7.258099880389614
+      },
+      "wall_seconds": 20.31080378498882,
+      "sample_errors": []
+    },
+    {
+      "qps": 60,
+      "duration_seconds": 10,
+      "total": 600,
+      "ok": 600,
+      "error": 0,
+      "success_ratio": 1.0,
+      "errors": {},
+      "by_key": {
+        "google_f1e60aaeef1d": {
+          "ok": 200
+        },
+        "google_e9a0f34d109b": {
+          "ok": 200
+        },
+        "google_0c73c95cc7f2": {
+          "ok": 200
+        }
+      },
+      "latency_seconds": {
+        "p50": 1.2981176549801603,
+        "p95": 4.383723334380191,
+        "p99": 20.287967792038106
+      },
+      "wall_seconds": 33.50572284089867,
+      "sample_errors": []
+    }
+  ]
+}

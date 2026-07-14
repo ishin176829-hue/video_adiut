@@ -1,0 +1,105 @@
+default_tags = ["smoke"]
+
+[[change_rules]]
+patterns = ["src/video_review/oss.py", "tests/test_oss_upload.py", "static/index.html", "static/app.js"]
+tags = ["oss", "upload", "mov"]
+reason = "OSS upload or browser upload flow changed"
+
+[[change_rules]]
+patterns = ["src/video_review/db.py", "tests/test_platform_api.py"]
+tags = ["database", "admin", "history"]
+reason = "database or platform API tests changed"
+
+[[change_rules]]
+patterns = ["src/video_review/main.py"]
+tags = ["api"]
+reason = "API route layer changed"
+
+[[change_rules]]
+patterns = ["src/video_review/tasks.py", "src/video_review/worker.py", "src/video_review/queue.py"]
+tags = ["review", "worker", "callback", "e2e"]
+reason = "review execution or queue flow changed"
+
+[[test_cases]]
+id = "health_blackbox"
+name = "Health endpoint"
+description = "Verify the public service responds and dependency flags are present."
+endpoints = ["/api/v1/health"]
+tags = ["smoke", "api"]
+
+[[test_cases.blackbox]]
+method = "GET"
+path = "/api/v1/health"
+expect_status = 200
+
+[[test_cases]]
+id = "policy_blackbox"
+name = "Current policy endpoint"
+description = "Verify the policy contract is reachable."
+endpoints = ["/api/v1/policies/current"]
+tags = ["smoke", "api", "policy"]
+
+[[test_cases.blackbox]]
+method = "GET"
+path = "/api/v1/policies/current"
+expect_status = 200
+
+[[test_cases]]
+id = "history_auth_blackbox"
+name = "History requires Feishu login"
+description = "Verify personal history rejects requests without Feishu identity."
+endpoints = ["/api/v1/reviews/history"]
+tags = ["smoke", "api", "auth", "history"]
+
+[[test_cases.blackbox]]
+method = "GET"
+path = "/api/v1/reviews/history"
+expect_status = 401
+headers = {"X-App-Id" = "smart-api-test"}
+
+[[test_cases]]
+id = "oss_init_mov_blackbox"
+name = ".mov OSS init"
+description = "Verify Apple .mov files can initialize OSS STS upload credentials."
+endpoints = ["/api/v1/uploads/oss/init"]
+tags = ["api", "oss", "upload", "mov"]
+pytest = ["tests/test_oss_upload.py::test_oss_upload_init_accepts_apple_mov_files", "tests/test_frontend_upload_accept.py"]
+
+[[test_cases.blackbox]]
+method = "POST"
+path = "/api/v1/uploads/oss/init"
+expect_status = 200
+headers = {"X-App-Id" = "smart-api-test", "Content-Type" = "application/json"}
+body = {filename = "smart-api-smoke.mov", size = 11, content_type = "video/quicktime"}
+
+[[test_cases]]
+id = "platform_admin_database_local"
+name = "Admin database access"
+description = "Verify admin database APIs enforce admin access and table whitelist behavior."
+endpoints = ["/api/v1/admin/database", "/api/v1/admin/database/{table}"]
+tags = ["api", "admin", "database"]
+pytest = [
+  "tests/test_platform_api.py::test_platform_admin_database_rows_requires_admin",
+  "tests/test_platform_api.py::test_platform_admin_database_rows_queries_whitelisted_table",
+]
+
+[[test_cases]]
+id = "platform_review_create_local"
+name = "Platform review create/idempotency"
+description = "Verify review creation remains idempotent and owner fields are returned."
+endpoints = ["/api/v1/reviews", "/api/v1/reviews/{review_id}"]
+tags = ["api", "review", "auth"]
+pytest = [
+  "tests/test_platform_api.py::test_platform_review_create_is_idempotent_by_platform_task_id",
+  "tests/test_platform_api.py::test_platform_review_status_includes_uploader_and_drama_title",
+]
+
+[[test_cases]]
+id = "real_review_e2e"
+name = "Real review E2E"
+description = "Submit a real small video, wait for worker/model review, fetch result, and verify callback signing."
+endpoints = ["/api/v1/reviews", "/api/v1/reviews/{review_id}", "/api/v1/reviews/{review_id}/result"]
+tags = ["review", "worker", "callback", "e2e"]
+writes = true
+costly = true
+callback = true
