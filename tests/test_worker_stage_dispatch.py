@@ -284,3 +284,54 @@ def test_worker_marks_deadline_exhaustion_failed_before_dead_letter(monkeypatch,
     assert calls[0][0:2] == ("fail", "review_expired")
     assert "30分钟" in calls[0][2]
     assert calls[1][0] == "dead"
+
+
+def test_worker_acks_durable_retry_even_if_job_status_update_fails(monkeypatch, tmp_path):
+    worker = import_worker(monkeypatch, tmp_path)
+    acknowledged = []
+
+    async def fake_terminal(review_id):
+        return False
+
+    async def fail_process(message):
+        raise RuntimeError("模型临时错误")
+
+    def fake_plan(request, **kwargs):
+        return SimpleNamespace(
+            request=request,
+            attempt=1,
+            delay_seconds=5,
+            deadline_at=datetime.now(timezone.utc) + timedelta(minutes=29),
+        )
+
+    async def fake_schedule(*args, **kwargs):
+        return "durable-retry-entry"
+
+    async def fail_update(*args, **kwargs):
+        raise RuntimeError("database unavailable")
+
+    async def fake_ack(message):
+        acknowledged.append(message.stream_id)
+
+    async def scenario():
+        monkeypatch.setattr(worker, "_is_terminal_job", fake_terminal)
+        monkeypatch.setattr(worker, "process_message", fail_process)
+        monkeypatch.setattr(worker, "plan_stage_retry", fake_plan)
+        monkeypatch.setattr(worker, "schedule_stage_retry", fake_schedule)
+        monkeypatch.setattr(worker, "update_job", fail_update)
+        monkeypatch.setattr(worker, "ack_review", fake_ack)
+        message = ReviewQueueMessage(
+            stream_id="13-0",
+            review_id="review_durable_retry",
+            request=CreateReviewRequest(video_url="https://example.com/a.mp4"),
+            payload={},
+            stage=ReviewQueueStage.MODEL,
+            stream="stream:model",
+            group="group:model",
+        )
+
+        await worker.handle_message(message, asyncio.Semaphore(1), "consumer-test")
+
+    asyncio.run(scenario())
+
+    assert acknowledged == ["13-0"]

@@ -225,3 +225,9 @@ def test_promote_due_stage_retries_targets_model_stream(monkeypatch):
         assert fake.eval_args[2][-1] == "model"
 
     asyncio.run(scenario())
+
+
+def test_stage_retry_promotion_adds_stream_message_before_removing_retry_entry():
+    script = queue._STAGE_RETRY_PROMOTE_SCRIPT
+
+    assert script.index("XADD") < script.index("ZREM")

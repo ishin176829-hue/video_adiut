@@ -106,6 +106,8 @@ if mode == 'open' and open_until_ms <= now_ms then
   multiplier = 1
   limit = 1
   redis.call('HSET', circuit_key, 'mode', mode, 'multiplier', multiplier, 'open_until_ms', 0)
+elseif mode == 'half_open' then
+  limit = 1
 elseif multiplier <= 0 then
   return {0, mode, 0}
 end
@@ -148,14 +150,14 @@ local stage = ARGV[3]
 local entries = redis.call('ZRANGEBYSCORE', retry_key, '-inf', now_seconds, 'LIMIT', 0, count)
 local promoted = 0
 for _, raw in ipairs(entries) do
+  local item = cjson.decode(raw)
+  redis.call('XADD', target_stream, '*',
+    'review_id', item.review_id,
+    'payload', item.payload,
+    'stage', stage,
+    'enqueued_at', item.enqueued_at,
+    'retry_attempt', tostring(item.attempt))
   if redis.call('ZREM', retry_key, raw) == 1 then
-    local item = cjson.decode(raw)
-    redis.call('XADD', target_stream, '*',
-      'review_id', item.review_id,
-      'payload', item.payload,
-      'stage', stage,
-      'enqueued_at', item.enqueued_at,
-      'retry_attempt', tostring(item.attempt))
     promoted = promoted + 1
   end
 end

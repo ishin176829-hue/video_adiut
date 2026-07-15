@@ -110,28 +110,35 @@ async def handle_message(message, worker_semaphore: asyncio.Semaphore, consumer_
                             attempt=retry_plan.attempt,
                         )
                         if scheduled:
-                            await update_job(
-                                message.review_id,
-                                status=ReviewStatus.PENDING,
-                                phase=f"{message.stage.value}_retry_wait",
-                                message=(
-                                    f"worker执行异常，{retry_plan.delay_seconds:.1f}秒后进行"
-                                    f"第{retry_plan.attempt}次任务级重试"
-                                ),
-                                error=error_text,
-                            )
-                            await add_event(
-                                message.review_id,
-                                "worker_retry",
-                                {
-                                    "stage": message.stage.value,
-                                    "attempt": retry_plan.attempt,
-                                    "delay_seconds": retry_plan.delay_seconds,
-                                    "deadline_at": retry_plan.deadline_at.isoformat(),
-                                    "error_kind": classify_model_error(exc),
-                                    "error": error_text,
-                                },
-                            )
+                            try:
+                                await update_job(
+                                    message.review_id,
+                                    status=ReviewStatus.PENDING,
+                                    phase=f"{message.stage.value}_retry_wait",
+                                    message=(
+                                        f"worker执行异常，{retry_plan.delay_seconds:.1f}秒后进行"
+                                        f"第{retry_plan.attempt}次任务级重试"
+                                    ),
+                                    error=error_text,
+                                )
+                                await add_event(
+                                    message.review_id,
+                                    "worker_retry",
+                                    {
+                                        "stage": message.stage.value,
+                                        "attempt": retry_plan.attempt,
+                                        "delay_seconds": retry_plan.delay_seconds,
+                                        "deadline_at": retry_plan.deadline_at.isoformat(),
+                                        "error_kind": classify_model_error(exc),
+                                        "error": error_text,
+                                    },
+                                )
+                            except Exception as state_exc:
+                                store.add_event(
+                                    message.review_id,
+                                    "status",
+                                    {"text": f"重试已持久化，但任务状态更新失败：{state_exc}"},
+                                )
                             await ack_review(message)
                             return
                         store.add_event(

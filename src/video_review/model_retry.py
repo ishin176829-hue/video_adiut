@@ -100,7 +100,7 @@ def classify_model_error(exc: BaseException) -> str:
         return "permanent"
     if status_code == 429:
         return "rate_limit"
-    if status_code in {502, 503, 504}:
+    if status_code in {500, 502, 503, 504}:
         return "transient"
     if isinstance(exc, json.JSONDecodeError):
         return "parse"

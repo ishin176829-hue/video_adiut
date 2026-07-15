@@ -1246,7 +1246,17 @@ async def run_model_stage(review_id: str, request: CreateReviewRequest) -> None:
             message="正在执行模型审核",
         )
         asset = _load_asset_snapshot(review_id)
-        await _run_model_review(review_id, request, asset)
+        _started_at, deadline_at = workflow_deadline(
+            request,
+            started_at=_job_created_at(store.get_job(review_id)),
+        )
+        remaining_seconds = (deadline_at - datetime.now(timezone.utc)).total_seconds()
+        if remaining_seconds <= 0:
+            raise TimeoutError("工作流已超过30分钟截止时间")
+        await asyncio.wait_for(
+            _run_model_review(review_id, request, asset),
+            timeout=remaining_seconds,
+        )
     except asyncio.CancelledError:
         await update_job(review_id, status=ReviewStatus.CANCELLED, phase="cancelled", message="审核已取消")
         await add_event(review_id, "error", {"error": "审核已取消"})
@@ -1278,27 +1288,34 @@ async def run_model_stage(review_id: str, request: CreateReviewRequest) -> None:
                 if not scheduled:
                     await add_event(review_id, "status", {"text": "模型延迟重试队列不可用，保留原队列消息等待恢复"})
                     raise RuntimeError("模型延迟重试队列不可用") from exc
-                await update_job(
-                    review_id,
-                    status=ReviewStatus.PENDING,
-                    phase="model_retry_wait",
-                    message=(
-                        f"模型审核临时失败，{retry_plan.delay_seconds:.1f}秒后进行"
-                        f"第{retry_plan.attempt}次任务级重试"
-                    ),
-                    error=error_text,
-                )
-                await add_event(
-                    review_id,
-                    "model_retry",
-                    {
-                        "attempt": retry_plan.attempt,
-                        "delay_seconds": retry_plan.delay_seconds,
-                        "deadline_at": retry_plan.deadline_at.isoformat(),
-                        "error_kind": classify_model_error(exc),
-                        "error": error_text,
-                    },
-                )
+                try:
+                    await update_job(
+                        review_id,
+                        status=ReviewStatus.PENDING,
+                        phase="model_retry_wait",
+                        message=(
+                            f"模型审核临时失败，{retry_plan.delay_seconds:.1f}秒后进行"
+                            f"第{retry_plan.attempt}次任务级重试"
+                        ),
+                        error=error_text,
+                    )
+                    await add_event(
+                        review_id,
+                        "model_retry",
+                        {
+                            "attempt": retry_plan.attempt,
+                            "delay_seconds": retry_plan.delay_seconds,
+                            "deadline_at": retry_plan.deadline_at.isoformat(),
+                            "error_kind": classify_model_error(exc),
+                            "error": error_text,
+                        },
+                    )
+                except Exception as state_exc:
+                    store.add_event(
+                        review_id,
+                        "status",
+                        {"text": f"模型重试已持久化，但任务状态更新失败：{state_exc}"},
+                    )
                 return
             failure_message = "模型审核超过30分钟截止时间"
             error_text = f"WORKFLOW_DEADLINE_EXCEEDED: {error_text}"

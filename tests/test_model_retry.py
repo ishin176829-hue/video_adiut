@@ -28,6 +28,13 @@ def test_classify_model_error_marks_json_decode_as_parse_error():
     assert classify_model_error(exc) == "parse"
 
 
+def test_classify_model_error_treats_http_500_as_transient():
+    exc = RuntimeError("upstream internal error")
+    exc.status_code = 500
+
+    assert classify_model_error(exc) == "transient"
+
+
 def test_call_model_with_retry_retries_parse_error_once(monkeypatch):
     async def scenario():
         sleeps = []

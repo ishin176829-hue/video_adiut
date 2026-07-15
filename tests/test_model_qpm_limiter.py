@@ -322,6 +322,7 @@ def test_model_concurrency_script_transitions_expired_open_to_half_open():
 
     assert "half_open" in script
     assert "open_until_ms <= now_ms" in script
+    assert "elseif mode == 'half_open' then" in script
 
 
 def test_model_qpm_slot_rejects_when_circuit_is_open(monkeypatch):
