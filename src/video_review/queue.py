@@ -98,25 +98,34 @@ local open_until_ms = tonumber(redis.call('HGET', circuit_key, 'open_until_ms') 
 if open_until_ms > now_ms then
   return {0, 'open', 0}
 end
+local mode = redis.call('HGET', circuit_key, 'mode') or 'closed'
 local multiplier = tonumber(redis.call('HGET', circuit_key, 'multiplier') or '1')
-if multiplier <= 0 then
-  return {0, 'open', 0}
-end
-local limit = math.floor(base_limit * multiplier)
-if limit < 1 then
+local limit = 0
+if mode == 'open' and open_until_ms <= now_ms then
+  mode = 'half_open'
+  multiplier = 1
   limit = 1
+  redis.call('HSET', circuit_key, 'mode', mode, 'multiplier', multiplier, 'open_until_ms', 0)
+elseif multiplier <= 0 then
+  return {0, mode, 0}
+end
+if limit == 0 then
+  limit = math.floor(base_limit * multiplier)
+  if limit < 1 then
+    limit = 1
+  end
 end
 if redis.call('ZSCORE', active_key, member) then
   redis.call('ZADD', active_key, now_ms + ttl_ms, member)
   redis.call('PEXPIRE', active_key, ttl_ms + 60000)
-  return {1, redis.call('HGET', circuit_key, 'mode') or 'closed', limit}
+  return {1, mode, limit}
 end
 if redis.call('ZCARD', active_key) < limit then
   redis.call('ZADD', active_key, now_ms + ttl_ms, member)
   redis.call('PEXPIRE', active_key, ttl_ms + 60000)
-  return {1, redis.call('HGET', circuit_key, 'mode') or 'closed', limit}
+  return {1, mode, limit}
 end
-return {0, redis.call('HGET', circuit_key, 'mode') or 'busy', limit}
+return {0, mode, limit}
 """
 
 _MODEL_QPM_RESERVE_SCRIPT = """
@@ -537,6 +546,9 @@ def _count_model_health_errors(events: list[str]) -> int:
     return sum(1 for event in events if ":error:" in str(event))
 
 
+_GLOBAL_CIRCUIT_ERROR_KINDS = {"rate_limit", "transient"}
+
+
 async def record_model_call_result(
     *,
     success: bool,
@@ -552,6 +564,32 @@ async def record_model_call_result(
     window_ms = max(1, settings.model_health_window_seconds) * 1000
     health_key = settings.redis_model_health_key
     circuit_key = settings.redis_model_circuit_key
+    state = await client.hgetall(circuit_key)
+    current_mode = str(state.get("mode") or "closed") if state else "closed"
+    current_open_until_ms = int(float(state.get("open_until_ms") or 0)) if state else 0
+    error_kind = error_kind or ("ok" if success else "unknown")
+
+    if current_mode == "half_open" and (success or error_kind not in _GLOBAL_CIRCUIT_ERROR_KINDS):
+        await client.delete(health_key)
+        await client.hset(
+            circuit_key,
+            mapping={
+                "mode": "closed",
+                "multiplier": "1.0",
+                "open_until_ms": "0",
+                "updated_at_ms": str(now_ms),
+                "window_seconds": str(settings.model_health_window_seconds),
+                "total": "0",
+                "errors": "0",
+                "error_rate": "0.000000",
+            },
+        )
+        await client.expire(circuit_key, max(settings.model_health_window_seconds * 3, 120))
+        return
+
+    if not success and error_kind not in _GLOBAL_CIRCUIT_ERROR_KINDS:
+        return
+
     member = _model_health_event_member(success=success, error_kind=error_kind, now_ms=now_ms)
     if api_key_id:
         member = f"{member}:key={api_key_id}"
@@ -565,7 +603,15 @@ async def record_model_call_result(
     open_until_ms = 0
     mode = "closed"
     multiplier = 1.0
-    if total >= min_requests and error_rate >= settings.model_circuit_open_error_rate:
+    if current_mode == "open" and current_open_until_ms > now_ms:
+        mode = "open"
+        multiplier = 0.0
+        open_until_ms = current_open_until_ms
+    elif current_mode == "half_open" and not success:
+        mode = "open"
+        multiplier = 0.0
+        open_until_ms = now_ms + max(1, settings.model_circuit_open_seconds) * 1000
+    elif total >= min_requests and error_rate >= settings.model_circuit_open_error_rate:
         mode = "open"
         multiplier = 0.0
         open_until_ms = now_ms + max(1, settings.model_circuit_open_seconds) * 1000

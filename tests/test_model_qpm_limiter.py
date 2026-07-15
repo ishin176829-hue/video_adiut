@@ -160,6 +160,9 @@ def test_record_model_call_result_opens_circuit_on_high_error_rate(monkeypatch):
         async def hset(self, key, mapping):
             self.state.update(mapping)
 
+        async def hgetall(self, key):
+            return self.state
+
         async def expire(self, key, seconds):
             return True
 
@@ -180,13 +183,145 @@ def test_record_model_call_result_opens_circuit_on_high_error_rate(monkeypatch):
 
         await queue.record_model_call_result(success=True)
         await queue.record_model_call_result(success=False, error_kind="transient")
-        await queue.record_model_call_result(success=False, error_kind="parse")
+        await queue.record_model_call_result(success=False, error_kind="rate_limit")
 
         assert fake.state["mode"] == "open"
         assert float(fake.state["error_rate"]) >= 0.5
         assert int(fake.state["open_until_ms"]) > int(fake.state["updated_at_ms"])
 
     asyncio.run(scenario())
+
+
+def test_contract_errors_do_not_affect_global_circuit(monkeypatch):
+    class FakeRedis:
+        async def hgetall(self, key):
+            return {}
+
+        async def zadd(self, key, mapping):
+            raise AssertionError("contract errors must not enter global provider health")
+
+    async def scenario():
+        async def fake_get_redis(*, strict=False):
+            return FakeRedis()
+
+        monkeypatch.setattr(queue, "get_redis", fake_get_redis)
+        monkeypatch.setattr(settings, "model_circuit_enabled", True)
+
+        await queue.record_model_call_result(success=False, error_kind="parse")
+        await queue.record_model_call_result(success=False, error_kind="validation")
+        await queue.record_model_call_result(success=False, error_kind="auth")
+
+    asyncio.run(scenario())
+
+
+def test_open_circuit_deadline_is_not_extended_by_inflight_errors(monkeypatch):
+    class FakeRedis:
+        def __init__(self, open_until_ms):
+            self.events = []
+            self.state = {
+                "mode": "open",
+                "multiplier": "0",
+                "open_until_ms": str(open_until_ms),
+            }
+
+        async def zadd(self, key, mapping):
+            self.events.extend(mapping.keys())
+
+        async def zremrangebyscore(self, key, minimum, maximum):
+            return 0
+
+        async def zrange(self, key, start, end):
+            return self.events
+
+        async def hgetall(self, key):
+            return self.state
+
+        async def hset(self, key, mapping):
+            self.state.update(mapping)
+
+        async def expire(self, key, seconds):
+            return True
+
+    async def scenario():
+        original_deadline = int(queue.time.time() * 1000) + 5_000
+        fake = FakeRedis(original_deadline)
+
+        async def fake_get_redis(*, strict=False):
+            return fake
+
+        monkeypatch.setattr(queue, "get_redis", fake_get_redis)
+        monkeypatch.setattr(settings, "model_circuit_enabled", True)
+        monkeypatch.setattr(settings, "model_circuit_min_requests", 1)
+        monkeypatch.setattr(settings, "model_circuit_open_error_rate", 0.5)
+        monkeypatch.setattr(settings, "model_circuit_open_seconds", 30)
+        monkeypatch.setattr(settings, "redis_model_health_key", "model:health")
+        monkeypatch.setattr(settings, "redis_model_circuit_key", "model:circuit")
+
+        await queue.record_model_call_result(success=False, error_kind="transient")
+
+        assert int(fake.state["open_until_ms"]) == original_deadline
+
+    asyncio.run(scenario())
+
+
+def test_half_open_success_clears_old_health_and_closes_circuit(monkeypatch):
+    class FakeRedis:
+        def __init__(self):
+            self.events = ["1:a:error:transient", "2:b:error:rate_limit"]
+            self.state = {
+                "mode": "half_open",
+                "multiplier": "0.1",
+                "open_until_ms": "0",
+            }
+            self.deleted = []
+
+        async def zadd(self, key, mapping):
+            self.events.extend(mapping.keys())
+
+        async def zremrangebyscore(self, key, minimum, maximum):
+            return 0
+
+        async def zrange(self, key, start, end):
+            return self.events
+
+        async def hgetall(self, key):
+            return self.state
+
+        async def hset(self, key, mapping):
+            self.state.update(mapping)
+
+        async def delete(self, key):
+            self.deleted.append(key)
+
+        async def expire(self, key, seconds):
+            return True
+
+    async def scenario():
+        fake = FakeRedis()
+
+        async def fake_get_redis(*, strict=False):
+            return fake
+
+        monkeypatch.setattr(queue, "get_redis", fake_get_redis)
+        monkeypatch.setattr(settings, "model_circuit_enabled", True)
+        monkeypatch.setattr(settings, "redis_model_health_key", "model:health")
+        monkeypatch.setattr(settings, "redis_model_circuit_key", "model:circuit")
+
+        await queue.record_model_call_result(success=True)
+
+        assert fake.state["mode"] == "closed"
+        assert fake.state["multiplier"] == "1.0"
+        assert fake.state["open_until_ms"] == "0"
+        assert "model:health" in fake.deleted
+
+    asyncio.run(scenario())
+
+
+def test_model_concurrency_script_transitions_expired_open_to_half_open():
+    script = queue._MODEL_CONCURRENCY_ACQUIRE_SCRIPT
+
+    assert "half_open" in script
+    assert "open_until_ms <= now_ms" in script
 
 
 def test_model_qpm_slot_rejects_when_circuit_is_open(monkeypatch):
