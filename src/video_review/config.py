@@ -102,6 +102,14 @@ class Settings(BaseModel):
     oss_internal_endpoint: str | None = os.getenv("ALIYUN_OSS_INTERNAL_ENDPOINT") or None
     oss_public_host: str | None = os.getenv("ALIYUN_OSS_PUBLIC_HOST") or None
     oss_prefix: str = os.getenv("ALIYUN_OSS_PREFIX", "sn2s-video-audit/prod")
+    source_oss_cache_enabled: bool = os.getenv(
+        "VIDEO_REVIEW_SOURCE_OSS_CACHE_ENABLED",
+        "1",
+    ).lower() in {"1", "true", "yes"}
+    source_oss_cache_prefix: str = os.getenv(
+        "VIDEO_REVIEW_SOURCE_OSS_CACHE_PREFIX",
+        f"{os.getenv('ALIYUN_OSS_PREFIX', 'sn2s-video-audit/prod').strip('/')}/source-cache",
+    )
     oss_sts_duration_seconds: int = int(os.getenv("ALIYUN_OSS_STS_DURATION_SECONDS", "3600"))
     worker_concurrency: int = int(os.getenv("VIDEO_REVIEW_WORKER_CONCURRENCY", "2"))
     worker_poll_count: int = int(os.getenv("VIDEO_REVIEW_WORKER_POLL_COUNT", "5"))
@@ -120,6 +128,16 @@ class Settings(BaseModel):
     google_api_key: str | None = os.getenv("GOOGLE_API_KEY")
     google_api_keys: str | None = os.getenv("GOOGLE_API_KEYS") or None
     google_api_base_url: str | None = os.getenv("GOOGLE_API_BASE_URL") or None
+    google_official_api_key: str | None = os.getenv("GOOGLE_OFFICIAL_API_KEY") or None
+    google_official_api_keys: str | None = os.getenv("GOOGLE_OFFICIAL_API_KEYS") or None
+    google_official_model: str = os.getenv("GOOGLE_OFFICIAL_MODEL", "gemini-2.5-flash")
+    xai_api_key: str | None = os.getenv("XAI_API_KEY") or None
+    xai_api_keys: str | None = os.getenv("XAI_API_KEYS") or None
+    xai_api_base_url: str = os.getenv("XAI_API_BASE_URL", "https://api.x.ai/v1")
+    xai_model: str = os.getenv("XAI_MODEL", "grok-4.5")
+    provider_contract_cooldown_seconds: int = int(
+        os.getenv("VIDEO_REVIEW_PROVIDER_CONTRACT_COOLDOWN_SECONDS", "300")
+    )
     gemini_safety_threshold: str = os.getenv("GEMINI_SAFETY_THRESHOLD", "BLOCK_NONE")
     anthropic_api_key: str | None = os.getenv("ANTHROPIC_API_KEY")
     anthropic_api_base_url: str = os.getenv("ANTHROPIC_API_BASE_URL", "https://aihubmix.com")
@@ -180,6 +198,18 @@ class Settings(BaseModel):
     def google_api_key_pool(self) -> list[str]:
         candidates = [self.google_api_key or ""]
         candidates.extend((self.google_api_keys or "").split(","))
+        return list(dict.fromkeys(key.strip() for key in candidates if key and key.strip()))
+
+    @property
+    def google_official_api_key_pool(self) -> list[str]:
+        candidates = [self.google_official_api_key or ""]
+        candidates.extend((self.google_official_api_keys or "").split(","))
+        return list(dict.fromkeys(key.strip() for key in candidates if key and key.strip()))
+
+    @property
+    def xai_api_key_pool(self) -> list[str]:
+        candidates = [self.xai_api_key or ""]
+        candidates.extend((self.xai_api_keys or "").split(","))
         return list(dict.fromkeys(key.strip() for key in candidates if key and key.strip()))
     synthesize_narrative: bool = os.getenv("VIDEO_REVIEW_SYNTHESIZE_NARRATIVE", "1").lower() in {"1", "true", "yes"}
     input_mode: str = os.getenv("VIDEO_REVIEW_INPUT_MODE", "frames")

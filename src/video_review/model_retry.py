@@ -20,6 +20,28 @@ class ModelContractError(ValueError):
         super().__init__(message)
         self.kind = kind
 
+
+class ModelProviderBlockedError(RuntimeError):
+    def __init__(self, reason: str, *, family: str = "gemini") -> None:
+        self.reason = reason or "PROHIBITED_CONTENT"
+        self.family = family
+        super().__init__(f"模型供应商内容保护拦截：{self.reason}")
+
+
+class ModelProviderExhaustedError(RuntimeError):
+    def __init__(
+        self,
+        *,
+        attempts: list[dict[str, str]],
+        excluded_families: set[str] | None = None,
+        error_kind: str = "transient",
+        message: str | None = None,
+    ) -> None:
+        self.attempts = attempts
+        self.excluded_families = set(excluded_families or set())
+        self.error_kind = error_kind
+        super().__init__(message or "所有可用模型渠道均调用失败")
+
 RATE_LIMIT_ERROR_TOKENS = (
     "429",
     "resource_exhausted",
@@ -38,6 +60,17 @@ TRANSIENT_MODEL_ERROR_TOKENS = (
     "temporarily unavailable",
     "connection reset",
     "server disconnected",
+)
+
+PROVIDER_BLOCK_TOKENS = (
+    "prohibited_content",
+    "prohibited content",
+    "finish_reason_safety",
+    "finish reason: safety",
+    "blocked_reason_safety",
+    "block_reason: safety",
+    "content policy violation",
+    "content_policy_violation",
 )
 
 
@@ -93,6 +126,13 @@ class ModelRetryBudget:
 def classify_model_error(exc: BaseException) -> str:
     if isinstance(exc, ModelContractError):
         return exc.kind
+    if isinstance(exc, ModelProviderBlockedError):
+        return "provider_block"
+    if isinstance(exc, ModelProviderExhaustedError):
+        return exc.error_kind
+    text = str(exc).lower()
+    if any(token in text for token in PROVIDER_BLOCK_TOKENS):
+        return "provider_block"
     status_code = _status_code(exc)
     if status_code in {401, 403}:
         return "auth"
@@ -111,7 +151,6 @@ def classify_model_error(exc: BaseException) -> str:
         if "模型熔断" in text or "模型并发槽位" in text or "模型 qpm 令牌" in text:
             return "circuit"
         return "transient"
-    text = str(exc).lower()
     if "模型熔断" in text or "模型并发槽位" in text or "模型 qpm 令牌" in text:
         return "circuit"
     if any(token in text for token in RATE_LIMIT_ERROR_TOKENS):
@@ -134,7 +173,14 @@ def is_rate_limit_error(exc: BaseException) -> bool:
 
 
 def is_retryable_model_error(exc: BaseException) -> bool:
-    return classify_model_error(exc) in {"rate_limit", "transient", "parse", "validation", "circuit"}
+    return classify_model_error(exc) in {
+        "rate_limit",
+        "transient",
+        "parse",
+        "validation",
+        "circuit",
+        "provider_block",
+    }
 
 
 def _attempt_limit_for_kind(

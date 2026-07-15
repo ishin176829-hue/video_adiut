@@ -162,3 +162,16 @@ def _download_sync(bucket_name: str, object_key: str, target: Path) -> dict[str,
 
 async def download_oss_object(bucket: str, object_key: str, target: Path) -> dict[str, Any]:
     return await asyncio.to_thread(_download_sync, bucket, object_key, target)
+
+
+def _upload_sync(bucket_name: str, object_key: str, source: Path) -> dict[str, Any]:
+    bucket = _bucket(bucket_name)
+    result = bucket.put_object_from_file(object_key, str(source))
+    return {
+        "etag": str(getattr(result, "etag", "") or "").strip('"') or None,
+        "content_length": source.stat().st_size,
+    }
+
+
+async def upload_oss_object(bucket: str, object_key: str, source: Path) -> dict[str, Any]:
+    return await asyncio.to_thread(_upload_sync, bucket, object_key, source)

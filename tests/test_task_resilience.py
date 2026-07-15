@@ -2,10 +2,7 @@ import os
 import tempfile
 from pathlib import Path
 import asyncio
-from contextlib import asynccontextmanager
-import gc
 import pytest
-import warnings
 
 os.environ["VIDEO_REVIEW_DATA_DIR"] = tempfile.mkdtemp(prefix="video-review-test-")
 
@@ -79,43 +76,21 @@ def test_stale_reconcile_sends_failed_callback(monkeypatch):
     asyncio.run(scenario())
 
 
-def test_model_timeout_closes_unstarted_coroutine_when_qpm_slot_fails(monkeypatch):
+def test_model_timeout_delegates_qpm_control_to_provider_adapter(monkeypatch):
     async def scenario():
-        @asynccontextmanager
-        async def failing_slot():
-            raise TimeoutError("qpm full")
-            yield
+        calls = []
 
-        class UnstartedAwaitable:
-            def __init__(self):
-                self.closed = False
+        async def operation():
+            calls.append("called")
+            return "ok"
 
-            def close(self):
-                self.closed = True
+        async def fake_record_model_call_result(*args, **kwargs):
+            return None
 
-            def __await__(self):
-                async def inner():
-                    return "unused"
+        monkeypatch.setattr(tasks, "record_model_call_result", fake_record_model_call_result)
 
-                return inner().__await__()
-
-        monkeypatch.setattr(tasks, "model_qpm_slot", failing_slot)
-        awaitable = UnstartedAwaitable()
-
-        with warnings.catch_warnings(record=True) as caught:
-            warnings.simplefilter("always", RuntimeWarning)
-            try:
-                await tasks._call_model_with_timeout(awaitable)
-            except TimeoutError:
-                pass
-            gc.collect()
-
-        assert awaitable.closed
-        assert not [
-            warning
-            for warning in caught
-            if "was never awaited" in str(warning.message)
-        ]
+        assert await tasks._call_model_with_timeout(operation) == "ok"
+        assert calls == ["called"]
 
 
 def test_terminal_job_persistence_retries_transient_database_failure(monkeypatch):
@@ -410,17 +385,12 @@ def test_frame_batch_rate_limit_retries_same_batch_without_splitting(monkeypatch
         async def fake_safe_persist(awaitable):
             awaitable.close()
 
-        @asynccontextmanager
-        async def fake_model_qpm_slot():
-            yield
-
         async def fake_sleep(seconds):
             return None
 
         async def fake_record_model_call_result(*args, **kwargs):
             return None
 
-        monkeypatch.setattr(tasks, "model_qpm_slot", fake_model_qpm_slot)
         monkeypatch.setattr(tasks, "record_model_call_result", fake_record_model_call_result)
         monkeypatch.setattr("video_review.model_retry.asyncio.sleep", fake_sleep)
         monkeypatch.setattr(tasks, "add_event", fake_add_event)

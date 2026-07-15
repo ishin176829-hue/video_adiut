@@ -2,7 +2,11 @@ import asyncio
 import json
 from dataclasses import dataclass
 
-from video_review.model_retry import ModelRetryBudget, call_model_with_retry, classify_model_error
+from video_review.model_retry import (
+    ModelRetryBudget,
+    call_model_with_retry,
+    classify_model_error,
+)
 
 
 @dataclass
@@ -33,6 +37,13 @@ def test_classify_model_error_treats_http_500_as_transient():
     exc.status_code = 500
 
     assert classify_model_error(exc) == "transient"
+
+
+def test_classify_model_error_detects_provider_block_before_http_500():
+    exc = RuntimeError("500 upstream error: PROHIBITED_CONTENT")
+    exc.status_code = 500
+
+    assert classify_model_error(exc) == "provider_block"
 
 
 def test_call_model_with_retry_retries_parse_error_once(monkeypatch):

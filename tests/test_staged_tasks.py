@@ -149,6 +149,45 @@ def test_preprocess_requeues_retryable_source_failure_without_marking_review_fai
     asyncio.run(scenario())
 
 
+def test_preprocess_persists_partial_download_path_for_task_retry(monkeypatch, tmp_path):
+    tasks, settings = import_tasks(monkeypatch, tmp_path)
+
+    async def scenario():
+        from video_review.downloader import SourceDownloadError
+
+        partial = settings.raw_dir / "video_partial" / "demo.mp4.part"
+        partial.parent.mkdir(parents=True, exist_ok=True)
+        partial.write_bytes(b"partial")
+        request = CreateReviewRequest(video_url="https://qiniu.duanju.com/demo.mp4")
+        tasks.create_job(request, review_id="review_download_resume")
+        scheduled = []
+
+        async def fake_download_video(*args, **kwargs):
+            assert kwargs.get("resume_path") is None
+            raise SourceDownloadError(
+                code="source_timeout",
+                retryable=True,
+                host="qiniu.duanju.com",
+                attempts=3,
+                partial_path=str(partial),
+            )
+
+        async def fake_schedule(review_id, retry_request, *, delay_seconds, attempt):
+            scheduled.append(retry_request)
+            return "retry-1"
+
+        monkeypatch.setattr(tasks, "download_video", fake_download_video)
+        monkeypatch.setattr(tasks, "schedule_download_retry", fake_schedule)
+        monkeypatch.setattr(settings, "download_task_retry_attempts", 3)
+
+        await tasks.run_preprocess_stage("review_download_resume", request)
+
+        assert scheduled[0].metadata["download_resume_path"] == str(partial)
+        assert tasks.store.get_job("review_download_resume").local_path == str(partial)
+
+    asyncio.run(scenario())
+
+
 def test_model_stage_schedules_retryable_failure_without_marking_failed(monkeypatch, tmp_path):
     tasks, settings = import_tasks(monkeypatch, tmp_path)
 
@@ -186,6 +225,58 @@ def test_model_stage_schedules_retryable_failure_without_marking_failed(monkeypa
         assert scheduled[0][2] == ReviewQueueStage.MODEL
         assert scheduled[0][4] == 1
         assert scheduled[0][1].metadata["model_retry_error_kind"] == "rate_limit"
+
+    asyncio.run(scenario())
+
+
+def test_model_stage_persists_provider_family_exclusion_in_delayed_retry(monkeypatch, tmp_path):
+    tasks, settings = import_tasks(monkeypatch, tmp_path)
+
+    async def scenario():
+        from video_review.model_retry import ModelProviderExhaustedError
+
+        settings.cleanup_enabled = False
+        settings.workflow_deadline_seconds = 1800
+        settings.model_task_retry_delays_seconds = "5,15,30"
+        video_path = tmp_path / "raw-provider-block.mp4"
+        video_path.write_bytes(b"fake")
+        request = CreateReviewRequest(video_url="https://example.com/a.mp4")
+        tasks.create_job(request, review_id="review_provider_block")
+        asset = VideoAsset(
+            video_id="video_provider_block",
+            local_path=str(video_path),
+            sha256="sha",
+            duration_seconds=12,
+        )
+        asset_dir = settings.derived_dir / asset.video_id
+        asset_dir.mkdir(parents=True, exist_ok=True)
+        (asset_dir / "asset.json").write_text(asset.model_dump_json(), encoding="utf-8")
+        await tasks.update_job(
+            "review_provider_block",
+            video_id=asset.video_id,
+            local_path=asset.local_path,
+        )
+        scheduled = []
+
+        async def fake_run_model(*args, **kwargs):
+            raise ModelProviderExhaustedError(
+                attempts=[{"provider_id": "jz", "error_kind": "provider_block"}],
+                excluded_families={"gemini"},
+                error_kind="provider_block",
+            )
+
+        async def fake_schedule(review_id, retry_request, *, stage, delay_seconds, attempt):
+            scheduled.append(retry_request)
+            return "retry-entry"
+
+        monkeypatch.setattr(tasks, "_run_model_review", fake_run_model)
+        monkeypatch.setattr(tasks, "schedule_stage_retry", fake_schedule)
+
+        await tasks.run_model_stage("review_provider_block", request)
+
+        assert len(scheduled) == 1
+        assert scheduled[0].metadata["model_excluded_families"] == ["gemini"]
+        assert scheduled[0].metadata["model_retry_error_kind"] == "provider_block"
 
     asyncio.run(scenario())
 

@@ -18,8 +18,9 @@ current_google_api_key_id: ContextVar[str | None] = ContextVar(
 )
 
 
-def api_key_fingerprint(api_key: str) -> str:
-    return f"google_{hashlib.sha256(api_key.encode('utf-8')).hexdigest()[:12]}"
+def api_key_fingerprint(api_key: str, provider_id: str = "google") -> str:
+    safe_provider = "".join(character for character in provider_id.lower() if character.isalnum() or character == "_")
+    return f"{safe_provider or 'model'}_{hashlib.sha256(api_key.encode('utf-8')).hexdigest()[:12]}"
 
 
 @dataclass(frozen=True)
@@ -28,6 +29,9 @@ class GoogleApiKeyLease:
     key_id: str
     lease_id: str | None = None
     scheduler_index: int = 0
+    channel_id: str = "legacy_google"
+    provider_id: str = "google"
+    contract_id: str = "gemini-native-v1beta"
 
 
 _KEY_POOL_ACQUIRE_SCRIPT = """
@@ -99,6 +103,9 @@ local cooldown_ms = tonumber(ARGV[4])
 if error_kind == 'ok' then
   redis.call('HINCRBY', state_key, 'total_requests', 1)
   redis.call('HSET', state_key, 'consecutive_failures', 0, 'mode', 'healthy', 'cooldown_until_ms', 0, 'probe_inflight', 0)
+elseif error_kind == 'parse' or error_kind == 'validation' or error_kind == 'provider_block' then
+  redis.call('HINCRBY', state_key, 'total_requests', 1)
+  redis.call('HSET', state_key, 'probe_inflight', 0)
 else
   redis.call('HINCRBY', state_key, 'total_requests', 1)
   redis.call('HINCRBY', state_key, 'total_errors', 1)
@@ -124,6 +131,9 @@ class GoogleApiKeyPool:
         redis_getter: Callable[[], Awaitable[object | None]] | None = None,
         key_concurrency_limit: int | None = None,
         lease_ttl_seconds: int | None = None,
+        channel_id: str = "legacy_google",
+        provider_id: str = "google",
+        contract_id: str = "gemini-native-v1beta",
     ) -> None:
         unique_keys = list(dict.fromkeys(key.strip() for key in api_keys if key and key.strip()))
         if not unique_keys:
@@ -132,6 +142,9 @@ class GoogleApiKeyPool:
         self._index = 0
         self._lock = asyncio.Lock()
         self._redis_getter = redis_getter
+        self.channel_id = channel_id
+        self.provider_id = provider_id
+        self.contract_id = contract_id
         configured_limit = settings.model_key_concurrency_limit if key_concurrency_limit is None else key_concurrency_limit
         derived_limit = (
             (settings.model_concurrency_limit + len(unique_keys) - 1) // len(unique_keys)
@@ -154,10 +167,13 @@ class GoogleApiKeyPool:
         return await get_redis()
 
     def _active_key(self, key_id: str) -> str:
-        return f"{settings.redis_model_key_pool_prefix}:active:{key_id}"
+        return f"{settings.redis_model_key_pool_prefix}:{self.channel_id}:active:{key_id}"
 
     def _state_key(self, key_id: str) -> str:
-        return f"{settings.redis_model_key_pool_prefix}:state:{key_id}"
+        return f"{settings.redis_model_key_pool_prefix}:{self.channel_id}:state:{key_id}"
+
+    def _key_id(self, api_key: str) -> str:
+        return api_key_fingerprint(api_key, self.provider_id)
 
     def _new_lease_id(self) -> str:
         return f"{socket.gethostname()}:{__import__('os').getpid()}:{uuid.uuid4().hex}"
@@ -165,7 +181,7 @@ class GoogleApiKeyPool:
     async def _acquire_redis(self, client) -> GoogleApiKeyLease | None:
         now_ms = int(time.time() * 1000)
         lease_id = self._new_lease_id()
-        key_ids = [api_key_fingerprint(key) for key in self._api_keys]
+        key_ids = [self._key_id(key) for key in self._api_keys]
         active_keys = [self._active_key(key_id) for key_id in key_ids]
         state_keys = [self._state_key(key_id) for key_id in key_ids]
         result = await client.eval(
@@ -188,6 +204,9 @@ class GoogleApiKeyPool:
             key_id=key_ids[index - 1],
             lease_id=str(result[1] or lease_id) if len(result) > 1 else lease_id,
             scheduler_index=index - 1,
+            channel_id=self.channel_id,
+            provider_id=self.provider_id,
+            contract_id=self.contract_id,
         )
         current_google_api_key_id.set(lease.key_id)
         return lease
@@ -206,8 +225,11 @@ class GoogleApiKeyPool:
             self._local_active[index] += 1
             lease = GoogleApiKeyLease(
                 api_key=self._api_keys[index],
-                key_id=api_key_fingerprint(self._api_keys[index]),
+                key_id=self._key_id(self._api_keys[index]),
                 scheduler_index=index,
+                channel_id=self.channel_id,
+                provider_id=self.provider_id,
+                contract_id=self.contract_id,
             )
             current_google_api_key_id.set(lease.key_id)
             return lease
@@ -240,7 +262,7 @@ class GoogleApiKeyPool:
                         0,
                         self._local_active[lease.scheduler_index] - 1,
                     )
-                    if not success and error_kind in {"auth", "rate_limit"}:
+                    if not success and error_kind in {"auth", "rate_limit", "transient"}:
                         cooldown = settings.model_key_cooldown_seconds
                         self._local_cooldown_until[lease.scheduler_index] = (
                             time.monotonic() + max(1, cooldown)
@@ -270,6 +292,7 @@ class GoogleApiKeyPool:
 
 _pool: GoogleApiKeyPool | None = None
 _pool_keys: tuple[str, ...] = ()
+_channel_pools: dict[str, GoogleApiKeyPool] = {}
 
 
 def get_google_api_key_pool() -> GoogleApiKeyPool:
@@ -279,3 +302,17 @@ def get_google_api_key_pool() -> GoogleApiKeyPool:
         _pool = GoogleApiKeyPool(list(keys))
         _pool_keys = keys
     return _pool
+
+
+def get_model_api_key_pool(channel) -> GoogleApiKeyPool:
+    pool = _channel_pools.get(channel.channel_id)
+    keys = tuple(channel.api_keys)
+    if pool is None or tuple(pool._api_keys) != keys:
+        pool = GoogleApiKeyPool(
+            list(keys),
+            channel_id=channel.channel_id,
+            provider_id=channel.provider_id,
+            contract_id=channel.contract_id,
+        )
+        _channel_pools[channel.channel_id] = pool
+    return pool

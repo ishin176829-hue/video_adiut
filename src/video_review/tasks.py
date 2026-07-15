@@ -36,6 +36,7 @@ from .model_retry import (
 )
 from .models import CreateReviewRequest, ReportNarrative, ReviewJob, ReviewStatus, SegmentReviewResult, VideoAsset
 from .policies import load_policy
+from .providers import configured_model_channels
 from .preprocessor import (
     build_frame_sheet,
     enrich_asset,
@@ -50,7 +51,6 @@ from .queue import (
     enqueue_review_stage,
     frame_batch_cache_key,
     get_frame_batch_cache,
-    model_qpm_slot,
     record_model_call_result,
     schedule_download_retry,
     schedule_stage_retry,
@@ -214,7 +214,11 @@ async def _prepare_review_asset(review_id: str, request: CreateReviewRequest) ->
     await update_job(review_id, status=ReviewStatus.PROCESSING, phase="ingest", message="正在准备视频")
     await add_event(review_id, "status", {"text": "正在准备视频"})
     if request.video_url:
-        asset = await download_video(request.video_url, request.video_title)
+        asset = await download_video(
+            request.video_url,
+            request.video_title,
+            resume_path=request.metadata.get("download_resume_path"),
+        )
     elif request.oss_bucket and request.oss_key:
         asset = await download_oss_video(
             request.oss_bucket,
@@ -293,6 +297,9 @@ async def _handle_source_download_error(
                 "download_retry_reason": exc.code,
             }
         )
+        if exc.partial_path:
+            metadata["download_resume_path"] = exc.partial_path
+            await update_job(review_id, local_path=exc.partial_path)
         retry_request = request.model_copy(update={"metadata": metadata})
         scheduled = await schedule_download_retry(
             review_id,
@@ -321,6 +328,14 @@ async def _handle_source_download_error(
                 },
             )
             return
+
+    if exc.partial_path:
+        partial = Path(exc.partial_path)
+        partial.unlink(missing_ok=True)
+        try:
+            partial.parent.rmdir()
+        except OSError:
+            pass
 
     await update_job(
         review_id,
@@ -535,7 +550,6 @@ async def _call_model_with_timeout(
     return await call_model_with_retry(
         operation,
         label=label,
-        qpm_slot_factory=model_qpm_slot,
         retry_budget=retry_budget,
         on_retry=_model_retry_event_handler(review_id) if review_id else None,
         on_attempt_result=on_attempt_result,
@@ -796,10 +810,14 @@ async def _run_model_review(review_id: str, request: CreateReviewRequest, asset:
     narrative: ReportNarrative | None = None
     if settings.mode != "model":
         raise RuntimeError("VIDEO_REVIEW_MODE 必须为 model；本地模拟审核已停用")
-    if not settings.google_api_key_pool:
-        raise RuntimeError("未配置 GOOGLE_API_KEY 或 GOOGLE_API_KEYS，无法调用多模态审核 API")
+    if not configured_model_channels():
+        raise RuntimeError("未配置任何模型渠道，无法调用多模态审核 API")
 
-    analyzer = MultimodalAnalyzer(model=request.model, fps=request.fps)
+    analyzer = MultimodalAnalyzer(
+        model=request.model,
+        fps=request.fps,
+        excluded_families=set(request.metadata.get("model_excluded_families") or []),
+    )
     retry_budget = ModelRetryBudget(settings.model_retry_budget_extra_attempts)
     policy = load_policy()
     try:
@@ -968,7 +986,11 @@ async def run_review(review_id: str, request: CreateReviewRequest) -> None:
             await update_job(review_id, status=ReviewStatus.PROCESSING, phase="ingest", message="正在准备视频")
             await add_event(review_id, "status", {"text": "正在准备视频"})
             if request.video_url:
-                asset = await download_video(request.video_url, request.video_title)
+                asset = await download_video(
+                    request.video_url,
+                    request.video_title,
+                    resume_path=request.metadata.get("download_resume_path"),
+                )
             elif request.oss_bucket and request.oss_key:
                 asset = await download_oss_video(
                     request.oss_bucket,
@@ -1016,10 +1038,14 @@ async def run_review(review_id: str, request: CreateReviewRequest) -> None:
             narrative: ReportNarrative | None = None
             if settings.mode != "model":
                 raise RuntimeError("VIDEO_REVIEW_MODE 必须为 model；本地模拟审核已停用")
-            if not settings.google_api_key_pool:
-                raise RuntimeError("未配置 GOOGLE_API_KEY 或 GOOGLE_API_KEYS，无法调用多模态审核 API")
+            if not configured_model_channels():
+                raise RuntimeError("未配置任何模型渠道，无法调用多模态审核 API")
             else:
-                analyzer = MultimodalAnalyzer(model=request.model, fps=request.fps)
+                analyzer = MultimodalAnalyzer(
+                    model=request.model,
+                    fps=request.fps,
+                    excluded_families=set(request.metadata.get("model_excluded_families") or []),
+                )
                 retry_budget = ModelRetryBudget(settings.model_retry_budget_extra_attempts)
                 policy = load_policy()
                 try:
@@ -1270,8 +1296,14 @@ async def run_model_stage(review_id: str, request: CreateReviewRequest) -> None:
         if is_retryable_model_error(exc):
             job = store.get_job(review_id)
             started_at = _job_created_at(job)
+            retry_request = request
+            excluded_families = sorted(set(getattr(exc, "excluded_families", set()) or set()))
+            if excluded_families:
+                retry_metadata = dict(request.metadata)
+                retry_metadata["model_excluded_families"] = excluded_families
+                retry_request = request.model_copy(update={"metadata": retry_metadata})
             retry_plan = plan_stage_retry(
-                request,
+                retry_request,
                 stage=ReviewQueueStage.MODEL.value,
                 reason=error_text,
                 error_kind=classify_model_error(exc),

@@ -4,13 +4,14 @@ import asyncio
 import json
 from pathlib import Path
 from collections.abc import Callable
+from dataclasses import replace
 from typing import Any
 
 from google import genai
 from google.genai import types
 
 from .config import settings
-from .api_key_pool import get_google_api_key_pool
+from .api_key_pool import get_google_api_key_pool, get_model_api_key_pool
 from .model_retry import ModelContractError, classify_model_error
 from .models import ReportNarrative, SegmentPlan, SegmentReviewResult, VideoAsset
 from .policies import load_policy
@@ -22,6 +23,15 @@ from .prompts import (
     build_review_prompt,
     build_subtitle_review_prompt,
 )
+from .provider_adapters import (
+    GeminiProviderAdapter,
+    GrokProviderAdapter,
+    ProviderImage,
+    gemini_safety_settings,
+    response_text as provider_response_text,
+)
+from .providers import ModelChannel, ProviderRouter, configured_model_channels
+from .queue import model_qpm_slot
 
 
 VALID_SEVERITIES = {"low", "medium", "high", "critical"}
@@ -230,13 +240,7 @@ def _normalize_final_verdict(value: Any) -> dict[str, Any]:
 
 
 def _response_text(response: Any) -> str:
-    try:
-        text = response.text
-    except Exception as exc:
-        raise ModelContractError("模型响应文本不可读取", kind="parse") from exc
-    if not isinstance(text, str) or not text.strip():
-        raise ModelContractError("模型返回空内容", kind="parse")
-    return text.strip()
+    return provider_response_text(response)
 
 
 def _json_payload(text: str) -> dict[str, Any]:
@@ -353,7 +357,14 @@ def normalize_narrative_payload(text: str) -> ReportNarrative:
 
 
 class MultimodalAnalyzer:
-    def __init__(self, model: str | None = None, fps: int = 1) -> None:
+    def __init__(
+        self,
+        model: str | None = None,
+        fps: int = 1,
+        *,
+        excluded_families: set[str] | None = None,
+        channels: list[ModelChannel] | None = None,
+    ) -> None:
         self.model = model or settings.video_review_model
         self.fps = max(1, min(int(fps), 10))
         http_options: dict[str, Any] | None = None
@@ -361,6 +372,52 @@ class MultimodalAnalyzer:
             http_options = {"base_url": settings.google_api_base_url}
         self._http_options = http_options
         self._clients: dict[str, Any] = {}
+        self._channels = list(channels if channels is not None else configured_model_channels())
+        if model:
+            self._channels = [
+                replace(channel, model=model) if channel.family == "gemini" else channel
+                for channel in self._channels
+            ]
+        self._router = ProviderRouter(
+            self._channels,
+            excluded_families=excluded_families,
+        )
+        self._provider_adapters: dict[str, Any] = {}
+
+    @property
+    def excluded_families(self) -> set[str]:
+        return set(self._router.excluded_families)
+
+    def _adapter_for_channel(self, channel: ModelChannel):
+        adapter = self._provider_adapters.get(channel.channel_id)
+        if adapter is not None:
+            return adapter
+        pool = get_model_api_key_pool(channel)
+        if channel.contract_id == "openai-chat-json-schema":
+            adapter = GrokProviderAdapter(channel, pool, qpm_slot_factory=model_qpm_slot)
+        else:
+            adapter = GeminiProviderAdapter(channel, pool, qpm_slot_factory=model_qpm_slot)
+        self._provider_adapters[channel.channel_id] = adapter
+        return adapter
+
+    async def _generate_routed(
+        self,
+        *,
+        prompt: str,
+        images: list[ProviderImage],
+        response_schema,
+        parser: Callable[[str], Any],
+    ):
+        async def operation(channel: ModelChannel):
+            adapter = self._adapter_for_channel(channel)
+            text = await adapter.generate(
+                prompt=prompt,
+                images=images,
+                response_schema=response_schema,
+            )
+            return parser(text)
+
+        return await self._router.execute(operation)
 
     def _client_for_key(self, api_key: str):
         client = self._clients.get(api_key)
@@ -374,11 +431,12 @@ class MultimodalAnalyzer:
         lease = await pool.acquire()
         client = self._client_for_key(lease.api_key)
         try:
-            response = await client.aio.models.generate_content(
-                model=self.model,
-                contents=contents,
-                config=config,
-            )
+            async with model_qpm_slot():
+                response = await client.aio.models.generate_content(
+                    model=self.model,
+                    contents=contents,
+                    config=config,
+                )
             result = parser(response) if parser is not None else response
         except Exception as exc:
             try:
@@ -393,24 +451,7 @@ class MultimodalAnalyzer:
         return result
 
     def _safety_settings(self) -> list[types.SafetySetting] | None:
-        threshold_name = (settings.gemini_safety_threshold or "").strip().upper()
-        if not threshold_name:
-            return None
-        threshold = getattr(types.HarmBlockThreshold, threshold_name, None)
-        if threshold is None:
-            threshold = types.HarmBlockThreshold.BLOCK_ONLY_HIGH
-        categories = [
-            types.HarmCategory.HARM_CATEGORY_HARASSMENT,
-            types.HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-            types.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
-            types.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-            types.HarmCategory.HARM_CATEGORY_CIVIC_INTEGRITY,
-            types.HarmCategory.HARM_CATEGORY_IMAGE_HARASSMENT,
-            types.HarmCategory.HARM_CATEGORY_IMAGE_HATE,
-            types.HarmCategory.HARM_CATEGORY_IMAGE_SEXUALLY_EXPLICIT,
-            types.HarmCategory.HARM_CATEGORY_IMAGE_DANGEROUS_CONTENT,
-        ]
-        return [types.SafetySetting(category=category, threshold=threshold) for category in categories]
+        return gemini_safety_settings()
 
     def _json_config(self, response_schema):
         return types.GenerateContentConfig(
@@ -460,11 +501,12 @@ class MultimodalAnalyzer:
         prompt = build_review_prompt(policy, segment, video_title)
         config = self._json_config(SegmentReviewResult)
         try:
-            response = await client.aio.models.generate_content(
-                model=self.model,
-                contents=[self._video_part(file), prompt],
-                config=config,
-            )
+            async with model_qpm_slot():
+                response = await client.aio.models.generate_content(
+                    model=self.model,
+                    contents=[self._video_part(file), prompt],
+                    config=config,
+                )
         except Exception as exc:
             try:
                 await pool.release(lease, success=False, error_kind=classify_model_error(exc))
@@ -493,11 +535,11 @@ class MultimodalAnalyzer:
     ) -> ReportNarrative:
         policy = load_policy()
         prompt = build_narrative_prompt(policy, segments, video_title)
-        config = self._json_config(ReportNarrative)
-        return await self._generate_content(
-            contents=[prompt],
-            config=config,
-            parser=lambda response: normalize_narrative_payload(_response_text(response)),
+        return await self._generate_routed(
+            prompt=prompt,
+            images=[],
+            response_schema=ReportNarrative,
+            parser=normalize_narrative_payload,
         )
 
     async def analyze_frames_segment(
@@ -509,16 +551,20 @@ class MultimodalAnalyzer:
     ) -> SegmentReviewResult:
         policy = load_policy()
         prompt = build_frames_review_prompt(policy, segment, video_title, len(frames))
-        parts = [types.Part.from_text(text=prompt)]
+        images: list[ProviderImage] = []
         for frame in frames:
             frame_path = Path(frame["path"])
-            parts.append(types.Part.from_text(text=f"FRAME timestamp={frame['timestamp']} index={frame['frame_index']}"))
-            parts.append(types.Part.from_bytes(data=frame_path.read_bytes(), mime_type="image/jpeg"))
-        config = self._json_config(SegmentReviewResult)
-        return await self._generate_content(
-            contents=parts,
-            config=config,
-            parser=lambda response: normalize_segment_payload(_response_text(response), segment),
+            images.append(
+                ProviderImage(
+                    path=frame_path,
+                    label=f"FRAME timestamp={frame['timestamp']} index={frame['frame_index']}",
+                )
+            )
+        return await self._generate_routed(
+            prompt=prompt,
+            images=images,
+            response_schema=SegmentReviewResult,
+            parser=lambda text: normalize_segment_payload(text, segment),
         )
 
     async def analyze_frame_sheets_segment(
@@ -531,18 +577,22 @@ class MultimodalAnalyzer:
         policy = load_policy()
         frame_count = sum(int(sheet.get("frame_count") or 0) for sheet in sheets)
         prompt = build_frame_sheet_review_prompt(policy, segment, video_title, len(sheets), frame_count)
-        parts = [types.Part.from_text(text=prompt)]
+        images: list[ProviderImage] = []
         for sheet_index, sheet in enumerate(sheets, start=1):
             sheet_path = Path(sheet["path"])
             frames = sheet.get("frames") or []
             timestamps = "；".join(f"{idx + 1}={frame['timestamp']}" for idx, frame in enumerate(frames))
-            parts.append(types.Part.from_text(text=f"SHEET {sheet_index} timestamps: {timestamps}"))
-            parts.append(types.Part.from_bytes(data=sheet_path.read_bytes(), mime_type="image/jpeg"))
-        config = self._json_config(SegmentReviewResult)
-        return await self._generate_content(
-            contents=parts,
-            config=config,
-            parser=lambda response: normalize_segment_payload(_response_text(response), segment),
+            images.append(
+                ProviderImage(
+                    path=sheet_path,
+                    label=f"SHEET {sheet_index} timestamps: {timestamps}",
+                )
+            )
+        return await self._generate_routed(
+            prompt=prompt,
+            images=images,
+            response_schema=SegmentReviewResult,
+            parser=lambda text: normalize_segment_payload(text, segment),
         )
 
     async def analyze_subtitle_text(
@@ -561,16 +611,18 @@ class MultimodalAnalyzer:
             start_time="00:00",
             end_time="00:00",
         )
-        config = self._json_config(SegmentReviewResult)
-        result = await self._generate_content(
-            contents=[prompt],
-            config=config,
-            parser=lambda response: normalize_segment_payload(_response_text(response), segment),
+        result = await self._generate_routed(
+            prompt=prompt,
+            images=[],
+            response_schema=SegmentReviewResult,
+            parser=lambda text: normalize_segment_payload(text, segment),
         )
         result.segment_index = 0
         return result
 
     async def close(self) -> None:
+        for adapter in self._provider_adapters.values():
+            await adapter.close()
         for client in self._clients.values():
             close = getattr(client, "close", None)
             if close:
