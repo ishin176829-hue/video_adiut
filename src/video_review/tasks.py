@@ -31,9 +31,10 @@ from .model_retry import (
     call_model_with_retry,
     classify_model_error,
     is_rate_limit_error,
+    is_retryable_model_error,
     is_transient_model_error,
 )
-from .models import CreateReviewRequest, ReportNarrative, ReviewFinding, ReviewJob, ReviewStatus, SegmentReviewResult, VideoAsset
+from .models import CreateReviewRequest, ReportNarrative, ReviewJob, ReviewStatus, SegmentReviewResult, VideoAsset
 from .policies import load_policy
 from .preprocessor import (
     build_frame_sheet,
@@ -52,10 +53,12 @@ from .queue import (
     model_qpm_slot,
     record_model_call_result,
     schedule_download_retry,
+    schedule_stage_retry,
     set_frame_batch_cache,
 )
 from .store import store
 from .utils import new_id
+from .workflow import plan_stage_retry, workflow_deadline
 
 
 semaphore = asyncio.Semaphore(settings.max_concurrent)
@@ -468,59 +471,9 @@ async def _analyze_subtitle_resilient(
         await add_event(
             review_id,
             "status",
-            {"text": f"字幕模型审核失败，跳过字幕通道并继续视觉审核：{_exception_text(exc)}"},
+            {"text": f"字幕模型审核失败，进入任务级重试：{_exception_text(exc)}"},
         )
-        return None
-
-
-def _manual_review_result(segment, batch: list[dict], exc: BaseException) -> SegmentReviewResult:
-    start_time = batch[0]["timestamp"] if batch else segment.start_time
-    end_time = batch[-1]["timestamp"] if batch else segment.end_time
-    error_kind = classify_model_error(exc)
-    contract_error = error_kind in {"parse", "validation"}
-    sub_category = "模型响应异常人工复核" if contract_error else "模型超时人工复核"
-    evidence = (
-        f"{start_time} - {end_time} 帧批次未获得可解析的结构化审核结果。"
-        if contract_error
-        else f"{start_time} - {end_time} 帧批次调用多模态模型超时或网关失败。"
-    )
-    reason = (
-        f"上游模型连续返回空内容、非 JSON 或不符合数据契约的结果：{exc}"
-        if contract_error
-        else f"上游模型服务返回临时错误，未能稳定完成该时间段审核：{exc}"
-    )
-    summary = (
-        f"{start_time} - {end_time} 模型响应异常，已标记人工复核。"
-        if contract_error
-        else f"{start_time} - {end_time} 模型审核超时，已标记人工复核。"
-    )
-    finding = ReviewFinding(
-        category="模型调用异常",
-        sub_category=sub_category,
-        risk_level="中风险",
-        rule_tag="人工复核",
-        severity="medium",
-        start_time=start_time,
-        end_time=end_time,
-        evidence=evidence,
-        reason=reason,
-        suggested_action="人工复核该时间段，或稍后重试该视频。",
-        context_note="该命中项表示审核链路异常，不代表视频内容本身违规。",
-        plot_impact="该时间段未完成模型判定，整片结论需结合人工复核确认。",
-        value_correction_advice={
-            "main": "重新提交该时间段审核；如果多次超时，降低采样 FPS 或缩短审核片段。",
-            "overall": "不要直接按通过处理该时间段，应补充人工复核。",
-        },
-        confidence=1,
-    )
-    return SegmentReviewResult(
-        segment_index=segment.segment_index,
-        start_time=segment.start_time,
-        end_time=segment.end_time,
-        summary=summary,
-        findings=[finding],
-        risk_score=55,
-    )
+        raise
 
 
 def _model_retry_event_handler(review_id: str):
@@ -647,11 +600,11 @@ async def _analyze_frame_batch_resilient(
                 {
                     "text": (
                         f"帧批次 {batch[0]['timestamp']} - {batch[-1]['timestamp']} "
-                        "模型限流重试耗尽，已标记人工复核"
+                        "模型限流重试耗尽，进入任务级重试"
                     )
                 },
             )
-            return [_manual_review_result(segment, batch, exc)]
+            raise
         if classify_model_error(exc) in {"parse", "validation"}:
             await add_event(
                 review_id,
@@ -659,11 +612,11 @@ async def _analyze_frame_batch_resilient(
                 {
                     "text": (
                         f"帧批次 {batch[0]['timestamp']} - {batch[-1]['timestamp']} "
-                        "结构化响应重试耗尽，已标记人工复核"
+                        "结构化响应重试耗尽，进入任务级重试"
                     )
                 },
             )
-            return [_manual_review_result(segment, batch, exc)]
+            raise
         if not _is_transient_model_error(exc):
             raise
         min_size = max(1, settings.frame_batch_min_size)
@@ -713,11 +666,11 @@ async def _analyze_frame_batch_resilient(
                 {
                     "text": (
                         f"帧批次 {batch[0]['timestamp']} - {batch[-1]['timestamp']} "
-                        f"达到最大拆分深度 {max_split_depth}，已标记人工复核"
+                        f"达到最大拆分深度 {max_split_depth}，进入任务级重试"
                     )
                 },
             )
-            return [_manual_review_result(segment, batch, exc)]
+            raise
 
         try:
             batch_result = await analyze_once()
@@ -731,11 +684,11 @@ async def _analyze_frame_batch_resilient(
                 {
                     "text": (
                         f"帧批次 {batch[0]['timestamp']} - {batch[-1]['timestamp']} 重试仍超时，"
-                        "已标记人工复核并继续后续审核"
+                        "进入任务级重试"
                     )
                 },
             )
-            return [_manual_review_result(segment, batch, retry_exc)]
+            raise
 
 
 async def _run_frame_batches_concurrently(
@@ -786,6 +739,26 @@ async def _run_frame_batches_concurrently(
     for _batch_number, sub_results in sorted(completed, key=lambda item: item[0]):
         ordered_results.extend(sub_results)
     return ordered_results
+
+
+def _job_created_at(job: ReviewJob | None) -> datetime:
+    if job is None:
+        return datetime.now(timezone.utc)
+    try:
+        value = datetime.fromisoformat(job.created_at.replace("Z", "+00:00"))
+    except ValueError:
+        return datetime.now(timezone.utc)
+    if value.tzinfo is None:
+        value = value.astimezone()
+    return value.astimezone(timezone.utc)
+
+
+def _workflow_deadline_expired(review_id: str, request: CreateReviewRequest) -> bool:
+    _started_at, deadline_at = workflow_deadline(
+        request,
+        started_at=_job_created_at(store.get_job(review_id)),
+    )
+    return datetime.now(timezone.utc) >= deadline_at
 
 
 async def _run_model_review(review_id: str, request: CreateReviewRequest, asset: VideoAsset) -> None:
@@ -935,20 +908,19 @@ async def _run_model_review(review_id: str, request: CreateReviewRequest, asset:
             await _safe_persist(persist_segment(review_id, result))
             await add_event(review_id, "segment_complete", result.model_dump())
         if settings.synthesize_narrative:
-            try:
-                await update_job(review_id, phase="judge", message="正在生成整片剧情与价值观评估")
-                await add_event(review_id, "status", {"text": "正在生成整片剧情主线、价值观判断和回正建议"})
-                narrative = await _call_model_with_timeout(
-                    lambda: analyzer.synthesize_narrative_report(results, video_title=request.video_title),
-                    review_id=review_id,
-                    label="整片叙事评估",
-                    retry_budget=retry_budget,
-                )
-            except Exception as exc:
-                await add_event(review_id, "status", {"text": f"整片叙事评估失败，使用分段结果兜底：{exc}"})
+            await update_job(review_id, phase="judge", message="正在生成整片剧情与价值观评估")
+            await add_event(review_id, "status", {"text": "正在生成整片剧情主线、价值观判断和回正建议"})
+            narrative = await _call_model_with_timeout(
+                lambda: analyzer.synthesize_narrative_report(results, video_title=request.video_title),
+                review_id=review_id,
+                label="整片叙事评估",
+                retry_budget=retry_budget,
+            )
     finally:
         await analyzer.close()
 
+    if _workflow_deadline_expired(review_id, request):
+        raise TimeoutError("模型审核超过30分钟工作流截止时间")
     await update_job(review_id, phase="judge", message="正在生成最终裁决")
     report = build_report(review_id, asset.video_id, results, narrative=narrative)
     report_path = await save_report(report)
@@ -1158,20 +1130,17 @@ async def run_review(review_id: str, request: CreateReviewRequest) -> None:
                         await _safe_persist(persist_segment(review_id, result))
                         await add_event(review_id, "segment_complete", result.model_dump())
                     if settings.synthesize_narrative:
-                        try:
-                            await update_job(review_id, phase="judge", message="正在生成整片剧情与价值观评估")
-                            await add_event(review_id, "status", {"text": "正在生成整片剧情主线、价值观判断和回正建议"})
-                            narrative = await _call_model_with_timeout(
-                                lambda: analyzer.synthesize_narrative_report(
-                                    results,
-                                    video_title=request.video_title,
-                                ),
-                                review_id=review_id,
-                                label="整片叙事评估",
-                                retry_budget=retry_budget,
-                            )
-                        except Exception as exc:
-                            await add_event(review_id, "status", {"text": f"整片叙事评估失败，使用分段结果兜底：{exc}"})
+                        await update_job(review_id, phase="judge", message="正在生成整片剧情与价值观评估")
+                        await add_event(review_id, "status", {"text": "正在生成整片剧情主线、价值观判断和回正建议"})
+                        narrative = await _call_model_with_timeout(
+                            lambda: analyzer.synthesize_narrative_report(
+                                results,
+                                video_title=request.video_title,
+                            ),
+                            review_id=review_id,
+                            label="整片叙事评估",
+                            retry_budget=retry_budget,
+                        )
                 finally:
                     await analyzer.close()
 
@@ -1248,6 +1217,12 @@ async def run_preprocess_stage(review_id: str, request: CreateReviewRequest) -> 
 
 async def run_model_stage(review_id: str, request: CreateReviewRequest) -> None:
     try:
+        await update_job(
+            review_id,
+            status=ReviewStatus.PROCESSING,
+            phase="model",
+            message="正在执行模型审核",
+        )
         asset = _load_asset_snapshot(review_id)
         await _run_model_review(review_id, request, asset)
     except asyncio.CancelledError:
@@ -1260,7 +1235,60 @@ async def run_model_stage(review_id: str, request: CreateReviewRequest) -> None:
         await cleanup_terminal_artifacts(review_id)
     except Exception as exc:
         error_text = _exception_text(exc)
-        await update_job(review_id, status=ReviewStatus.FAILED, phase="error", message="模型审核失败", error=error_text)
+        if is_retryable_model_error(exc):
+            job = store.get_job(review_id)
+            started_at = _job_created_at(job)
+            retry_plan = plan_stage_retry(
+                request,
+                stage=ReviewQueueStage.MODEL.value,
+                reason=error_text,
+                error_kind=classify_model_error(exc),
+                started_at=started_at,
+            )
+            if retry_plan is not None:
+                scheduled = await schedule_stage_retry(
+                    review_id,
+                    retry_plan.request,
+                    stage=ReviewQueueStage.MODEL,
+                    delay_seconds=retry_plan.delay_seconds,
+                    attempt=retry_plan.attempt,
+                )
+                if not scheduled:
+                    await add_event(review_id, "status", {"text": "模型延迟重试队列不可用，保留原队列消息等待恢复"})
+                    raise RuntimeError("模型延迟重试队列不可用") from exc
+                await update_job(
+                    review_id,
+                    status=ReviewStatus.PENDING,
+                    phase="model_retry_wait",
+                    message=(
+                        f"模型审核临时失败，{retry_plan.delay_seconds:.1f}秒后进行"
+                        f"第{retry_plan.attempt}次任务级重试"
+                    ),
+                    error=error_text,
+                )
+                await add_event(
+                    review_id,
+                    "model_retry",
+                    {
+                        "attempt": retry_plan.attempt,
+                        "delay_seconds": retry_plan.delay_seconds,
+                        "deadline_at": retry_plan.deadline_at.isoformat(),
+                        "error_kind": classify_model_error(exc),
+                        "error": error_text,
+                    },
+                )
+                return
+            failure_message = "模型审核超过30分钟截止时间"
+            error_text = f"WORKFLOW_DEADLINE_EXCEEDED: {error_text}"
+        else:
+            failure_message = "模型审核失败"
+        await update_job(
+            review_id,
+            status=ReviewStatus.FAILED,
+            phase="error",
+            message=failure_message,
+            error=error_text,
+        )
         await add_event(review_id, "error", {"error": error_text})
         try:
             await send_review_callback(review_id, request, ReviewStatus.FAILED.value, error=error_text)

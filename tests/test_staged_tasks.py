@@ -1,6 +1,7 @@
 import asyncio
 import importlib
 import sys
+from datetime import datetime, timedelta, timezone
 
 from video_review.models import CreateReviewRequest, VideoAsset
 from video_review.queue import ReviewQueueStage
@@ -144,5 +145,87 @@ def test_preprocess_requeues_retryable_source_failure_without_marking_review_fai
                 1,
             )
         ]
+
+    asyncio.run(scenario())
+
+
+def test_model_stage_schedules_retryable_failure_without_marking_failed(monkeypatch, tmp_path):
+    tasks, settings = import_tasks(monkeypatch, tmp_path)
+
+    async def scenario():
+        settings.cleanup_enabled = False
+        settings.workflow_deadline_seconds = 1800
+        settings.model_task_retry_delays_seconds = "5,15,30"
+        video_path = tmp_path / "raw.mp4"
+        video_path.write_bytes(b"fake")
+        request = CreateReviewRequest(video_url="https://example.com/a.mp4")
+        tasks.create_job(request, review_id="review_model_retry")
+        asset = VideoAsset(video_id="video_retry", local_path=str(video_path), sha256="sha", duration_seconds=12)
+        asset_dir = settings.derived_dir / asset.video_id
+        asset_dir.mkdir(parents=True, exist_ok=True)
+        (asset_dir / "asset.json").write_text(asset.model_dump_json(), encoding="utf-8")
+        await tasks.update_job("review_model_retry", video_id=asset.video_id, local_path=asset.local_path)
+        scheduled = []
+
+        async def fake_run_model(*args, **kwargs):
+            raise RuntimeError("429 RESOURCE_EXHAUSTED")
+
+        async def fake_schedule(review_id, retry_request, *, stage, delay_seconds, attempt):
+            scheduled.append((review_id, retry_request, stage, delay_seconds, attempt))
+            return "retry-entry"
+
+        monkeypatch.setattr(tasks, "_run_model_review", fake_run_model)
+        monkeypatch.setattr(tasks, "schedule_stage_retry", fake_schedule)
+
+        await tasks.run_model_stage("review_model_retry", request)
+
+        job = tasks.store.get_job("review_model_retry")
+        assert job.status.value == "pending"
+        assert job.phase == "model_retry_wait"
+        assert len(scheduled) == 1
+        assert scheduled[0][2] == ReviewQueueStage.MODEL
+        assert scheduled[0][4] == 1
+        assert scheduled[0][1].metadata["model_retry_error_kind"] == "rate_limit"
+
+    asyncio.run(scenario())
+
+
+def test_model_stage_marks_failed_when_workflow_deadline_has_expired(monkeypatch, tmp_path):
+    tasks, settings = import_tasks(monkeypatch, tmp_path)
+
+    async def scenario():
+        settings.cleanup_enabled = False
+        now = datetime.now(timezone.utc)
+        request = CreateReviewRequest(
+            video_url="https://example.com/a.mp4",
+            metadata={
+                "workflow_started_at": (now - timedelta(minutes=31)).isoformat(),
+                "workflow_deadline_at": (now - timedelta(minutes=1)).isoformat(),
+            },
+        )
+        tasks.create_job(request, review_id="review_model_expired")
+        video_path = tmp_path / "raw-expired.mp4"
+        video_path.write_bytes(b"fake")
+        asset = VideoAsset(video_id="video_expired", local_path=str(video_path), sha256="sha", duration_seconds=12)
+        asset_dir = settings.derived_dir / asset.video_id
+        asset_dir.mkdir(parents=True, exist_ok=True)
+        (asset_dir / "asset.json").write_text(asset.model_dump_json(), encoding="utf-8")
+        await tasks.update_job("review_model_expired", video_id=asset.video_id, local_path=asset.local_path)
+
+        async def fake_run_model(*args, **kwargs):
+            raise RuntimeError("504 Gateway Time-out")
+
+        async def fail_schedule(*args, **kwargs):
+            raise AssertionError("expired workflow must not be rescheduled")
+
+        monkeypatch.setattr(tasks, "_run_model_review", fake_run_model)
+        monkeypatch.setattr(tasks, "schedule_stage_retry", fail_schedule)
+
+        await tasks.run_model_stage("review_model_expired", request)
+
+        job = tasks.store.get_job("review_model_expired")
+        assert job.status.value == "failed"
+        assert job.phase == "error"
+        assert "30分钟" in job.message
 
     asyncio.run(scenario())

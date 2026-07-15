@@ -4,11 +4,12 @@ from pathlib import Path
 import asyncio
 from contextlib import asynccontextmanager
 import gc
+import pytest
 import warnings
 
 os.environ["VIDEO_REVIEW_DATA_DIR"] = tempfile.mkdtemp(prefix="video-review-test-")
 
-from video_review.models import CreateReviewRequest, ReviewJob, ReviewStatus, SegmentPlan, SegmentReviewResult
+from video_review.models import CreateReviewRequest, ReviewJob, ReviewStatus, SegmentPlan, SegmentReviewResult, VideoAsset
 from video_review.model_retry import ModelContractError
 from video_review.config import settings
 
@@ -21,7 +22,6 @@ from video_review.tasks import (
     _exception_text,
     _is_rate_limit_error,
     _is_transient_model_error,
-    _manual_review_result,
     _persist_job_with_retry,
     _run_frame_batches_concurrently,
 )
@@ -181,7 +181,7 @@ def test_created_job_requires_durable_request_before_queueing(monkeypatch):
     asyncio.run(scenario())
 
 
-def test_subtitle_timeout_degrades_to_visual_review(monkeypatch):
+def test_subtitle_timeout_propagates_for_stage_retry(monkeypatch):
     async def scenario():
         events = []
 
@@ -195,43 +195,22 @@ def test_subtitle_timeout_degrades_to_visual_review(monkeypatch):
         monkeypatch.setattr(tasks, "add_event", fake_add_event)
         monkeypatch.setattr(settings, "model_qpm_limit", 0)
 
-        result = await _analyze_subtitle_resilient(
-            review_id="review_test",
-            analyzer=Analyzer(),
-            subtitle_text="测试字幕",
-            video_title="测试视频",
-            subtitle_source="ocr",
-        )
+        with pytest.raises(asyncio.TimeoutError):
+            await _analyze_subtitle_resilient(
+                review_id="review_test",
+                analyzer=Analyzer(),
+                subtitle_text="测试字幕",
+                video_title="测试视频",
+                subtitle_source="ocr",
+            )
 
-        assert result is None
-        assert "继续视觉审核" in events[-1][2]["text"]
+        assert "进入任务级重试" in events[-1][2]["text"]
         assert "TimeoutError" in events[-1][2]["text"]
 
     asyncio.run(scenario())
 
 
-def test_manual_review_result_marks_batch_time_range():
-    segment = SegmentPlan(
-        segment_index=1,
-        start_seconds=0,
-        end_seconds=10,
-        start_time="00:00",
-        end_time="00:10",
-    )
-    batch = [
-        {"timestamp": "00:04", "timestamp_seconds": 4, "frame_index": 5},
-        {"timestamp": "00:05", "timestamp_seconds": 5, "frame_index": 6},
-    ]
-
-    result = _manual_review_result(segment, batch, RuntimeError("504 Gateway Time-out"))
-
-    assert result.findings[0].sub_category == "模型超时人工复核"
-    assert result.findings[0].start_time == "00:04"
-    assert result.findings[0].end_time == "00:05"
-    assert result.findings[0].value_correction_advice.main
-
-
-def test_frame_batch_contract_error_degrades_to_manual_review(monkeypatch):
+def test_frame_batch_contract_error_propagates_for_stage_retry(monkeypatch):
     async def scenario():
         settings.frame_sheet_enabled = False
 
@@ -265,20 +244,17 @@ def test_frame_batch_contract_error_degrades_to_manual_review(monkeypatch):
         asset = type("Asset", (), {"sha256": "hash"})()
         policy = type("Policy", (), {"version": "v1"})()
 
-        results = await _analyze_frame_batch_resilient(
-            review_id="review_test",
-            analyzer=Analyzer(),
-            policy=policy,
-            asset=asset,
-            segment=segment,
-            batch=batch,
-            frame_fps=1,
-            video_title="test",
-        )
-
-        assert len(results) == 1
-        assert results[0].findings[0].sub_category == "模型响应异常人工复核"
-        assert "结构化" in results[0].findings[0].evidence
+        with pytest.raises(ModelContractError, match="模型返回空内容"):
+            await _analyze_frame_batch_resilient(
+                review_id="review_test",
+                analyzer=Analyzer(),
+                policy=policy,
+                asset=asset,
+                segment=segment,
+                batch=batch,
+                frame_fps=1,
+                video_title="test",
+            )
 
     asyncio.run(scenario())
 
@@ -341,7 +317,7 @@ def test_frame_batches_run_with_bounded_concurrency(monkeypatch):
     asyncio.run(scenario())
 
 
-def test_frame_batch_timeout_stops_splitting_at_configured_depth(monkeypatch):
+def test_frame_batch_timeout_propagates_after_configured_split_depth(monkeypatch):
     async def scenario():
         settings.frame_sheet_enabled = False
         settings.frame_batch_min_size = 4
@@ -383,20 +359,19 @@ def test_frame_batch_timeout_stops_splitting_at_configured_depth(monkeypatch):
         asset = type("Asset", (), {"sha256": "hash"})()
         policy = type("Policy", (), {"version": "v1"})()
 
-        results = await _analyze_frame_batch_resilient(
-            review_id="review_test",
-            analyzer=Analyzer(),
-            policy=policy,
-            asset=asset,
-            segment=segment,
-            batch=batch,
-            frame_fps=1,
-            video_title="test",
-        )
+        with pytest.raises(asyncio.TimeoutError):
+            await _analyze_frame_batch_resilient(
+                review_id="review_test",
+                analyzer=Analyzer(),
+                policy=policy,
+                asset=asset,
+                segment=segment,
+                batch=batch,
+                frame_fps=1,
+                video_title="test",
+            )
 
-        assert calls == 3
-        assert len(results) == 2
-        assert all(result.findings[0].sub_category == "模型超时人工复核" for result in results)
+        assert calls >= 2
 
     asyncio.run(scenario())
 
@@ -480,5 +455,117 @@ def test_frame_batch_rate_limit_retries_same_batch_without_splitting(monkeypatch
 
         assert calls == 2
         assert len(results) == 1
+
+    asyncio.run(scenario())
+
+
+def test_frame_batch_rate_limit_exhaustion_propagates_for_stage_retry(monkeypatch):
+    async def scenario():
+        settings.frame_sheet_enabled = False
+
+        class Analyzer:
+            model = "test-model"
+
+            async def analyze_frames_segment(self, *args, **kwargs):
+                raise RuntimeError("429 RESOURCE_EXHAUSTED")
+
+        async def fake_call(*args, **kwargs):
+            raise RuntimeError("429 RESOURCE_EXHAUSTED")
+
+        async def fake_add_event(*args, **kwargs):
+            return None
+
+        async def fake_get_cache(*args, **kwargs):
+            return None
+
+        monkeypatch.setattr(tasks, "_call_model_with_timeout", fake_call)
+        monkeypatch.setattr(tasks, "add_event", fake_add_event)
+        monkeypatch.setattr(tasks, "get_frame_batch_cache", fake_get_cache)
+
+        segment = SegmentPlan(
+            segment_index=1,
+            start_seconds=0,
+            end_seconds=2,
+            start_time="00:00",
+            end_time="00:02",
+        )
+        batch = [{"timestamp": "00:01", "timestamp_seconds": 1, "frame_index": 1}]
+        asset = type("Asset", (), {"sha256": "hash"})()
+        policy = type("Policy", (), {"version": "v1"})()
+
+        with pytest.raises(RuntimeError, match="429"):
+            await _analyze_frame_batch_resilient(
+                review_id="review_test",
+                analyzer=Analyzer(),
+                policy=policy,
+                asset=asset,
+                segment=segment,
+                batch=batch,
+                frame_fps=1,
+                video_title="test",
+            )
+
+    asyncio.run(scenario())
+
+
+def test_narrative_failure_propagates_for_stage_retry(monkeypatch):
+    async def scenario():
+        class Analyzer:
+            model = "test-model"
+
+            def __init__(self, *args, **kwargs):
+                pass
+
+            async def synthesize_narrative_report(self, *args, **kwargs):
+                raise asyncio.TimeoutError
+
+            async def close(self):
+                return None
+
+        async def fake_call(operation, **kwargs):
+            return await operation()
+
+        async def fake_update_job(*args, **kwargs):
+            return None
+
+        async def fake_add_event(*args, **kwargs):
+            return None
+
+        async def fake_save_report(*args, **kwargs):
+            return "report.json"
+
+        async def fake_callback(*args, **kwargs):
+            return None
+
+        async def fake_cleanup(*args, **kwargs):
+            return None
+
+        class Report:
+            def model_dump(self):
+                return {}
+
+        monkeypatch.setattr(settings, "mode", "model")
+        monkeypatch.setattr(settings, "google_api_key", "test-key")
+        monkeypatch.setattr(settings, "google_api_keys", None)
+        monkeypatch.setattr(settings, "subtitle_review_enabled", False)
+        monkeypatch.setattr(settings, "synthesize_narrative", True)
+        monkeypatch.setattr(tasks, "MultimodalAnalyzer", Analyzer)
+        monkeypatch.setattr(tasks, "make_segment_plan", lambda *args, **kwargs: [])
+        monkeypatch.setattr(tasks, "load_policy", lambda: object())
+        monkeypatch.setattr(tasks, "_call_model_with_timeout", fake_call)
+        monkeypatch.setattr(tasks, "update_job", fake_update_job)
+        monkeypatch.setattr(tasks, "add_event", fake_add_event)
+        monkeypatch.setattr(tasks, "build_report", lambda *args, **kwargs: Report())
+        monkeypatch.setattr(tasks, "save_report", fake_save_report)
+        monkeypatch.setattr(tasks, "send_review_callback", fake_callback)
+        monkeypatch.setattr(tasks, "cleanup_terminal_artifacts", fake_cleanup)
+        asset = VideoAsset(video_id="video_test", local_path="/tmp/test.mp4", sha256="sha", duration_seconds=1)
+
+        with pytest.raises(asyncio.TimeoutError):
+            await tasks._run_model_review(
+                "review_test",
+                CreateReviewRequest(video_url="https://example.com/a.mp4"),
+                asset,
+            )
 
     asyncio.run(scenario())

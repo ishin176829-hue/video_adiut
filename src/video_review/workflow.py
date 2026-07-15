@@ -20,7 +20,7 @@ class WorkflowRetryPlan:
 
 def _utc(value: datetime) -> datetime:
     if value.tzinfo is None:
-        return value.replace(tzinfo=timezone.utc)
+        return value.astimezone(timezone.utc)
     return value.astimezone(timezone.utc)
 
 
