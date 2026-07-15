@@ -139,22 +139,23 @@ redis.call('SET', key, reserved_at_ms + interval_ms, 'PX', ttl_ms)
 return reserved_at_ms
 """
 
-_DOWNLOAD_RETRY_PROMOTE_SCRIPT = """
+_STAGE_RETRY_PROMOTE_SCRIPT = """
 local retry_key = KEYS[1]
-local preprocess_stream = KEYS[2]
+local target_stream = KEYS[2]
 local now_seconds = tonumber(ARGV[1])
 local count = tonumber(ARGV[2])
+local stage = ARGV[3]
 local entries = redis.call('ZRANGEBYSCORE', retry_key, '-inf', now_seconds, 'LIMIT', 0, count)
 local promoted = 0
 for _, raw in ipairs(entries) do
   if redis.call('ZREM', retry_key, raw) == 1 then
     local item = cjson.decode(raw)
-    redis.call('XADD', preprocess_stream, '*',
+    redis.call('XADD', target_stream, '*',
       'review_id', item.review_id,
       'payload', item.payload,
-      'stage', 'preprocess',
+      'stage', stage,
       'enqueued_at', item.enqueued_at,
-      'download_retry_attempt', tostring(item.attempt))
+      'retry_attempt', tostring(item.attempt))
     promoted = promoted + 1
   end
 end
@@ -266,9 +267,36 @@ async def schedule_download_retry(
     delay_seconds: float,
     attempt: int,
 ) -> str | None:
+    return await schedule_stage_retry(
+        review_id,
+        request,
+        stage=ReviewQueueStage.PREPROCESS,
+        delay_seconds=delay_seconds,
+        attempt=attempt,
+    )
+
+
+def _stage_retry_key(stage: ReviewQueueStage) -> str:
+    if stage == ReviewQueueStage.MODEL:
+        return settings.redis_model_retry_key
+    if stage == ReviewQueueStage.PREPROCESS:
+        return settings.redis_download_retry_key
+    raise ValueError(f"阶段 {stage.value} 不支持延迟重试")
+
+
+async def schedule_stage_retry(
+    review_id: str,
+    request: CreateReviewRequest,
+    *,
+    stage: ReviewQueueStage | str,
+    delay_seconds: float,
+    attempt: int,
+) -> str | None:
     client = await get_redis()
     if client is None:
         return None
+    normalized = ReviewQueueStage(stage)
+    retry_key = _stage_retry_key(normalized)
     enqueued_at = datetime.now().isoformat()
     entry = json.dumps(
         {
@@ -276,26 +304,40 @@ async def schedule_download_retry(
             "payload": json.dumps(request.model_dump(mode="json", exclude_none=True), ensure_ascii=False),
             "enqueued_at": enqueued_at,
             "attempt": attempt,
+            "stage": normalized.value,
         },
         ensure_ascii=False,
         sort_keys=True,
     )
-    await client.zadd(settings.redis_download_retry_key, {entry: time.time() + max(0.0, delay_seconds)})
-    await client.expire(settings.redis_download_retry_key, max(86_400, int(delay_seconds) + 86_400))
+    await client.zadd(retry_key, {entry: time.time() + max(0.0, delay_seconds)})
+    await client.expire(retry_key, max(86_400, int(delay_seconds) + 86_400))
     return entry
 
 
 async def promote_due_download_retries() -> int:
+    return await promote_due_stage_retries(ReviewQueueStage.PREPROCESS)
+
+
+async def promote_due_stage_retries(stage: ReviewQueueStage | str) -> int:
     client = await get_redis()
     if client is None:
         return 0
+    normalized = ReviewQueueStage(stage)
+    retry_key = _stage_retry_key(normalized)
+    target_stream, _group = review_stream_group(normalized)
+    promote_count = (
+        settings.model_retry_promote_count
+        if normalized == ReviewQueueStage.MODEL
+        else settings.download_retry_promote_count
+    )
     promoted = await client.eval(
-        _DOWNLOAD_RETRY_PROMOTE_SCRIPT,
+        _STAGE_RETRY_PROMOTE_SCRIPT,
         2,
-        settings.redis_download_retry_key,
-        settings.redis_preprocess_stream,
+        retry_key,
+        target_stream,
         time.time(),
-        max(1, settings.download_retry_promote_count),
+        max(1, promote_count),
+        normalized.value,
     )
     return int(promoted or 0)
 

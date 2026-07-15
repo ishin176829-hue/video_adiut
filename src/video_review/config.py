@@ -44,6 +44,7 @@ class Settings(BaseModel):
         "sn2s:video_review:model_key",
     )
     redis_download_retry_key: str = os.getenv("REDIS_DOWNLOAD_RETRY_KEY", "sn2s:video_review:download_retry")
+    redis_model_retry_key: str = os.getenv("REDIS_MODEL_RETRY_KEY", "sn2s:video_review:model_retry")
     redis_download_host_prefix: str = os.getenv("REDIS_DOWNLOAD_HOST_PREFIX", "sn2s:video_review:download_host")
     model_qpm_limit: int = int(os.getenv("VIDEO_REVIEW_MODEL_QPM_LIMIT", "500"))
     model_qpm_wait_seconds: float = float(os.getenv("VIDEO_REVIEW_MODEL_QPM_WAIT_SECONDS", "60"))
@@ -60,6 +61,12 @@ class Settings(BaseModel):
     download_task_retry_attempts: int = int(os.getenv("VIDEO_REVIEW_DOWNLOAD_TASK_RETRY_ATTEMPTS", "3"))
     download_task_retry_delays_seconds: str = os.getenv("VIDEO_REVIEW_DOWNLOAD_TASK_RETRY_DELAYS_SECONDS", "60,300,900")
     download_retry_promote_count: int = int(os.getenv("VIDEO_REVIEW_DOWNLOAD_RETRY_PROMOTE_COUNT", "100"))
+    workflow_deadline_seconds: int = int(os.getenv("VIDEO_REVIEW_WORKFLOW_DEADLINE_SECONDS", "1800"))
+    model_task_retry_delays_seconds: str = os.getenv(
+        "VIDEO_REVIEW_MODEL_TASK_RETRY_DELAYS_SECONDS",
+        "5,15,30,60,120,180,300",
+    )
+    model_retry_promote_count: int = int(os.getenv("VIDEO_REVIEW_MODEL_RETRY_PROMOTE_COUNT", "100"))
     use_redis_queue: bool = os.getenv("VIDEO_REVIEW_USE_REDIS_QUEUE", "0").lower() in {"1", "true", "yes"}
     redis_cache_enabled: bool = os.getenv("VIDEO_REVIEW_REDIS_CACHE_ENABLED", "1").lower() in {"1", "true", "yes"}
     infra_failure_backoff_seconds: int = int(os.getenv("INFRA_FAILURE_BACKOFF_SECONDS", "30"))

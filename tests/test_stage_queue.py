@@ -1,4 +1,5 @@
 import asyncio
+import json
 
 from video_review import queue
 from video_review.config import settings
@@ -148,5 +149,79 @@ def test_renew_review_claim_refreshes_pending_idle_time(monkeypatch):
         await queue.renew_review_claim(message, "consumer-1")
 
         assert fake.args == ("stream:model", "group:model", "consumer-1", 0, ["7-0"], 0, True)
+
+    asyncio.run(scenario())
+
+
+def test_schedule_stage_retry_persists_model_request_in_sorted_set(monkeypatch):
+    class FakeRedis:
+        def __init__(self):
+            self.zadd_args = None
+            self.expire_args = None
+
+        async def zadd(self, key, mapping):
+            self.zadd_args = (key, mapping)
+
+        async def expire(self, key, seconds):
+            self.expire_args = (key, seconds)
+
+    async def scenario():
+        fake = FakeRedis()
+
+        async def fake_get_redis(*, strict=False):
+            return fake
+
+        monkeypatch.setattr(queue, "get_redis", fake_get_redis)
+        monkeypatch.setattr(settings, "redis_model_retry_key", "retry:model", raising=False)
+        request = CreateReviewRequest(
+            video_url="https://example.com/a.mp4",
+            metadata={"model_retry_attempt": 1},
+        )
+
+        entry = await queue.schedule_stage_retry(
+            "review_1",
+            request,
+            stage=queue.ReviewQueueStage.MODEL,
+            delay_seconds=15,
+            attempt=1,
+        )
+
+        assert entry is not None
+        assert fake.zadd_args[0] == "retry:model"
+        raw = next(iter(fake.zadd_args[1]))
+        payload = json.loads(raw)
+        assert payload["review_id"] == "review_1"
+        assert payload["stage"] == "model"
+        assert json.loads(payload["payload"])["metadata"]["model_retry_attempt"] == 1
+
+    asyncio.run(scenario())
+
+
+def test_promote_due_stage_retries_targets_model_stream(monkeypatch):
+    class FakeRedis:
+        def __init__(self):
+            self.eval_args = None
+
+        async def eval(self, script, key_count, *args):
+            self.eval_args = (script, key_count, args)
+            return 3
+
+    async def scenario():
+        fake = FakeRedis()
+
+        async def fake_get_redis(*, strict=False):
+            return fake
+
+        monkeypatch.setattr(queue, "get_redis", fake_get_redis)
+        monkeypatch.setattr(settings, "redis_model_retry_key", "retry:model", raising=False)
+        monkeypatch.setattr(settings, "redis_model_stream", "stream:model")
+        monkeypatch.setattr(settings, "model_retry_promote_count", 100, raising=False)
+
+        promoted = await queue.promote_due_stage_retries(queue.ReviewQueueStage.MODEL)
+
+        assert promoted == 3
+        assert fake.eval_args[1] == 2
+        assert fake.eval_args[2][0:2] == ("retry:model", "stream:model")
+        assert fake.eval_args[2][-1] == "model"
 
     asyncio.run(scenario())

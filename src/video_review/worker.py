@@ -17,6 +17,7 @@ from .queue import (
     dequeue_reviews,
     global_review_slot,
     promote_due_download_retries,
+    promote_due_stage_retries,
     renew_review_claim,
 )
 from .store import store
@@ -114,6 +115,13 @@ async def run_worker(
                     store.add_event("worker", "status", {"text": f"已投递 {promoted} 个延迟下载重试任务"})
             except Exception as exc:
                 store.add_event("worker", "status", {"text": f"下载延迟队列投递失败：{exc}"})
+        elif queue_stage == ReviewQueueStage.MODEL:
+            try:
+                promoted = await promote_due_stage_retries(ReviewQueueStage.MODEL)
+                if promoted:
+                    store.add_event("worker", "status", {"text": f"已投递 {promoted} 个延迟模型重试任务"})
+            except Exception as exc:
+                store.add_event("worker", "status", {"text": f"模型延迟队列投递失败：{exc}"})
         reconcile_interval = max(5, settings.stale_processing_reconcile_interval_seconds)
         if settings.stale_processing_reconcile_on_worker_start and (
             not last_stale_reconcile_at or time.monotonic() - last_stale_reconcile_at >= reconcile_interval
