@@ -60,8 +60,20 @@ WORKER_ID=2 WORKER_CONCURRENCY=5 WORKER_POLL_COUNT=5 scripts/run_worker_nohup.sh
 Redis Stream：
 
 - 主队列：`sn2s:video_review:jobs`
+- 预处理队列：`sn2s:video_review:preprocess`
+- 模型队列：`sn2s:video_review:model`
+- 模型延迟重试队列：`sn2s:video_review:model_retry`
 - 失败队列：`sn2s:video_review:jobs:dead`
 - Consumer group：`video-review-workers`
+
+模型工作流默认以提交时间为起点设置 30 分钟截止时间。429、502/503/504、连接超时、模型熔断和结构化输出错误在调用级重试耗尽后进入 Redis 延迟重试队列；只有超过截止时间或明确不可恢复的错误才进入最终失败。技术错误不会生成“人工复核”占位审核结果。
+
+```bash
+VIDEO_REVIEW_PIPELINE_MODE=staged
+VIDEO_REVIEW_WORKFLOW_DEADLINE_SECONDS=1800
+VIDEO_REVIEW_MODEL_TASK_RETRY_DELAYS_SECONDS=5,15,30,60,120,180,300
+VIDEO_REVIEW_MODEL_RETRY_PROMOTE_COUNT=100
+```
 
 PostgreSQL 表：
 
