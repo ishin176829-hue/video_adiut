@@ -4,10 +4,13 @@ import argparse
 import asyncio
 import contextlib
 import time
+from datetime import datetime, timezone
 
 from .config import settings
 from .db import fetch_review_job_states
 from .infra import init_infra
+from .model_retry import classify_model_error
+from .models import ReviewStatus
 from .queue import (
     ReviewQueueStage,
     ack_review,
@@ -19,9 +22,11 @@ from .queue import (
     promote_due_download_retries,
     promote_due_stage_retries,
     renew_review_claim,
+    schedule_stage_retry,
 )
 from .store import store
-from .tasks import reconcile_stale_reviews, run_model_stage, run_preprocess_stage, run_review
+from .tasks import add_event, fail_workflow, reconcile_stale_reviews, run_model_stage, run_preprocess_stage, run_review, update_job
+from .workflow import plan_stage_retry
 
 
 async def process_message(message) -> None:
@@ -61,6 +66,19 @@ async def _is_terminal_job(review_id: str) -> bool:
     return state.get("status") in {"completed", "failed", "cancelled", "source_unavailable"}
 
 
+def _message_started_at(review_id: str) -> datetime:
+    job = store.get_job(review_id)
+    if job is None:
+        return datetime.now(timezone.utc)
+    try:
+        value = datetime.fromisoformat(job.created_at.replace("Z", "+00:00"))
+    except ValueError:
+        return datetime.now(timezone.utc)
+    if value.tzinfo is None:
+        value = value.astimezone()
+    return value.astimezone(timezone.utc)
+
+
 async def handle_message(message, worker_semaphore: asyncio.Semaphore, consumer_name: str) -> None:
     async with worker_semaphore:
         if await _is_terminal_job(message.review_id):
@@ -73,6 +91,70 @@ async def handle_message(message, worker_semaphore: asyncio.Semaphore, consumer_
             await process_message(message)
             await ack_review(message)
         except Exception as exc:
+            if message.stage in {ReviewQueueStage.PREPROCESS, ReviewQueueStage.MODEL}:
+                try:
+                    error_text = str(exc) or exc.__class__.__name__
+                    retry_plan = plan_stage_retry(
+                        message.request,
+                        stage=message.stage.value,
+                        reason=error_text,
+                        error_kind=classify_model_error(exc),
+                        started_at=_message_started_at(message.review_id),
+                    )
+                    if retry_plan is not None:
+                        scheduled = await schedule_stage_retry(
+                            message.review_id,
+                            retry_plan.request,
+                            stage=message.stage,
+                            delay_seconds=retry_plan.delay_seconds,
+                            attempt=retry_plan.attempt,
+                        )
+                        if scheduled:
+                            await update_job(
+                                message.review_id,
+                                status=ReviewStatus.PENDING,
+                                phase=f"{message.stage.value}_retry_wait",
+                                message=(
+                                    f"worker执行异常，{retry_plan.delay_seconds:.1f}秒后进行"
+                                    f"第{retry_plan.attempt}次任务级重试"
+                                ),
+                                error=error_text,
+                            )
+                            await add_event(
+                                message.review_id,
+                                "worker_retry",
+                                {
+                                    "stage": message.stage.value,
+                                    "attempt": retry_plan.attempt,
+                                    "delay_seconds": retry_plan.delay_seconds,
+                                    "deadline_at": retry_plan.deadline_at.isoformat(),
+                                    "error_kind": classify_model_error(exc),
+                                    "error": error_text,
+                                },
+                            )
+                            await ack_review(message)
+                            return
+                        store.add_event(
+                            message.review_id,
+                            "status",
+                            {"text": "worker重试任务未能持久化，保留Redis pending消息等待恢复"},
+                        )
+                        return
+                    await fail_workflow(
+                        message.review_id,
+                        message.request,
+                        message="工作流超过30分钟截止时间",
+                        error=f"WORKFLOW_DEADLINE_EXCEEDED: {error_text}",
+                    )
+                    await dead_letter_review(message, error_text)
+                    return
+                except Exception as retry_exc:
+                    store.add_event(
+                        message.review_id,
+                        "status",
+                        {"text": f"worker重试调度失败，保留Redis pending消息：{retry_exc}"},
+                    )
+                    return
             await dead_letter_review(message, str(exc))
             store.add_event(message.review_id, "error", {"error": f"worker 执行异常：{exc}"})
         finally:

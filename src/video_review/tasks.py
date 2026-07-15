@@ -137,6 +137,28 @@ async def cleanup_terminal_artifacts(review_id: str) -> None:
         )
 
 
+async def fail_workflow(
+    review_id: str,
+    request: CreateReviewRequest,
+    *,
+    message: str,
+    error: str,
+) -> None:
+    await update_job(
+        review_id,
+        status=ReviewStatus.FAILED,
+        phase="error",
+        message=message,
+        error=error,
+    )
+    await add_event(review_id, "error", {"error": error})
+    try:
+        await send_review_callback(review_id, request, ReviewStatus.FAILED.value, error=error)
+    except Exception as callback_exc:
+        await add_event(review_id, "status", {"text": f"审核失败回调失败：{callback_exc}"})
+    await cleanup_terminal_artifacts(review_id)
+
+
 async def reconcile_stale_reviews(
     *,
     older_than_minutes: int | None = None,
@@ -1282,16 +1304,9 @@ async def run_model_stage(review_id: str, request: CreateReviewRequest) -> None:
             error_text = f"WORKFLOW_DEADLINE_EXCEEDED: {error_text}"
         else:
             failure_message = "模型审核失败"
-        await update_job(
+        await fail_workflow(
             review_id,
-            status=ReviewStatus.FAILED,
-            phase="error",
+            request,
             message=failure_message,
             error=error_text,
         )
-        await add_event(review_id, "error", {"error": error_text})
-        try:
-            await send_review_callback(review_id, request, ReviewStatus.FAILED.value, error=error_text)
-        except Exception as callback_exc:
-            await add_event(review_id, "status", {"text": f"模型审核失败回调失败：{callback_exc}"})
-        await cleanup_terminal_artifacts(review_id)
